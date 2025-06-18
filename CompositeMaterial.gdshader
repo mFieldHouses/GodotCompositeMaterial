@@ -1,6 +1,6 @@
 shader_type spatial;
 
-//Todo: triplanar mapping, vertex displacement normal recalculation, implement changing order of layers (bottom, middle, top), uv rotation by uv offset map r channel
+//Todo: triplanar mapping, vertex displacement normal recalculation, implement changing order of layers (bottom, middle, top), uv rotation by uv offset map r channel, uv mask
 
 //render_mode unshaded;
 
@@ -31,7 +31,7 @@ uniform bool layer_C_enabled = true;
 /**
  * In what place this layer will show. Layer 1 is the bottom layer, layer 3 the top layer. Do not set this to the same value on multiple layers.
  */
-uniform int layer_C_processing_index : hint_enum("Bottom", "Middle", "Top") = 3;
+uniform int layer_C_processing_index : hint_enum("Bottom", "Middle", "Top") = 2;
 /**
  * X and Y components by which the size of the UV map used by all maps (albedo, normal, ORM) will be multiplied.
  */
@@ -129,7 +129,13 @@ uniform int layer_C_step_4_mixing_operation : hint_enum("Add", "Subtract", "Mult
 uniform float layer_C_step_4_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
 uniform int layer_C_step_5_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
 uniform float layer_C_step_5_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
-uniform sampler2D layer_C_post_color_ramp : hint_default_white;
+uniform int layer_C_step_6_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
+uniform float layer_C_step_6_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
+uniform sampler2D layer_C_post_color_ramp : hint_default_transparent;
+uniform int layer_C_post_effect : hint_enum("None", "Drip", "Expand-Blur") = 0;
+uniform float layer_C_post_effect_parameter_1 : hint_range(0.0, 1.0) = 0.1;
+uniform float layer_C_post_effect_parameter_2 = 0.0;
+uniform float layer_C_post_effect_parameter_3 = 0.0;
 
 group_uniforms layer_C.texture_masks;
 uniform vec2 layer_C_mask_uv_scale = vec2(1.0, 1.0);
@@ -180,8 +186,11 @@ group_uniforms layer_C.vertex_color_mask;
  * Whether to use the objects vertex color properties as a mask. Useful for edgewear or adding deliberate spots of material to terrain.
  */
 uniform int layer_C_vertex_color_mask_mode : hint_enum("Disabled", "Red", "Green", "Blue") = 0;
-uniform sampler2D layer_C_vertex_color_mask_color_ramp : hint_default_white;
+uniform sampler2D layer_C_vertex_color_mask_color_ramp : hint_default_transparent;
 uniform int layer_C_vertex_color_mask_mixing_step: hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4") = 4;
+
+group_uniforms layer_C.UV_mask;
+uniform int layer_C_UV_mask_mode : hint_enum("Disabled", "Tile", "Clamp") = 0;
 
 group_uniforms layer_C.normal_map_slope_mask;
 
@@ -298,7 +307,9 @@ uniform int layer_B_step_4_mixing_operation : hint_enum("Add", "Subtract", "Mult
 uniform float layer_B_step_4_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
 uniform int layer_B_step_5_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
 uniform float layer_B_step_5_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
-uniform sampler2D layer_B_post_color_ramp : hint_default_white;
+uniform int layer_B_step_6_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
+uniform float layer_B_step_6_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
+uniform sampler2D layer_B_post_color_ramp : hint_default_transparent;
 
 group_uniforms layer_B.texture_masks;
 uniform vec2 layer_B_mask_uv_scale = vec2(1.0, 1.0);
@@ -350,7 +361,7 @@ group_uniforms layer_B.vertex_color_mask;
  * Whether to use the objects vertex color properties as a mask. Useful for edgewear or adding deliberate spots of material to terrain.
  */
 uniform int layer_B_vertex_color_mask_mode : hint_enum("Disabled", "Red", "Green", "Blue") = 0;
-uniform sampler2D layer_B_vertex_color_mask_color_ramp : hint_default_white;
+uniform sampler2D layer_B_vertex_color_mask_color_ramp : hint_default_transparent;
 uniform int layer_B_vertex_color_mask_mixing_step: hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4") = 4;
 
 group_uniforms layer_B.normal_map_slope_mask;
@@ -454,7 +465,9 @@ uniform int layer_A_step_4_mixing_operation : hint_enum("Add", "Subtract", "Mult
 uniform float layer_A_step_4_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
 uniform int layer_A_step_5_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
 uniform float layer_A_step_5_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
-uniform sampler2D layer_A_post_color_ramp : hint_default_white;
+uniform int layer_A_step_6_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
+uniform float layer_A_step_6_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
+uniform sampler2D layer_A_post_color_ramp : hint_default_transparent;
 
 group_uniforms layer_A.texture_masks;
 uniform vec2 layer_A_mask_uv_scale = vec2(1.0, 1.0);
@@ -506,7 +519,7 @@ group_uniforms layer_A.vertex_color_mask;
  * Whether to use the objects vertex color properties as a mask. Useful for edgewear or adding deliberate spots of material to terrain.
  */
 uniform int layer_A_vertex_color_mask_mode : hint_enum("Disabled", "Red", "Green", "Blue") = 0;
-uniform sampler2D layer_A_vertex_color_mask_color_ramp : hint_default_white;
+uniform sampler2D layer_A_vertex_color_mask_color_ramp : hint_default_transparent;
 uniform int layer_A_vertex_color_mask_mixing_step: hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4") = 4;
 
 group_uniforms layer_A.normal_map_slope_mask;
@@ -629,14 +642,14 @@ float get_layer_mask_amplification(int layer) {
 float get_layer_mask_post_color_ramp_value(int layer, float factor) {
 	switch (layer) {
 		case 1:
-			vec2 color_ramp_factor = texture(layer_A_post_color_ramp, vec2((factor * 0.95) + 0.025)).ra;
+			vec2 color_ramp_factor = texture(layer_A_post_color_ramp, vec2(factor, 0.0)).ra;
 			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
 		case 2:
-			vec2 color_ramp_factor = texture(layer_B_post_color_ramp, vec2((factor * 0.95) + 0.025)).ra;
+			vec2 color_ramp_factor = texture(layer_B_post_color_ramp, vec2(factor, 0.0)).ra;
 			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
 		case 3:
-			vec2 color_ramp_factor = texture(layer_C_post_color_ramp, vec2((factor * 0.95) + 0.025)).ra;
-			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
+			vec2 color_ramp_factor = texture(layer_C_post_color_ramp, vec2(factor, 0.0)).ra;
+			return mix(0.0, color_ramp_factor.x, color_ramp_factor.y * factor);
 	}
 }
 
@@ -880,33 +893,33 @@ float get_vertex_color_mask_for_layer(int layer) {
 				case 0:
 					return 0.0;
 				case 1:
-					return texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.01, 0.99), 0.2)).r * vertex_color.r;
+					return texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.005, 0.995), 0.0)).r * texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.0, 1.0) * vertex_color.r, 0.0)).a;
 				case 2:
-					return texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.01, 0.99), 0.2)).r * vertex_color.g;
+					return texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.005, 0.995), 0.0)).r * texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.0, 1.0) * vertex_color.g, 0.0)).a;
 				case 3:
-					return texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.01, 0.99), 0.2)).r * vertex_color.b;
+					return texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.005, 0.995), 0.0)).r * texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.0, 1.0) * vertex_color.b, 0.0)).a;
 			}
 		case 2:
 			switch (layer_B_vertex_color_mask_mode) {
 				case 0:
 					return 0.0;
 				case 1:
-					return texture(layer_B_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.01, 0.99), 0.2)).r * vertex_color.r;
+					return texture(layer_B_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.0, 1.0) * vertex_color.r, 0.0)).r;
 				case 2:
-					return texture(layer_B_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.01, 0.99), 0.2)).r * vertex_color.g;
+					return texture(layer_B_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.0, 1.0) * vertex_color.g, 0.0)).r;
 				case 3:
-					return texture(layer_B_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.01, 0.99), 0.2)).r * vertex_color.b;
+					return texture(layer_B_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.0, 1.0) * vertex_color.b, 0.0)).r;
 			}
 		case 3:
 			switch (layer_C_vertex_color_mask_mode) {
 				case 0:
 					return 0.0;
 				case 1:
-					return texture(layer_C_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.01, 0.99), 0.2)).r * vertex_color.r;
+					return texture(layer_C_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.0, 1.0) * vertex_color.r, 0.0)).r;
 				case 2:
-					return texture(layer_C_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.01, 0.99), 0.2)).r * vertex_color.g;
+					return texture(layer_C_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.0, 1.0) * vertex_color.g, 0.0)).r;
 				case 3:
-					return texture(layer_C_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.01, 0.99), 0.2)).r * vertex_color.b;
+					return texture(layer_C_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.0, 1.0) * vertex_color.b, 0.0)).r;
 			}
 
 	};
@@ -970,12 +983,12 @@ float get_resulting_mask_for_layer(int layer, vec2 uv, vec3 local_surface_normal
 	}
 
 	float step_5_mix = clamp((get_texture_mask_for_layer(layer, uv) * float(get_layer_mask_mixing_step(layer, 1) == 5) + get_directional_mask_for_layer(layer, local_surface_normal, global_surface_normal) * float(get_layer_mask_mixing_step(layer, 2) == 5) + get_positional_mask_for_layer(layer, local_vertex_position, global_vertex_position) * float(get_layer_mask_mixing_step(layer, 3) == 5) + get_vertex_color_mask_for_layer(layer) * float(get_layer_mask_mixing_step(layer, 4) == 5)), 0.0, 1.0);
-	switch (get_layer_step_mixing_operation(layer, 4)) {
+	switch (get_layer_step_mixing_operation(layer, 5)) {
 		case 0:
 			step_5_mix = clamp(step_4_mix + (step_5_mix * float(step_4_mix >= get_layer_step_mixing_threshold(layer, 5))), 0.0, 1.0);
 			break;
 		case 1:
-			step_5_mix = clamp(step_4_mix - (step_4_mix * float(step_4_mix >= get_layer_step_mixing_threshold(layer, 5))), 0.0, 1.0);
+			step_5_mix = clamp(step_4_mix - (step_5_mix * float(step_4_mix >= get_layer_step_mixing_threshold(layer, 5))), 0.0, 1.0);
 			break;
 		case 2:
 			if (step_4_mix >= get_layer_step_mixing_threshold(layer, 5)) {
@@ -988,7 +1001,7 @@ float get_resulting_mask_for_layer(int layer, vec2 uv, vec3 local_surface_normal
 	}
 
 	//return step_3_mix;
-	return get_layer_mask_post_color_ramp_value(layer, clamp(step_5_mix * get_layer_mask_amplification(layer), 0.0, 1.0) * 0.9 + 0.02) * step_5_mix;
+	return get_layer_mask_post_color_ramp_value(layer, clamp(step_5_mix, 0.0, 1.0) * get_layer_mask_amplification(layer) * 0.9 + 0.02);
 }
 
 void vertex() {
