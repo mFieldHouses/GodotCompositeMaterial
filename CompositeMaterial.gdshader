@@ -1036,8 +1036,30 @@ float get_uv_mask_for_layer(int layer, vec2 uv) {
 	float x_max = get_layer_uv_mask_max(layer, false);
 	float x_min = get_layer_uv_mask_min(layer, false);
 	float x_factor = clamp(1.0/(x_max - x_min) * uv.x + (1.0 - 1.0/(x_max - x_min) * x_max), 0.002, 0.998);
+	float x_value = get_layer_uv_mask_color_ramp_value(layer, false, x_factor);
 
-	return 0.0;
+	float y_max = get_layer_uv_mask_max(layer, true);
+	float y_min = get_layer_uv_mask_min(layer, true);
+	float y_factor = clamp(1.0/(y_max - y_min) * uv.y + (1.0 - 1.0/(y_max - y_min) * y_max), 0.002, 0.998);
+	float y_value = get_layer_uv_mask_color_ramp_value(layer, true, y_factor);
+
+	float result;
+
+	switch (get_layer_uv_mask_mixing_operation(layer)) {
+		case 0:
+			result = y_value + x_value;
+		case 1:
+			switch (get_layer_uv_mask_mixing_order(layer)) {
+				case 0:
+					result = x_value - y_value;
+				case 1:
+					result = y_value - x_value;
+			};
+		case 2:
+			result = y_value * x_value;
+	};
+
+	return result * float(get_layer_uv_mask_enabled(layer));
 }
 
 float get_layer_mask_step_mix(int layer, int step, vec2 uv1, vec2 uv2, vec3 local_surface_normal, vec3 global_surface_normal, vec3 local_vertex_position, vec3 global_vertex_position) {
