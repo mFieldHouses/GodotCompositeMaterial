@@ -182,7 +182,6 @@ uniform int layer_C_normal_map_slope_mask_mode : hint_enum("Disabled", "Pre-Mask
 uniform int layer_C_normal_map_slope_mask_source : hint_enum("Previous Layer", "Current Layer") = 0;
 uniform sampler2D layer_C_normal_map_slope_mask_color_ramp : hint_default_transparent;
 uniform int layer_C_normal_map_slope_mask_mixing_step : hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5") = 5;
-uniform float layer_C_normal_map_slope_radius : hint_range(0.0, 100.0) = 0.0;
 
 group_uniforms layer_C.UV_mask;
 
@@ -296,6 +295,10 @@ uniform float layer_B_step_5_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
 uniform int layer_B_step_6_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
 uniform float layer_B_step_6_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
 uniform sampler2D layer_B_post_color_ramp : hint_default_transparent;
+uniform int layer_B_post_effect : hint_enum("None", "Drip", "Expand-Blur") = 0;
+uniform float layer_B_post_effect_parameter_1 : hint_range(0.0, 1.0) = 0.1;
+uniform float layer_B_post_effect_parameter_2 = 0.0;
+uniform float layer_B_post_effect_parameter_3 = 0.0;
 
 group_uniforms layer_B.texture_masks;
 uniform bool layer_B_texture_mask_A_enabled = true;
@@ -354,7 +357,6 @@ uniform int layer_B_normal_map_slope_mask_mode : hint_enum("Disabled", "Pre-Mask
 uniform int layer_B_normal_map_slope_mask_source : hint_enum("Previous Layer", "Current Layer") = 0;
 uniform sampler2D layer_B_normal_map_slope_mask_color_ramp : hint_default_transparent;
 uniform int layer_B_normal_map_slope_mask_mixing_step : hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") = 5;
-uniform float layer_B_normal_map_slope_radius : hint_range(0.0, 100.0) = 0.0;
 
 group_uniforms layer_B.UV_mask;
 
@@ -468,6 +470,10 @@ uniform float layer_A_step_5_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
 uniform int layer_A_step_6_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
 uniform float layer_A_step_6_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
 uniform sampler2D layer_A_post_color_ramp : hint_default_transparent;
+uniform int layer_A_post_effect : hint_enum("None", "Drip", "Expand-Blur") = 0;
+uniform float layer_A_post_effect_parameter_1 : hint_range(0.0, 1.0) = 0.1;
+uniform float layer_A_post_effect_parameter_2 = 0.0;
+uniform float layer_A_post_effect_parameter_3 = 0.0;
 
 group_uniforms layer_A.texture_masks;
 uniform bool layer_A_texture_mask_A_enabled = true;
@@ -526,7 +532,6 @@ uniform int layer_A_normal_map_slope_mask_mode : hint_enum("Disabled", "Pre-Mask
 uniform int layer_A_normal_map_slope_mask_source : hint_enum("Previous Layer", "Current Layer") = 0;
 uniform sampler2D layer_A_normal_map_slope_mask_color_ramp : hint_default_transparent;
 uniform int layer_A_normal_map_slope_mask_mixing_step : hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5") = 5;
-uniform float layer_A_normal_map_slope_radius : hint_range(0.0, 100.0) = 0.0;
 
 group_uniforms layer_A.UV_mask;
 
@@ -684,6 +689,28 @@ float get_layer_mask_post_color_ramp_value(int layer, float factor) {
 		case 3:
 			vec2 color_ramp_factor = texture(layer_C_post_color_ramp, vec2(factor, 0.0)).ra;
 			return mix(0.0, color_ramp_factor.x, color_ramp_factor.y * factor);
+	}
+}
+
+int get_layer_post_effect(int layer) {
+	switch (layer) {
+		case 1:
+			return layer_A_post_effect;
+		case 2:
+			return layer_B_post_effect;
+		case 3:
+			return layer_C_post_effect;
+	}
+}
+
+float get_layer_post_effect_parameter(int layer, int parameter_index) {
+	switch (layer) {
+		case 1:
+			return layer_A_post_effect_parameter_1 * float(parameter_index == 1) + layer_A_post_effect_parameter_2 * float(parameter_index == 2) + layer_A_post_effect_parameter_3 * float(parameter_index == 3);
+		case 2:
+			return layer_B_post_effect_parameter_1 * float(parameter_index == 1) + layer_B_post_effect_parameter_2 * float(parameter_index == 2) + layer_B_post_effect_parameter_3 * float(parameter_index == 3);
+		case 3:
+			return layer_C_post_effect_parameter_1 * float(parameter_index == 1) + layer_C_post_effect_parameter_2 * float(parameter_index == 2) + layer_C_post_effect_parameter_3 * float(parameter_index == 3);
 	}
 }
 
@@ -1191,6 +1218,13 @@ float get_resulting_mask_for_layer(int layer, vec2 uv1, vec2 uv2, vec3 local_sur
 				}
 			break;
 	}
+
+	switch (get_layer_post_effect(layer)) {
+		case 1:
+			step_6_mix = step_6_mix + 0.1;
+		case 2:
+			step_6_mix = 0.0;
+	};
 
 	//return step_3_mix;
 	return get_layer_mask_post_color_ramp_value(layer, clamp(step_5_mix, 0.0, 1.0) * get_layer_mask_amplification(layer) + 0.002);

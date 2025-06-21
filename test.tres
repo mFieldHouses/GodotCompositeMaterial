@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CompositeMaterialLayer" load_steps=2 format=3 uid="uid://cgd6adjwg1i8f"]
+
+[ext_resource type="Script" uid="uid://o6isbs5x1fjr" path="res://addons/CompositeMaterial/CompositeMaterialLayer.gd" id="1_asohs"]
+
+[resource]
+script = ExtResource("1_asohs")
+layer_name = "Grass"
+metadata/_custom_type_script = "uid://o6isbs5x1fjr"
