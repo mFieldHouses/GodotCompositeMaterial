@@ -24,10 +24,6 @@ uniform sampler2D vertex_displacement_map : hint_default_black;
  * Whether this layer will display at all.
  */
 uniform bool enabled = true;
-/**
- * In what place this layer will show. Layer 1 is the bottom layer, layer 3 the top layer. Do not set this to the same value on multiple layers.
- */
-uniform int processing_index : hint_enum("Bottom", "Middle", "Top") = 2;
 
 uniform sampler2D albedo : source_color, hint_default_transparent;
 
@@ -75,7 +71,7 @@ uniform int metallic_map_UV_assignment : hint_enum("UV1", "UV2") = 0;
 uniform int UV_offset_map_UV_assignment : hint_enum("UV1", "UV2") = 0;
 uniform int texture_mask_A_UV_assignment : hint_enum("UV1", "UV2") = 1;
 uniform int texture_mask_B_UV_assignment : hint_enum("UV1", "UV2") = 1;
-uniform int UV_mask_assignment : hint_enum("UV1", "UV2") = 0;
+uniform int UV_mask_UV_assignment : hint_enum("UV1", "UV2") = 0;
 
 uniform int orm_mode : hint_enum("Single map", "Seperate maps") = 0;
 uniform sampler2D orm_map : hint_default_transparent;
@@ -160,8 +156,6 @@ uniform int vertex_color_mask_mode : hint_enum("Disabled", "Red", "Green", "Blue
 uniform sampler2D vertex_color_mask_color_ramp : hint_default_transparent;
 uniform int vertex_color_mask_mixing_step: hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") = 4;
 
-uniform int UV_mask_mode : hint_enum("Disabled", "Tile", "Clamp") = 0;
-
 uniform int normal_map_slope_mask_mode : hint_enum("Disabled", "Pre-Mask", "Post-Mask") = 0;
 uniform int normal_map_slope_mask_source : hint_enum("Previous Layer", "Current Layer") = 0;
 uniform sampler2D normal_map_slope_mask_color_ramp : hint_default_transparent;
@@ -178,6 +172,8 @@ uniform sampler2D UV_mask_Y_color_ramp : hint_default_transparent;
 uniform int UV_mask_XY_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
 uniform int UV_mask_XY_mixing_order : hint_enum("X-Y", "Y-X") = 0;
 
+// uniform vec3 previous_normal;
+// uniform vec
 
 varying vec3 local_vertex_normal;
 varying vec3 global_vertex_normal;
@@ -195,368 +191,76 @@ varying vec3 vertex_color;
 
 
 
-int get_processing_layer_assigned_layer(int layer_processing_index) {
-	if (layer_A_processing_index == layer_processing_index) {
-		return 1;
-	}
-	else if (layer_B_processing_index == layer_processing_index) {
-		return 2;
-	}
-	else if (layer_C_processing_index == layer_processing_index) {
-		return 3;
-	}
+vec2 get_uv_offset(int uv_map_index, vec2 uv) {
+	return ((texture(uv1_offset_map, uv * uv1_offset_map_scale).rg - vec2(0.5)) * 2.0) * texture(uv1_offset_map, uv).a * uv1_offset_map_factor * float(uv_map_index == 0) + ((texture(uv2_offset_map, uv * uv2_offset_map_scale).rg - vec2(0.5)) * 2.0) * texture(uv2_offset_map, uv).a * uv2_offset_map_factor * float(uv_map_index == 1);
 }
 
-bool get_layer_enabled(int layer_index) {
-	switch (layer_index) {
-		case 1:
-			return layer_A_enabled;
-		case 2:
-			return layer_B_enabled;
-		case 3:
-			return layer_C_enabled;
-	}
+vec2 get_uv(int uv_map_index, vec2 uv) {
+	return (uv + get_uv_offset(0, uv) + uv1_offset) * uv1_scale * float(uv_map_index == 0) + (uv + get_uv_offset(1, uv) + uv2_offset) * uv2_scale * float(uv_map_index == 1);
 }
 
-vec2 get_layer_uv_offset(int layer, int uv_map_index, vec2 uv) {
-	switch (layer) {
-		case 1:
-			return ((texture(layer_A_uv1_offset_map, uv * layer_A_uv1_offset_map_scale).rg - vec2(0.5)) * 2.0) * texture(layer_A_uv1_offset_map, uv).a * layer_A_uv1_offset_map_factor * float(uv_map_index == 0) + ((texture(layer_A_uv2_offset_map, uv * layer_A_uv2_offset_map_scale).rg - vec2(0.5)) * 2.0) * texture(layer_A_uv2_offset_map, uv).a * layer_A_uv2_offset_map_factor * float(uv_map_index == 1);
-		case 2:
-			return ((texture(layer_B_uv1_offset_map, uv * layer_B_uv1_offset_map_scale).rg - vec2(0.5)) * 2.0) * texture(layer_B_uv1_offset_map, uv).a * layer_B_uv1_offset_map_factor * float(uv_map_index == 0) + ((texture(layer_B_uv2_offset_map, uv * layer_B_uv2_offset_map_scale).rg - vec2(0.5)) * 2.0) * texture(layer_B_uv2_offset_map, uv).a * layer_B_uv2_offset_map_factor * float(uv_map_index == 1);
-		case 3:
-			return ((texture(layer_C_uv1_offset_map, uv * layer_C_uv1_offset_map_scale).rg - vec2(0.5)) * 2.0) * texture(layer_C_uv1_offset_map, uv).a * layer_C_uv1_offset_map_factor * float(uv_map_index == 0) + ((texture(layer_C_uv2_offset_map, uv * layer_C_uv2_offset_map_scale).rg - vec2(0.5)) * 2.0) * texture(layer_C_uv2_offset_map, uv).a * layer_C_uv2_offset_map_factor * float(uv_map_index == 1);
-	}
-}
-
-vec2 get_layer_uv(int layer, int uv_map_index, vec2 uv) {
-	switch (layer) {
-		case 1:
-			return (uv + get_layer_uv_offset(1, 0, uv) + layer_A_uv1_offset) * layer_A_uv1_scale * float(uv_map_index == 0) + (uv + get_layer_uv_offset(1, 1, uv) + layer_A_uv2_offset) * layer_A_uv2_scale * float(uv_map_index == 1);
-		case 2:
-			return (uv + get_layer_uv_offset(2, 0, uv) + layer_B_uv1_offset) * layer_B_uv1_scale * float(uv_map_index == 0) + (uv + get_layer_uv_offset(2, 1, uv) + layer_B_uv2_offset) * layer_B_uv2_scale * float(uv_map_index == 1);
-		case 3:
-			return (uv + get_layer_uv_offset(3, 0, uv) + layer_C_uv1_offset) * layer_C_uv1_scale * float(uv_map_index == 0) + (uv + get_layer_uv_offset(3, 1, uv) + layer_C_uv2_offset) * layer_C_uv2_scale * float(uv_map_index == 1);
-	}
-}
-
-int get_layer_map_uv_index(int layer, int map_index) {
+int get_map_uv_index(int map_index) {
 	switch (map_index) {
 		case 0:
-			return layer_A_normal_map_UV_assignment * int(layer == 1) + layer_B_normal_map_UV_assignment * int(layer == 2) + layer_C_normal_map_UV_assignment * int(layer == 3);
+			return normal_map_UV_assignment;
 		case 1:
-			return layer_A_albedo_map_UV_assignment * int(layer == 1) + layer_B_albedo_map_UV_assignment * int(layer == 2) + layer_C_albedo_map_UV_assignment * int(layer == 3);
+			return albedo_map_UV_assignment;
 		case 2:
-			return layer_A_occlusion_map_UV_assignment * int(layer == 1) + layer_B_occlusion_map_UV_assignment * int(layer == 2) + layer_C_occlusion_map_UV_assignment * int(layer == 3);
+			return occlusion_map_UV_assignment;
 		case 3:
-			return layer_A_roughness_map_UV_assignment * int(layer == 1) + layer_B_roughness_map_UV_assignment * int(layer == 2) + layer_C_roughness_map_UV_assignment * int(layer == 3);
+			return roughness_map_UV_assignment;
 		case 4:
-			return layer_A_metallic_map_UV_assignment * int(layer == 1) + layer_B_metallic_map_UV_assignment * int(layer == 2) + layer_C_metallic_map_UV_assignment * int(layer == 3);
+			return metallic_map_UV_assignment;
 		case 5:
-			return layer_A_texture_mask_A_UV_assignment * int(layer == 1) + layer_B_texture_mask_A_UV_assignment * int(layer == 2) + layer_C_texture_mask_A_UV_assignment * int(layer == 3);
+			return texture_mask_A_UV_assignment;
 		case 6:
-			return layer_A_texture_mask_B_UV_assignment * int(layer == 1) + layer_B_texture_mask_B_UV_assignment * int(layer == 2) + layer_C_texture_mask_B_UV_assignment * int(layer == 3);
+			return texture_mask_B_UV_assignment;
 		case 7:
-			return layer_A_UV_mask_assignment * int(layer == 1) + layer_B_UV_mask_assignment * int(layer == 2) + layer_C_UV_mask_assignment * int(layer == 3);
+			return UV_mask_UV_assignment;
 	}
 }
 
-int get_layer_mask_mixing_step(int layer, int mask) {
-	switch (layer) {
-		case 1:
-			return (layer_A_texture_masks_mixing_step * int(mask == 1) + layer_A_directional_mask_mixing_step * int(mask == 2) + layer_A_positional_mask_mixing_step * int(mask == 3) + layer_A_vertex_color_mask_mixing_step * int(mask == 4) + layer_A_normal_map_slope_mask_mixing_step * int(mask == 5) + layer_A_UV_mask_mixing_step * int(mask == 6));
-		case 2:
-			return (layer_B_texture_masks_mixing_step * int(mask == 1) + layer_B_directional_mask_mixing_step * int(mask == 2) + layer_B_positional_mask_mixing_step * int(mask == 3) + layer_B_vertex_color_mask_mixing_step * int(mask == 4) + layer_B_normal_map_slope_mask_mixing_step * int(mask == 5) + layer_B_UV_mask_mixing_step * int(mask == 6));
-		case 3:
-			return (layer_C_texture_masks_mixing_step * int(mask == 1) + layer_C_directional_mask_mixing_step * int(mask == 2) + layer_C_positional_mask_mixing_step * int(mask == 3) + layer_C_vertex_color_mask_mixing_step * int(mask == 4) + layer_C_normal_map_slope_mask_mixing_step * int(mask == 5) + layer_C_UV_mask_mixing_step * int(mask == 6));
-	}
+int get_mask_mixing_step(int mask) {
+	return (texture_masks_mixing_step * int(mask == 1) + directional_mask_mixing_step * int(mask == 2) + positional_mask_mixing_step * int(mask == 3) + vertex_color_mask_mixing_step * int(mask == 4) + normal_map_slope_mask_mixing_step * int(mask == 5) + UV_mask_mixing_step * int(mask == 6));
 }
 
-int get_layer_step_mixing_operation(int layer, int step) {
-	return (layer_A_step_2_mixing_operation * int(step == 2) + layer_A_step_3_mixing_operation * int(step == 3) + layer_A_step_4_mixing_operation * int(step == 4) + layer_A_step_5_mixing_operation * int(step == 5)) * int(layer == 1) + (layer_B_step_2_mixing_operation * int(step == 2) + layer_B_step_3_mixing_operation * int(step == 3) + layer_B_step_4_mixing_operation * int(step == 4) + layer_B_step_5_mixing_operation * int(step == 5)) * int(layer == 2) + (layer_C_step_2_mixing_operation * int(step == 2) + layer_C_step_3_mixing_operation * int(step == 3) + layer_C_step_4_mixing_operation * int(step == 4) + + layer_C_step_5_mixing_operation * int(step == 5)) * int(layer == 3);
+int get_step_mixing_operation(int step) {
+	return (step_2_mixing_operation * int(step == 2) + step_3_mixing_operation * int(step == 3) + step_4_mixing_operation * int(step == 4) + step_5_mixing_operation * int(step == 5));
 }
 
-float get_layer_step_mixing_threshold(int layer, int step) {
-	return (layer_A_step_2_mixing_threshold * float(step == 2) + layer_A_step_3_mixing_threshold * float(step == 3) + layer_A_step_4_mixing_threshold * float(step == 4) + layer_A_step_5_mixing_threshold * float(step == 5)) * float(layer == 1) + (layer_B_step_2_mixing_threshold * float(step == 2) + layer_B_step_3_mixing_threshold * float(step == 3) + layer_B_step_4_mixing_threshold * float(step == 4) + layer_B_step_5_mixing_threshold * float(step == 5)) * float(layer == 2) + (layer_C_step_2_mixing_threshold * float(step == 2) + layer_C_step_3_mixing_threshold * float(step == 3) + layer_C_step_4_mixing_threshold * float(step == 4) + layer_C_step_5_mixing_threshold * float(step == 5)) * float(layer == 3);
+float get_step_mixing_threshold(int step) {
+	return (step_2_mixing_threshold * float(step == 2) + step_3_mixing_threshold * float(step == 3) + step_4_mixing_threshold * float(step == 4) + step_5_mixing_threshold * float(step == 5));
 }
 
-float get_layer_mask_amplification(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_mask_amplification;
-		case 2:
-			return layer_B_mask_amplification;
-		case 3:
-			return layer_C_mask_amplification;
-	}
+float get_mask_post_color_ramp_value(float factor) {
+	vec2 color_ramp_factor = texture(post_color_ramp, vec2(factor, 0.0)).ra;
+	return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
 }
 
-float get_layer_mask_post_color_ramp_value(int layer, float factor) {
-	switch (layer) {
-		case 1:
-			vec2 color_ramp_factor = texture(layer_A_post_color_ramp, vec2(factor, 0.0)).ra;
-			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
-		case 2:
-			vec2 color_ramp_factor = texture(layer_B_post_color_ramp, vec2(factor, 0.0)).ra;
-			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
-		case 3:
-			vec2 color_ramp_factor = texture(layer_C_post_color_ramp, vec2(factor, 0.0)).ra;
-			return mix(0.0, color_ramp_factor.x, color_ramp_factor.y * factor);
-	}
+// float get_layer_post_effect_parameter(int layer, int parameter_index) {
+// 	switch (layer) {
+// 		case 1:
+// 			return layer_A_post_effect_parameter_1 * float(parameter_index == 1) + layer_A_post_effect_parameter_2 * float(parameter_index == 2) + layer_A_post_effect_parameter_3 * float(parameter_index == 3);
+// 		case 2:
+// 			return layer_B_post_effect_parameter_1 * float(parameter_index == 1) + layer_B_post_effect_parameter_2 * float(parameter_index == 2) + layer_B_post_effect_parameter_3 * float(parameter_index == 3);
+// 		case 3:
+// 			return layer_C_post_effect_parameter_1 * float(parameter_index == 1) + layer_C_post_effect_parameter_2 * float(parameter_index == 2) + layer_C_post_effect_parameter_3 * float(parameter_index == 3);
+// 	}
+// }
+
+float get_directional_mask_color_ramp_value(float factor) {
+	vec2 color_ramp_factor = texture(directional_mask_color_ramp, vec2((factor * 0.95) + 0.025)).ra;
+	return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
 }
 
-int get_layer_post_effect(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_post_effect;
-		case 2:
-			return layer_B_post_effect;
-		case 3:
-			return layer_C_post_effect;
-	}
+float get_positional_mask_color_ramp_value(float factor) {
+	vec2 color_ramp_factor = texture(positional_mask_color_ramp, vec2(factor, 0.0)).ra;
+	return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
 }
 
-float get_layer_post_effect_parameter(int layer, int parameter_index) {
-	switch (layer) {
-		case 1:
-			return layer_A_post_effect_parameter_1 * float(parameter_index == 1) + layer_A_post_effect_parameter_2 * float(parameter_index == 2) + layer_A_post_effect_parameter_3 * float(parameter_index == 3);
-		case 2:
-			return layer_B_post_effect_parameter_1 * float(parameter_index == 1) + layer_B_post_effect_parameter_2 * float(parameter_index == 2) + layer_B_post_effect_parameter_3 * float(parameter_index == 3);
-		case 3:
-			return layer_C_post_effect_parameter_1 * float(parameter_index == 1) + layer_C_post_effect_parameter_2 * float(parameter_index == 2) + layer_C_post_effect_parameter_3 * float(parameter_index == 3);
-	}
-}
-
-vec4 get_layer_texture_mask_texture(int layer, int a_or_b, vec2 uv) {
-	switch (layer) {
-		case 1:
-			return (texture(layer_A_texture_mask_A, uv) * (1.0 - float(a_or_b))) + (texture(layer_A_texture_mask_B, uv) * float(a_or_b));
-		case 2:
-			return (texture(layer_B_texture_mask_A, uv) * (1.0 - float(a_or_b))) + (texture(layer_B_texture_mask_B, uv) * float(a_or_b));
-		case 3:
-			return (texture(layer_C_texture_mask_A, uv) * (1.0 - float(a_or_b))) + (texture(layer_C_texture_mask_B, uv) * float(a_or_b));
-	}
-}
-
-bool get_layer_texture_mask_enabled(int layer, int a_or_b) {
-	switch (layer) {
-		case 1:
-			return layer_A_texture_mask_A_enabled && (bool(a_or_b) == false) || layer_A_texture_mask_B_enabled && (bool(a_or_b) == true);
-		case 2:
-			return layer_B_texture_mask_A_enabled && (bool(a_or_b) == false) || layer_B_texture_mask_B_enabled && (bool(a_or_b) == true);
-		case 3:
-			return layer_C_texture_mask_A_enabled && (bool(a_or_b) == false) || layer_C_texture_mask_B_enabled && (bool(a_or_b) == true);
-	}
-}
-
-int get_layer_texture_masks_subtraction_order(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_texture_masks_subtraction_order;
-		case 2:
-			return layer_B_texture_masks_subtraction_order;
-		case 3:
-			return layer_C_texture_masks_subtraction_order;
-	}
-}
-
-int get_layer_texture_mask_mix_operation(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_texture_masks_mix_operation;
-		case 2:
-			return layer_B_texture_masks_mix_operation;
-		case 3:
-			return layer_C_texture_masks_mix_operation;
-	}
-}
-
-int get_layer_directional_mask_mode(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_directional_mask_mode;
-		case 2:
-			return layer_B_directional_mask_mode;
-		case 3:
-			return layer_C_directional_mask_mode;
-	}
-}
-
-int get_layer_directional_mask_space(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_directional_mask_space;
-		case 2:
-			return layer_B_directional_mask_space;
-		case 3:
-			return layer_C_directional_mask_space;
-	}
-}
-
-float get_layer_directional_mask_color_ramp_value(int layer, float factor) {
-	switch (layer) {
-		case 1:
-			vec2 color_ramp_factor = texture(layer_A_directional_mask_color_ramp, vec2((factor * 0.95) + 0.025)).ra;
-			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
-		case 2:
-			vec2 color_ramp_factor = texture(layer_B_directional_mask_color_ramp, vec2((factor * 0.95) + 0.025)).ra;
-			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
-		case 3:
-			vec2 color_ramp_factor = texture(layer_C_directional_mask_color_ramp, vec2((factor * 0.95) + 0.025)).ra;
-			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
-	}
-}
-
-int get_layer_positional_mask_mode(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_positional_mask_mode;
-		case 2:
-			return layer_B_positional_mask_mode;
-		case 3:
-			return layer_C_positional_mask_mode;
-	}
-}
-
-int get_layer_positional_mask_axis(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_positional_mask_axis;
-		case 2:
-			return layer_B_positional_mask_axis;
-		case 3:
-			return layer_C_positional_mask_axis;
-	}
-}
-
-float get_layer_positional_mask_min(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_positional_mask_min;
-		case 2:
-			return layer_B_positional_mask_min;
-		case 3:
-			return layer_C_positional_mask_min;
-	}
-}
-
-float get_layer_positional_mask_max(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_positional_mask_max;
-		case 2:
-			return layer_B_positional_mask_max;
-		case 3:
-			return layer_C_positional_mask_max;
-	}
-}
-
-float get_layer_positional_mask_color_ramp_value(int layer, float factor) {
-	switch (layer) {
-		case 1:
-			vec2 color_ramp_factor = texture(layer_A_positional_mask_color_ramp, vec2(factor, 0.0)).ra;
-			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
-		case 2:
-			vec2 color_ramp_factor = texture(layer_B_positional_mask_color_ramp, vec2(factor, 0.0)).ra;
-			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
-		case 3:
-			vec2 color_ramp_factor = texture(layer_C_positional_mask_color_ramp, vec2(factor, 0.0)).ra;
-			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
-	}
-}
-
-int get_layer_normal_map_slope_mask_mode(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_normal_map_slope_mask_mode;
-		case 2:
-			return layer_B_normal_map_slope_mask_mode;
-		case 3:
-			return layer_C_normal_map_slope_mask_mode;
-	}
-}
-
-float get_layer_normal_map_slope_mask_color_ramp_value(int layer, float factor) {
-	switch (layer) {
-		case 1:
-			vec4 color_ramp_color = texture(layer_A_normal_map_slope_mask_color_ramp, vec2(factor, 0));
-			return mix(factor, color_ramp_color.r, color_ramp_color.a);
-		case 2:
-			vec4 color_ramp_color = texture(layer_B_normal_map_slope_mask_color_ramp, vec2(factor, 0));
-			return mix(factor, color_ramp_color.r, color_ramp_color.a);
-		case 3:
-			vec4 color_ramp_color = texture(layer_C_normal_map_slope_mask_color_ramp, vec2(factor, 0));
-			return mix(factor, color_ramp_color.r, color_ramp_color.a);
-	}
-}
-
-bool get_layer_uv_mask_enabled(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_UV_mask_enabled;
-		case 2:
-			return layer_B_UV_mask_enabled;
-		case 3:
-			return layer_C_UV_mask_enabled;
-	}
-}
-
-int get_layer_uv_mask_mixing_operation(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_UV_mask_XY_mixing_operation;
-		case 2:
-			return layer_B_UV_mask_XY_mixing_operation;
-		case 3:
-			return layer_C_UV_mask_XY_mixing_operation;
-	}
-}
-
-int get_layer_uv_mask_mixing_order(int layer) {
-	switch (layer) {
-		case 1:
-			return layer_A_UV_mask_XY_mixing_order;
-		case 2:
-			return layer_B_UV_mask_XY_mixing_order;
-		case 3:
-			return layer_C_UV_mask_XY_mixing_order;
-	}
-}
-
-float get_layer_uv_mask_color_ramp_value(int layer, bool axis, float factor) {
-	switch (layer) {
-		case 1:
-			vec4 color_ramp_color = texture(layer_A_UV_mask_X_color_ramp, vec2(factor, 0)) * float(int(axis) == 0) + texture(layer_A_UV_mask_Y_color_ramp, vec2(factor, 0)) * float(int(axis) == 1);
-			return mix(factor, color_ramp_color.r, color_ramp_color.a);
-		case 2:
-			vec4 color_ramp_color = texture(layer_B_UV_mask_X_color_ramp, vec2(factor, 0)) * float(int(axis) == 0) + texture(layer_B_UV_mask_Y_color_ramp, vec2(factor, 0)) * float(int(axis) == 1);
-			return mix(factor, color_ramp_color.r, color_ramp_color.a);
-		case 3:
-			vec4 color_ramp_color = texture(layer_C_UV_mask_X_color_ramp, vec2(factor, 0)) * float(int(axis) == 0) + texture(layer_C_UV_mask_Y_color_ramp, vec2(factor, 0)) * float(int(axis) == 1);
-			return mix(factor, color_ramp_color.r, color_ramp_color.a);
-	}
-}
-
-float get_layer_uv_mask_min(int layer, bool axis) {
-	switch (layer) {
-		case 1:
-			return layer_A_UV_mask_X_min * float(int(axis) == 0) + layer_A_UV_mask_Y_min * float(int(axis) == 1);
-		case 2:
-			return layer_B_UV_mask_X_min * float(int(axis) == 0) + layer_B_UV_mask_Y_min * float(int(axis) == 1);
-		case 3:
-			return layer_C_UV_mask_X_min * float(int(axis) == 0) + layer_C_UV_mask_Y_min * float(int(axis) == 1);
-	}
-}
-
-float get_layer_uv_mask_max(int layer, bool axis) {
-	switch (layer) {
-		case 1:
-			return layer_A_UV_mask_X_max * float(int(axis) == 0) + layer_A_UV_mask_Y_max * float(int(axis) == 1);
-		case 2:
-			return layer_B_UV_mask_X_max * float(int(axis) == 0) + layer_B_UV_mask_Y_max * float(int(axis) == 1);
-		case 3:
-			return layer_C_UV_mask_X_max * float(int(axis) == 0) + layer_C_UV_mask_Y_max * float(int(axis) == 1);
-	}
+float get_normal_map_slope_mask_color_ramp_value(float factor) {
+	vec4 color_ramp_color = texture(normal_map_slope_mask_color_ramp, vec2(factor, 0));
+	return mix(factor, color_ramp_color.r, color_ramp_color.a);
 }
 
 //======================================================================
@@ -571,9 +275,6 @@ float get_texture_mask(vec2 mask_a_uv, vec2 mask_b_uv) {
 	vec4 texture_mask_B_texture = texture(texture_mask_B, mask_b_uv);
 
 	int texture_masks_AB_subtraction_order = texture_masks_subtraction_order;
-
-	bool texture_mask_A_enabled = texture_mask_A_enabled;
-	bool texture_mask_B_enabled = texture_mask_B_enabled;
 
 	switch (texture_masks_mix_operation) {
 		case 0:
@@ -597,125 +298,91 @@ float get_texture_mask(vec2 mask_a_uv, vec2 mask_b_uv) {
 	return texture_mask_mix;
 }
 
-float get_directional_mask_for_layer(int layer, vec3 local_surface_normal, vec3 global_surface_normal) {
-		vec3 surface_normal = local_surface_normal * float(get_layer_directional_mask_space(layer) == 1) + global_surface_normal * float(get_layer_directional_mask_space(layer) == 0);
-		switch (get_layer_directional_mask_mode(layer)) {
+float get_directional_mask(vec3 local_surface_normal, vec3 global_surface_normal) {
+		vec3 surface_normal = local_surface_normal * float(directional_mask_space == 1) + global_surface_normal * float(directional_mask_space == 0);
+		switch (directional_mask_mode) {
 			case 0:
 				return 0.0;
 			case 1:
-				return (abs(surface_normal.r) * get_layer_directional_mask_color_ramp_value(layer, abs(surface_normal.r)));
+				return (abs(surface_normal.r) * get_directional_mask_color_ramp_value(abs(surface_normal.r)));
 			case 2:
-				return (clamp(surface_normal.r, 0.0, 1.0) * get_layer_directional_mask_color_ramp_value(layer, clamp(surface_normal.r, 0.0, 1.0)));
+				return (clamp(surface_normal.r, 0.0, 1.0) * get_directional_mask_color_ramp_value(clamp(surface_normal.r, 0.0, 1.0)));
 			case 3:
-				return (abs(clamp(surface_normal.r, -1.0, 0.0)) * get_layer_directional_mask_color_ramp_value(layer, abs(clamp(surface_normal.r, -1.0, 0.0))));
+				return (abs(clamp(surface_normal.r, -1.0, 0.0)) * get_directional_mask_color_ramp_value(abs(clamp(surface_normal.r, -1.0, 0.0))));
 			case 4:
-				return (abs(surface_normal.g) * get_layer_directional_mask_color_ramp_value(layer, abs(surface_normal.g)));
+				return (abs(surface_normal.g) * get_directional_mask_color_ramp_value(abs(surface_normal.g)));
 			case 5:
-				return (clamp(surface_normal.g, 0.0, 1.0) * get_layer_directional_mask_color_ramp_value(layer, clamp(surface_normal.g, 0.0, 1.0)));
+				return (clamp(surface_normal.g, 0.0, 1.0) * get_directional_mask_color_ramp_value(clamp(surface_normal.g, 0.0, 1.0)));
 			case 6:
-				return (abs(clamp(surface_normal.g, -1.0, 0.0)) * get_layer_directional_mask_color_ramp_value(layer, abs(clamp(surface_normal.g, -1.0, 0.0))));
+				return (abs(clamp(surface_normal.g, -1.0, 0.0)) * get_directional_mask_color_ramp_value(abs(clamp(surface_normal.g, -1.0, 0.0))));
 			case 7:
-				return (abs(surface_normal.b) * get_layer_directional_mask_color_ramp_value(layer, abs(surface_normal.b)));
+				return (abs(surface_normal.b) * get_directional_mask_color_ramp_value(abs(surface_normal.b)));
 			case 8:
-				return (clamp(surface_normal.b, 0.0, 1.0) * get_layer_directional_mask_color_ramp_value(layer, clamp(surface_normal.b, 0.0, 1.0)));
+				return (clamp(surface_normal.b, 0.0, 1.0) * get_directional_mask_color_ramp_value(clamp(surface_normal.b, 0.0, 1.0)));
 			case 9:
-				return (abs(clamp(surface_normal.b, -1.0, 0.0)) * get_layer_directional_mask_color_ramp_value(layer, abs(clamp(surface_normal.b, -1.0, 0.0))));
+				return (abs(clamp(surface_normal.b, -1.0, 0.0)) * get_directional_mask_color_ramp_value(abs(clamp(surface_normal.b, -1.0, 0.0))));
 			}
 }
 
-float get_positional_mask_for_layer(int layer, vec3 local_v_position, vec3 global_v_position) {
+float get_positional_mask(vec3 local_v_position, vec3 global_v_position) {
 	float positional_mask_value;
-	float positional_mask_max = get_layer_positional_mask_max(layer);
-	float positional_mask_min = get_layer_positional_mask_min(layer);
 
-	vec3 v_position = (float(get_layer_positional_mask_mode(layer) == 1) * local_v_position) + (float(get_layer_positional_mask_mode(layer) == 2) * global_v_position);
+	vec3 v_position = (float(positional_mask_mode == 1) * local_v_position) + (float(positional_mask_mode == 2) * global_v_position);
 
-	switch (get_layer_positional_mask_axis(layer)) {
+	switch (positional_mask_axis) {
 			case 0:
 				positional_mask_value = clamp(1.0/(positional_mask_max - positional_mask_min) * v_position.x + (1.0 - 1.0/(positional_mask_max - positional_mask_min) * positional_mask_max), 0.002, 0.998);
-				return get_layer_positional_mask_color_ramp_value(layer, positional_mask_value) * float(get_layer_positional_mask_mode(layer) != 0);
 			case 1:
 				positional_mask_value = clamp(1.0/(positional_mask_max - positional_mask_min) * v_position.y + (1.0 - 1.0/(positional_mask_max - positional_mask_min) * positional_mask_max), 0.002, 0.998);
-				return get_layer_positional_mask_color_ramp_value(layer, positional_mask_value) * float(get_layer_positional_mask_mode(layer) != 0);
 			case 2:
 				positional_mask_value = clamp(1.0/(positional_mask_max - positional_mask_min) * v_position.z + (1.0 - 1.0/(positional_mask_max - positional_mask_min) * positional_mask_max), 0.002, 0.998);
-				return get_layer_positional_mask_color_ramp_value(layer, positional_mask_value) * float(get_layer_positional_mask_mode(layer) != 0);
-		}
+		};
+
+	return get_positional_mask_color_ramp_value(positional_mask_value) * float(positional_mask_mode != 0);
 }
 
-float get_vertex_color_mask_for_layer(int layer) {
-	switch (layer) {
-		case 1:
-			switch (layer_A_vertex_color_mask_mode) {
-				case 0:
-					return 0.0;
-				case 1: //RED
-					vec4 color_ramp_color = texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.005, 0.995), 0.0));
-					return mix(vertex_color.r, color_ramp_color.r, color_ramp_color.a);
-				case 2: //GREEN
-					vec4 color_ramp_color = texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.005, 0.995), 0.0));
-					return mix(vertex_color.g, color_ramp_color.g, color_ramp_color.a);
-				case 3: //BLUE
-					vec4 color_ramp_color = texture(layer_A_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.005, 0.995), 0.0));
-					return mix(vertex_color.b, color_ramp_color.b, color_ramp_color.a);
-			}
-		case 2:
-			switch (layer_B_vertex_color_mask_mode) {
-				case 0:
-					return 0.0;
-				case 1:
-					return texture(layer_B_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.0, 1.0) * vertex_color.r, 0.0)).r;
-				case 2:
-					return texture(layer_B_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.0, 1.0) * vertex_color.g, 0.0)).r;
-				case 3:
-					return texture(layer_B_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.0, 1.0) * vertex_color.b, 0.0)).r;
-			}
-		case 3:
-			switch (layer_C_vertex_color_mask_mode) {
-				case 0:
-					return 0.0;
-				case 1:
-					return texture(layer_C_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.0, 1.0) * vertex_color.r, 0.0)).r;
-				case 2:
-					return texture(layer_C_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.0, 1.0) * vertex_color.g, 0.0)).r;
-				case 3:
-					return texture(layer_C_vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.0, 1.0) * vertex_color.b, 0.0)).r;
-			}
-
-	};
-}
-
-float get_normal_map_slope_mask_for_layer(int layer, vec2 uv) {
-	switch (layer) {
-		case 1:
-			vec4 normal_map_value = texture(layer_A_normal, uv);
-			float mask_value = (abs(normal_map_value.r - 0.5) * float(abs(normal_map_value.r - 0.5) > abs(normal_map_value.g - 0.5)) + abs(normal_map_value.g - 0.5) * float(abs(normal_map_value.r - 0.5) < abs(normal_map_value.g - 0.5))) * float(get_layer_normal_map_slope_mask_mode(1) != 0);
-			return get_layer_normal_map_slope_mask_color_ramp_value(1, mask_value);
-		case 2:
+float get_vertex_color_mask() {
+	switch (vertex_color_mask_mode) {
+		case 0:
 			return 0.0;
-		case 3:
-			return 0.0;
+		case 1: //RED
+			vec4 color_ramp_color = texture(vertex_color_mask_color_ramp, vec2(clamp(vertex_color.r, 0.005, 0.995), 0.0));
+			return mix(vertex_color.r, color_ramp_color.r, color_ramp_color.a);
+		case 2: //GREEN
+			vec4 color_ramp_color = texture(vertex_color_mask_color_ramp, vec2(clamp(vertex_color.g, 0.005, 0.995), 0.0));
+			return mix(vertex_color.g, color_ramp_color.g, color_ramp_color.a);
+		case 3: //BLUE
+			vec4 color_ramp_color = texture(vertex_color_mask_color_ramp, vec2(clamp(vertex_color.b, 0.005, 0.995), 0.0));
+			return mix(vertex_color.b, color_ramp_color.b, color_ramp_color.a);
 	}
 }
 
-float get_uv_mask_for_layer(int layer, vec2 uv) {
-	float x_max = get_layer_uv_mask_max(layer, false);
-	float x_min = get_layer_uv_mask_min(layer, false);
-	float x_factor = clamp(1.0/(x_max - x_min) * uv.x + (1.0 - 1.0/(x_max - x_min) * x_max), 0.002, 0.998);
-	float x_value = get_layer_uv_mask_color_ramp_value(layer, false, x_factor);
+float get_normal_map_slope_mask(vec2 uv) {
+	vec4 normal_map_value = texture(normal, uv);
+	float mask_value = (abs(normal_map_value.r - 0.5) * float(abs(normal_map_value.r - 0.5) > abs(normal_map_value.g - 0.5)) + abs(normal_map_value.g - 0.5) * float(abs(normal_map_value.r - 0.5) < abs(normal_map_value.g - 0.5))) * float(normal_map_slope_mask_mode != 0);
+	return get_normal_map_slope_mask_color_ramp_value(mask_value);
+}
 
-	float y_max = get_layer_uv_mask_max(layer, true);
-	float y_min = get_layer_uv_mask_min(layer, true);
+float get_uv_mask(vec2 uv) {
+	float x_max = UV_mask_X_max;
+	float x_min = UV_mask_X_min;
+	float x_factor = clamp(1.0/(x_max - x_min) * uv.x + (1.0 - 1.0/(x_max - x_min) * x_max), 0.002, 0.998);
+	vec4 color_ramp_color = texture(UV_mask_X_color_ramp, vec2(x_factor, 0));
+	float x_value = mix(x_factor, color_ramp_color.r, color_ramp_color.a);
+
+	float y_max = UV_mask_Y_max;
+	float y_min = UV_mask_Y_min;
 	float y_factor = clamp(1.0/(y_max - y_min) * uv.y + (1.0 - 1.0/(y_max - y_min) * y_max), 0.002, 0.998);
-	float y_value = get_layer_uv_mask_color_ramp_value(layer, true, y_factor);
+	color_ramp_color = texture(UV_mask_X_color_ramp, vec2(y_factor, 0));
+	float y_value = mix(y_factor, color_ramp_color.r, color_ramp_color.a);
 
 	float result;
 
-	switch (get_layer_uv_mask_mixing_operation(layer)) {
+	switch (UV_mask_XY_mixing_operation) {
 		case 0:
 			result = y_value + x_value;
 		case 1:
-			switch (get_layer_uv_mask_mixing_order(layer)) {
+			switch (UV_mask_XY_mixing_order) {
 				case 0:
 					result = x_value - y_value;
 				case 1:
@@ -725,33 +392,33 @@ float get_uv_mask_for_layer(int layer, vec2 uv) {
 			result = y_value * x_value;
 	};
 
-	return result * float(get_layer_uv_mask_enabled(layer));
+	return result * float(UV_mask_enabled);
 }
 
-float get_layer_mask_step_mix(int layer, int step, vec2 uv1, vec2 uv2, vec3 local_surface_normal, vec3 global_surface_normal, vec3 local_vertex_position, vec3 global_vertex_position) {
-	vec2 mask_a_uv = (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(1, 5) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(layer, 5) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(layer, 5) == 1)) * float(layer == 3);
-	vec2 mask_b_uv = (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(1, 6) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(layer, 6) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(layer, 6) == 1)) * float(layer == 3);
+float get_mask_step_mix(int step, vec2 uv1, vec2 uv2, vec3 local_surface_normal, vec3 global_surface_normal, vec3 local_vertex_position, vec3 global_vertex_position) {
+	vec2 mask_a_uv = (uv1 * float(texture_mask_A_UV_assignment == 0) + uv2 * float(texture_mask_A_UV_assignment == 1));
+	vec2 mask_b_uv = (uv1 * float(texture_mask_B_UV_assignment == 0) + uv2 * float(texture_mask_B_UV_assignment == 1));
 
-	vec2 uv_mask_uv = (uv1 * float(get_layer_map_uv_index(1, 7) == 0) + uv2 * float(get_layer_map_uv_index(1, 7) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(2, 7) == 0) + uv2 * float(get_layer_map_uv_index(2, 7) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(3, 7) == 0) + uv2 * float(get_layer_map_uv_index(3, 7) == 1)) * float(layer == 3);
+	vec2 uv_mask_uv = (uv1 * float(UV_mask_UV_assignment == 0) + uv2 * float(UV_mask_UV_assignment == 1));
 
-	vec2 normal_map_uv = uv1 * float(get_layer_map_uv_index(layer, 0) == 0) + uv2 * float(get_layer_map_uv_index(layer, 0) == 1);
+	vec2 normal_map_uv = uv1 * float(normal_map_UV_assignment == 0) + uv2 * float(normal_map_UV_assignment == 1);
 
-	return clamp((get_texture_mask(mask_a_uv, mask_b_uv) * float(get_layer_mask_mixing_step(layer, 1) == step) + get_directional_mask_for_layer(layer, local_surface_normal, global_surface_normal) * float(get_layer_mask_mixing_step(layer, 2) == step) + get_positional_mask_for_layer(layer, local_vertex_position, global_vertex_position) * float(get_layer_mask_mixing_step(layer, 3) == step) + get_vertex_color_mask_for_layer(layer) * float(get_layer_mask_mixing_step(layer, 4) == step) + get_normal_map_slope_mask_for_layer(layer, normal_map_uv) * float(get_layer_mask_mixing_step(layer, 5) == step) + get_uv_mask_for_layer(layer, uv_mask_uv) * float(get_layer_mask_mixing_step(layer, 6) == step)), 0.0, 1.0);
+	return clamp((get_texture_mask(mask_a_uv, mask_b_uv) * float(get_mask_mixing_step(1) == step) + get_directional_mask(local_surface_normal, global_surface_normal) * float(get_mask_mixing_step(2) == step) + get_positional_mask(local_vertex_position, global_vertex_position) * float(get_mask_mixing_step(3) == step) + get_vertex_color_mask() * float(get_mask_mixing_step(4) == step) + get_normal_map_slope_mask(normal_map_uv) * float(get_mask_mixing_step(5) == step) + get_uv_mask(uv_mask_uv) * float(get_mask_mixing_step(6) == step)), 0.0, 1.0);
 }
 
-float get_resulting_mask_for_layer(int layer, vec2 uv1, vec2 uv2, vec3 local_surface_normal, vec3 global_surface_normal, vec3 local_vertex_position, vec3 global_vertex_position) {
-	float step_1_mix = get_layer_mask_step_mix(layer, 1, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
+float get_resulting_mask(vec2 uv1, vec2 uv2, vec3 local_surface_normal, vec3 global_surface_normal, vec3 local_vertex_position, vec3 global_vertex_position) {
+	float step_1_mix = get_mask_step_mix(1, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
 
-	float step_2_mix = get_layer_mask_step_mix(layer, 2, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
-	switch (get_layer_step_mixing_operation(layer, 2)) {
+	float step_2_mix = get_mask_step_mix(2, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
+	switch (get_step_mixing_operation(2)) {
 		case 0:
-			step_2_mix = clamp(step_1_mix + (step_2_mix * float(step_1_mix >= get_layer_step_mixing_threshold(layer, 2))), 0.0, 1.0);
+			step_2_mix = clamp(step_1_mix + (step_2_mix * float(step_1_mix >= get_step_mixing_threshold(2))), 0.0, 1.0);
 			break;
 		case 1:
-			step_2_mix = clamp(step_1_mix - (step_2_mix * float(step_1_mix >= get_layer_step_mixing_threshold(layer, 2))), 0.0, 1.0);
+			step_2_mix = clamp(step_1_mix - (step_2_mix * float(step_1_mix >= get_step_mixing_threshold(2))), 0.0, 1.0);
 			break;
 		case 2:
-			if (step_1_mix >= get_layer_step_mixing_threshold(layer, 2)) {
+			if (step_1_mix >= get_step_mixing_threshold(2)) {
 				step_2_mix = clamp(step_1_mix * step_2_mix, 0.0, 1.0);
 			}
 			else {
@@ -760,16 +427,16 @@ float get_resulting_mask_for_layer(int layer, vec2 uv1, vec2 uv2, vec3 local_sur
 			break;
 	}
 
-	float step_3_mix = get_layer_mask_step_mix(layer, 3, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
-	switch (get_layer_step_mixing_operation(layer, 3)) {
+	float step_3_mix = get_mask_step_mix(3, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
+	switch (get_step_mixing_operation(3)) {
 		case 0:
-			step_3_mix = clamp(step_2_mix + (step_3_mix * float(step_2_mix >= get_layer_step_mixing_threshold(layer, 3))), 0.0, 1.0);
+			step_3_mix = clamp(step_2_mix + (step_3_mix * float(step_2_mix >= get_step_mixing_threshold(3))), 0.0, 1.0);
 			break;
 		case 1:
-			step_3_mix = clamp(step_2_mix - (step_3_mix * float(step_2_mix >= get_layer_step_mixing_threshold(layer, 3))), 0.0, 1.0);
+			step_3_mix = clamp(step_2_mix - (step_3_mix * float(step_2_mix >= get_step_mixing_threshold(3))), 0.0, 1.0);
 			break;
 		case 2:
-			if (step_2_mix >= get_layer_step_mixing_threshold(layer, 3)) {
+			if (step_2_mix >= get_step_mixing_threshold(3)) {
 				step_3_mix = clamp(step_2_mix * step_3_mix, 0.0, 1.0);
 			}
 			else {
@@ -778,16 +445,16 @@ float get_resulting_mask_for_layer(int layer, vec2 uv1, vec2 uv2, vec3 local_sur
 			break;
 	}
 
-	float step_4_mix = get_layer_mask_step_mix(layer, 4, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
-	switch (get_layer_step_mixing_operation(layer, 4)) {
+	float step_4_mix = get_mask_step_mix(4, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
+	switch (get_step_mixing_operation(4)) {
 		case 0:
-			step_4_mix = clamp(step_3_mix + (step_4_mix * float(step_3_mix >= get_layer_step_mixing_threshold(layer, 4))), 0.0, 1.0);
+			step_4_mix = clamp(step_3_mix + (step_4_mix * float(step_3_mix >= get_step_mixing_threshold(4))), 0.0, 1.0);
 			break;
 		case 1:
-			step_4_mix = clamp(step_3_mix - (step_4_mix * float(step_3_mix >= get_layer_step_mixing_threshold(layer, 4))), 0.0, 1.0);
+			step_4_mix = clamp(step_3_mix - (step_4_mix * float(step_3_mix >= get_step_mixing_threshold(4))), 0.0, 1.0);
 			break;
 		case 2:
-			if (step_3_mix >= get_layer_step_mixing_threshold(layer, 4)) {
+			if (step_3_mix >= get_step_mixing_threshold(4)) {
 				step_4_mix = clamp(step_3_mix * step_4_mix, 0.0, 1.0);
 			}
 			else {
@@ -796,16 +463,16 @@ float get_resulting_mask_for_layer(int layer, vec2 uv1, vec2 uv2, vec3 local_sur
 			break;
 	}
 
-	float step_5_mix = get_layer_mask_step_mix(layer, 5, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
-	switch (get_layer_step_mixing_operation(layer, 5)) {
+	float step_5_mix = get_mask_step_mix(5, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
+	switch (get_step_mixing_operation(5)) {
 		case 0:
-			step_5_mix = clamp(step_4_mix + (step_5_mix * float(step_4_mix >= get_layer_step_mixing_threshold(layer, 5))), 0.0, 1.0);
+			step_5_mix = clamp(step_4_mix + (step_5_mix * float(step_4_mix >= get_step_mixing_threshold(5))), 0.0, 1.0);
 			break;
 		case 1:
-			step_5_mix = clamp(step_4_mix - (step_5_mix * float(step_4_mix >= get_layer_step_mixing_threshold(layer, 5))), 0.0, 1.0);
+			step_5_mix = clamp(step_4_mix - (step_5_mix * float(step_4_mix >= get_step_mixing_threshold(5))), 0.0, 1.0);
 			break;
 		case 2:
-			if (step_4_mix >= get_layer_step_mixing_threshold(layer, 5)) {
+			if (step_4_mix >= get_step_mixing_threshold(5)) {
 				step_5_mix = clamp(step_4_mix * step_5_mix, 0.0, 1.0);
 			}
 			else {
@@ -814,16 +481,16 @@ float get_resulting_mask_for_layer(int layer, vec2 uv1, vec2 uv2, vec3 local_sur
 			break;
 	}
 
-	float step_6_mix = get_layer_mask_step_mix(layer, 6, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
-	switch (get_layer_step_mixing_operation(layer, 6)) {
+	float step_6_mix = get_mask_step_mix(6, uv1, uv2, local_surface_normal, global_surface_normal, local_vertex_position, global_vertex_position);
+	switch (get_step_mixing_operation(6)) {
 		case 0:
-			step_6_mix = clamp(step_4_mix + (step_6_mix * float(step_5_mix >= get_layer_step_mixing_threshold(layer, 6))), 0.0, 1.0);
+			step_6_mix = clamp(step_4_mix + (step_6_mix * float(step_5_mix >= get_step_mixing_threshold(6))), 0.0, 1.0);
 			break;
 		case 1:
-			step_6_mix = clamp(step_4_mix - (step_6_mix * float(step_5_mix >= get_layer_step_mixing_threshold(layer, 6))), 0.0, 1.0);
+			step_6_mix = clamp(step_4_mix - (step_6_mix * float(step_5_mix >= get_step_mixing_threshold(6))), 0.0, 1.0);
 			break;
 		case 2:
-			if (step_5_mix >= get_layer_step_mixing_threshold(layer, 6)) {
+			if (step_5_mix >= get_step_mixing_threshold(6)) {
 				step_6_mix = clamp(step_5_mix * step_6_mix, 0.0, 1.0);
 			}
 			else {
@@ -832,15 +499,15 @@ float get_resulting_mask_for_layer(int layer, vec2 uv1, vec2 uv2, vec3 local_sur
 			break;
 	}
 
-	switch (get_layer_post_effect(layer)) {
+	switch (post_effect) {
 		case 1:
-			step_6_mix = step_6_mix + 0.1;
+			step_6_mix = step_6_mix * 0.5;
 		case 2:
 			step_6_mix = 0.0;
 	};
 
 	//return step_3_mix;
-	return get_layer_mask_post_color_ramp_value(layer, clamp(step_5_mix, 0.0, 1.0) * get_layer_mask_amplification(layer) + 0.002);
+	return get_mask_post_color_ramp_value(clamp(step_5_mix, 0.0, 1.0) * mask_amplification + 0.002);
 }
 
 void vertex() {
@@ -858,45 +525,39 @@ void vertex() {
 void fragment() {
 	vertex_color = COLOR.rgb;
 
-	vec3 albedo_mix = layer_base_albedo_texture.rgb;
-	float occlusion_mix = layer_base_occlusion_factor;
-	float roughness_mix = layer_base_roughness_factor;
-	float metallic_mix = layer_base_metallic_factor;
-	vec3 normal_mix = layer_base_normal_map;
+	vec3 albedo_mix = vec3(0.0, 0.0, 0.0);
+	float occlusion_mix = 0.0;
+	float roughness_mix = 0.0;
+	float metallic_mix = 0.0;
+	vec3 normal_mix = vec3(0.0, 0.0, 0.0);
 
-	//bool layer_index_1_enabled = get_layer_processing_index
+	if (enabled == true) {
+		vec2 uv1 = get_uv(0, UV);
+		vec2 uv2 = get_uv(1, UV);
 
-	int layer_bottom_assigned_layer = get_processing_layer_assigned_layer(1);
-	int layer_middle_assigned_layer = get_processing_layer_assigned_layer(2);
-	int layer_top_assigned_layer = get_processing_layer_assigned_layer(3);
+		int normal_uv_map_index = get_map_uv_index(0);
+		int albedo_uv_map_index = get_map_uv_index(1);
+		int occlusion_uv_map_index = get_map_uv_index(2);
+		int roughness_uv_map_index = get_map_uv_index(3);
+		int metallic_uv_map_index = get_map_uv_index(4);
 
-	if (layer_C_enabled == true) {
-		vec2 uv1 = (UV + get_layer_uv_offset(3, 0, UV) + layer_C_uv1_offset) * layer_C_uv1_scale;
-		vec2 uv2 = (UV + get_layer_uv_offset(3, 1, UV) + layer_C_uv2_offset) * layer_C_uv2_scale;
+		vec4 albedo_texture = texture(albedo, uv1 * float(albedo_uv_map_index == 0) + uv2 * float(albedo_uv_map_index == 1));
+		vec2 occlusion_factor = texture(occlusion_map, uv1 * float(occlusion_uv_map_index == 0) + uv2 * float(occlusion_uv_map_index == 1)).ra * float(orm_mode) + texture(orm_map, uv1 * float(occlusion_uv_map_index == 0) + uv2 * float(occlusion_uv_map_index == 1)).ra * (1.0 - float(orm_mode));
+		vec2 roughness_factor = texture(roughness_map, uv1 * float(roughness_uv_map_index == 0) + uv2 * float(roughness_uv_map_index == 1)).ra * float(orm_mode) + texture(orm_map, uv1 * float(roughness_uv_map_index == 0) + uv2 * float(roughness_uv_map_index == 1)).ga * (1.0 - float(orm_mode));
+		vec2 metallic_factor = texture(metallic_map, uv1 * float(metallic_uv_map_index == 0) + uv2 * float(metallic_uv_map_index == 1)).ra * float(orm_mode) + texture(orm_map, uv1 * float(metallic_uv_map_index == 0) + uv2 * float(metallic_uv_map_index == 1)).ra * (1.0 - float(orm_mode));
+		vec3 normal_map = texture(normal, uv1 * float(normal_uv_map_index == 0) + uv2 * float(normal_uv_map_index == 1)).rgb;
 
-		int layer_C_normal_uv_map_index = get_layer_map_uv_index(2,0);
-		int layer_C_albedo_uv_map_index = get_layer_map_uv_index(2,1);
-		int layer_C_occlusion_uv_map_index = get_layer_map_uv_index(2,2);
-		int layer_C_roughness_uv_map_index = get_layer_map_uv_index(2,3);
-		int layer_C_metallic_uv_map_index = get_layer_map_uv_index(2,4);
+		int mask_A_uv_map_index = get_map_uv_index(5);
+		int mask_B_uv_map_index = get_map_uv_index(6);
 
-		vec4 layer_C_albedo_texture = texture(layer_C_albedo, uv1 * float(layer_C_albedo_uv_map_index == 0) + uv2 * float(layer_C_albedo_uv_map_index == 1));
-		vec2 layer_C_occlusion_factor = texture(layer_C_occlusion_map, uv1 * float(layer_C_occlusion_uv_map_index == 0) + uv2 * float(layer_C_occlusion_uv_map_index == 1)).ra * float(layer_C_orm_mode) + texture(layer_C_orm_map, uv1 * float(layer_C_occlusion_uv_map_index == 0) + uv2 * float(layer_C_occlusion_uv_map_index == 1)).ra * (1.0 - float(layer_C_orm_mode));
-		vec2 layer_C_roughness_factor = texture(layer_C_roughness_map, uv1 * float(layer_C_roughness_uv_map_index == 0) + uv2 * float(layer_C_roughness_uv_map_index == 1)).ra * float(layer_C_orm_mode) + texture(layer_C_orm_map, uv1 * float(layer_C_roughness_uv_map_index == 0) + uv2 * float(layer_C_roughness_uv_map_index == 1)).ga * (1.0 - float(layer_C_orm_mode));
-		vec2 layer_C_metallic_factor = texture(layer_C_metallic_map, uv1 * float(layer_C_metallic_uv_map_index == 0) + uv2 * float(layer_C_metallic_uv_map_index == 1)).ra * float(layer_C_orm_mode) + texture(layer_C_orm_map, uv1 * float(layer_C_metallic_uv_map_index == 0) + uv2 * float(layer_C_metallic_uv_map_index == 1)).ra * (1.0 - float(layer_C_orm_mode));
-		vec3 layer_C_normal_map = texture(layer_C_normal, uv1 * float(layer_C_normal_uv_map_index == 0) + uv2 * float(layer_C_normal_uv_map_index == 1)).rgb;
+		float mask_factor = get_resulting_mask(uv1, uv2, local_vertex_normal, global_vertex_normal, local_vertex_pos, global_vertex_pos);
+		albedo_mix = mix(albedo_mix, albedo_texture.rgb, mask_factor * albedo_texture.a);
+		albedo_mix = mix(albedo_mix, vec3(mask_factor), float(consolidate_masks));
 
-		int mask_A_uv_map_index = get_layer_map_uv_index(3, 5);
-		int mask_B_uv_map_index = get_layer_map_uv_index(3, 6);
-
-		float layer_C_mask_factor = get_resulting_mask_for_layer(3, uv1, uv2, local_vertex_normal, global_vertex_normal, local_vertex_pos, global_vertex_pos);
-		albedo_mix = mix(albedo_mix, layer_C_albedo_texture.rgb, layer_C_mask_factor * layer_C_albedo_texture.a);
-		albedo_mix = mix(albedo_mix, vec3(layer_C_mask_factor), float(layer_C_consolidate_masks));
-
-		occlusion_mix = mix(occlusion_mix, layer_C_occlusion_factor.x, layer_C_mask_factor * layer_C_occlusion_factor.y);
-		roughness_mix = mix(roughness_mix, layer_C_roughness_factor.x, layer_C_mask_factor * layer_C_roughness_factor.y);
-		metallic_mix = mix(metallic_mix, layer_C_metallic_factor.x, layer_C_mask_factor * layer_C_metallic_factor.y);
-		normal_mix = mix(normal_mix, layer_C_normal_map, layer_C_mask_factor * (1.0 - float(layer_C_propagate_normals)));
+		occlusion_mix = mix(occlusion_mix, occlusion_factor.x, mask_factor * occlusion_factor.y);
+		roughness_mix = mix(roughness_mix, roughness_factor.x, mask_factor * roughness_factor.y);
+		metallic_mix = mix(metallic_mix, metallic_factor.x, mask_factor * metallic_factor.y);
+		normal_mix = mix(normal_mix, normal_map, mask_factor * (1.0 - float(propagate_normals)));
 	}
 
 	ALBEDO = albedo_mix.rgb;
