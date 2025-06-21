@@ -4,5 +4,5 @@
 
 [resource]
 script = ExtResource("1_asohs")
-layer_name = "Grass"
+layer_name = ""
 metadata/_custom_type_script = "uid://o6isbs5x1fjr"

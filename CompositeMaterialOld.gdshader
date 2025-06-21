@@ -39,6 +39,7 @@ uniform sampler2D layer_C_normal : hint_normal;
  */
 uniform bool layer_C_propagate_normals = false;
 
+group_uniforms layer_C.uv1;
 /**
  * X and Y components by which the size of this UV map will be multiplied.
  */
