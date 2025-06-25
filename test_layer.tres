@@ -1,0 +1,98 @@
+[gd_resource type="Resource" script_class="CompositeMaterialLayer" load_steps=9 format=3 uid="uid://bvgrschuumsf0"]
+
+[ext_resource type="Texture2D" uid="uid://bjiq1wig4sqy3" path="res://assets/textures/albedo/yellow_black_stripes.png" id="1_vnjo4"]
+[ext_resource type="Script" uid="uid://o6isbs5x1fjr" path="res://addons/CompositeMaterial/CompositeMaterialLayer.gd" id="2_sfs8r"]
+
+[sub_resource type="Gradient" id="Gradient_6q3jr"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(0.849621, 0.849621, 0.849621, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_mb1cw"]
+gradient = SubResource("Gradient_6q3jr")
+
+[sub_resource type="Gradient" id="Gradient_u8p2d"]
+offsets = PackedFloat32Array(0.588785)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6q3jr"]
+gradient = SubResource("Gradient_u8p2d")
+
+[sub_resource type="Gradient" id="Gradient_ty5yp"]
+offsets = PackedFloat32Array(0.428571)
+colors = PackedColorArray(0.217701, 0.217701, 0.217701, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_21f8r"]
+gradient = SubResource("Gradient_ty5yp")
+
+[resource]
+script = ExtResource("2_sfs8r")
+layer_name = ""
+vertex_displacement_mode = 0
+vertex_displacement_scale = -1.0
+enabled = true
+albedo = ExtResource("1_vnjo4")
+propagate_normals = false
+uv1_scale = Vector2(2, 1)
+uv1_offset = Vector2(0, 0)
+uv1_offset_map_scale = Vector2(1, 1)
+uv1_offset_map_factor = 1.0
+uv2_scale = Vector2(1, 1)
+uv2_offset = Vector2(0, 0)
+uv2_offset_map_scale = Vector2(1, 1)
+uv2_offset_map_factor = 1.0
+normal_map_UV_assignment = 0
+albedo_map_UV_assignment = 0
+occlusion_map_UV_assignment = 0
+roughness_map_UV_assignment = 0
+metallic_map_UV_assignment = 0
+texture_mask_A_UV_assignment = 0
+texture_mask_B_UV_assignment = 1
+UV_mask_UV_assignment = 0
+orm_mode = 1
+roughness_map = SubResource("GradientTexture1D_21f8r")
+metallic_map = SubResource("GradientTexture1D_mb1cw")
+consolidate_masks = false
+mask_amplification = 1.0
+step_2_mixing_operation = 0
+step_2_mixing_threshold = 0.0
+step_3_mixing_operation = 0
+step_3_mixing_threshold = 0.0
+step_4_mixing_operation = 0
+step_4_mixing_threshold = 0.0
+step_5_mixing_operation = 0
+step_5_mixing_threshold = 0.0
+step_6_mixing_operation = 0
+step_6_mixing_threshold = 0.0
+post_color_ramp = SubResource("GradientTexture1D_6q3jr")
+post_effect = 0
+post_effect_parameter_1 = 0.1
+post_effect_parameter_2 = 0.0
+post_effect_parameter_3 = 0.0
+texture_mask_A_enabled = true
+texture_mask_B_enabled = false
+texture_masks_mix_operation = 0
+texture_masks_subtraction_order = 0
+texture_masks_mixing_step = 1
+directional_mask_mode = 0
+directional_mask_space = 0
+directional_mask_mixing_step = 2
+positional_mask_mode = 0
+positional_mask_axis = 1
+positional_mask_max = 1.0
+positional_mask_min = -1.0
+positional_mask_mixing_step = 3
+vertex_color_mask_mode = 0
+vertex_color_mask_target_color = Color(0, 0, 0, 1)
+vertex_color_mask_mixing_step = 4
+normal_map_slope_mask_mode = 0
+normal_map_slope_mask_source = 0
+normal_map_slope_mask_mixing_step = 5
+UV_mask_enabled = false
+UV_mask_X_min = 0.0
+UV_mask_X_max = 1.0
+UV_mask_Y_min = 0.0
+UV_mask_Y_max = 1.0
+UV_mask_XY_mixing_operation = 0
+UV_mask_XY_mixing_order = 0
+UV_mask_mixing_step = 6
+metadata/_custom_type_script = "uid://o6isbs5x1fjr"

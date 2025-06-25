@@ -2,7 +2,7 @@ shader_type spatial;
 
 //Todo: triplanar mapping, vertex displacement normal recalculation, implement changing order of layers (bottom, middle, top), uv rotation by uv offset map r channel, uv mask
 
-render_mode cull_disabled;
+render_mode cull_disabled, depth_prepass_alpha, blend_premul_alpha;
 
 //indeces/enums:
 //
@@ -15,6 +15,8 @@ render_mode cull_disabled;
 //		5:texture mask A
 //		6:texture mask B
 //      7:UV Mask
+
+uniform sampler2D screen_texture : hint_screen_texture;
 
 uniform int vertex_displacement_mode : hint_enum("Disabled", "Normal") = 0;
 uniform float vertex_displacement_scale = -1.0;
@@ -525,15 +527,14 @@ void vertex() {
 void fragment() {
 	vertex_color = COLOR.rgb;
 
-	vec3 albedo_mix = vec3(0.0, 0.0, 0.0);
-	float occlusion_mix = 0.0;
-	float roughness_mix = 0.0;
-	float metallic_mix = 0.0;
-	vec3 normal_mix = vec3(0.0, 0.0, 0.0);
-
 	if (enabled == true) {
 		vec2 uv1 = get_uv(0, UV);
 		vec2 uv2 = get_uv(1, UV);
+
+		vec3 albedo_mix = texture(screen_texture, SCREEN_UV).rgb;
+		float occlusion_mix = 0.0;
+		float roughness_mix = 0.0;
+		float metallic_mix = 0.0;
 
 		int normal_uv_map_index = get_map_uv_index(0);
 		int albedo_uv_map_index = get_map_uv_index(1);
@@ -547,6 +548,8 @@ void fragment() {
 		vec2 metallic_factor = texture(metallic_map, uv1 * float(metallic_uv_map_index == 0) + uv2 * float(metallic_uv_map_index == 1)).ra * float(orm_mode) + texture(orm_map, uv1 * float(metallic_uv_map_index == 0) + uv2 * float(metallic_uv_map_index == 1)).ra * (1.0 - float(orm_mode));
 		vec3 normal_map = texture(normal, uv1 * float(normal_uv_map_index == 0) + uv2 * float(normal_uv_map_index == 1)).rgb;
 
+		vec3 normal_mix = local_vertex_normal;
+
 		int mask_A_uv_map_index = get_map_uv_index(5);
 		int mask_B_uv_map_index = get_map_uv_index(6);
 
@@ -558,18 +561,22 @@ void fragment() {
 		roughness_mix = mix(roughness_mix, roughness_factor.x, mask_factor * roughness_factor.y);
 		metallic_mix = mix(metallic_mix, metallic_factor.x, mask_factor * metallic_factor.y);
 		normal_mix = mix(normal_mix, normal_map, mask_factor * (1.0 - float(propagate_normals)));
+
+		ALBEDO = albedo_mix.rgb;
+		//ALBEDO = vec3(get_positional_mask_for_layer(1, local_vertex_pos, global_vertex_pos));
+		//ALBEDO = vec3(get_directional_mask_for_layer(1, local_vertex_normal, global_vertex_normal));
+		//ALBEDO = vec3(get_resulting_mask_for_layer(1, UV, local_vertex_normal, global_vertex_normal, local_vertex_pos, global_vertex_pos));
+		//ALBEDO = vec3(get_vertex_color_mask_for_layer(1));
+		ROUGHNESS = roughness_mix;
+		METALLIC = metallic_mix;
+//
+		NORMAL_MAP = normal_mix;
+
+		ALPHA = mask_factor;
+	}
+	else {
+		ALPHA = 0.0;
 	}
 
-	ALBEDO = albedo_mix.rgb;
-	//ALBEDO = vec3(get_positional_mask_for_layer(1, local_vertex_pos, global_vertex_pos));
-	//ALBEDO = vec3(get_directional_mask_for_layer(1, local_vertex_normal, global_vertex_normal));
-	//ALBEDO = vec3(get_resulting_mask_for_layer(1, UV, local_vertex_normal, global_vertex_normal, local_vertex_pos, global_vertex_pos));
-	//ALBEDO = vec3(get_vertex_color_mask_for_layer(1));
-	ROUGHNESS = roughness_mix;
-	METALLIC = metallic_mix;
-
-	NORMAL_MAP = normal_mix;
-
 	//ALBEDO = global_vertex_normal.rgb;
-	//ALPHA = 1.0;
 }
