@@ -1,41 +1,36 @@
 extends ShaderMaterial
 class_name CompositeMaterialLayerShaderMaterial
 
-var layer_config : CompositeMaterialLayer
-var shaded = false
+var layer_configs
 	
-static func create(init_layer_config, init_is_shaded):
+enum layer_index {LAYER_A = 0, LAYER_B = 1, LAYER_C = 2}
+
+static func create(init_layer_configs, enable_alpha):
 	var new_instance = CompositeMaterialLayerShaderMaterial.new()
-	new_instance.layer_config = init_layer_config
+	new_instance.layer_configs = init_layer_configs
 	
-	if init_is_shaded:
-		new_instance.shaded = true
-		new_instance.shader = load("res://addons/CompositeMaterial/shaders/CompositeMaterialLayerUnshaded.gdshader")
+	if enable_alpha:
+		new_instance.shader = load("res://addons/CompositeMaterial/shaders/CompositeMaterialUnitAE.gdshader")
 	else:
-		new_instance.shaded = false
-		new_instance.shader = load("res://addons/CompositeMaterial/shaders/CompositeMaterialLayerUnshaded.gdshader")
+		new_instance.shader = load("res://addons/CompositeMaterial/shaders/CompositeMaterialUnitAD.gdshader")
 	
 	return new_instance
 
-func update_shaded(is_shaded):
-	if is_shaded != shaded:
-		if is_shaded:
-			shaded = true
-			shader = load("res://addons/CompositeMaterial/shaders/CompositeMaterialLayerShaded.gdshader")
-		else:
-			shaded = false
-			shader = load("res://addons/CompositeMaterial/shaders/CompositeMaterialLayerUnshaded.gdshader")
-
-	
-func update_config(new_config : CompositeMaterialLayer):
+func update_config(new_config : CompositeMaterialLayer, layer_idx : layer_index):
 	print("update config")
-	layer_config = new_config
-	apply_config()
+	layer_configs[layer_idx] = new_config
+	for property in new_config.get_property_list():
+		if layer_configs[layer_idx].get(property.name) != null:
+			set_shader_parameter(get_layer_prefix(layer_idx) + property.name, layer_configs[layer_idx].get(property.name))
+			#print("setting shader property ", get_layer_prefix(layer_idx) + property.name)
 
-
-func apply_config():
-	#print("apply config")
-	for property in layer_config.get_property_list():
-		if layer_config.get(property.name) != null:
-			#print("setting shader property ", property.name, " to ", layer_config.get(property.name))
-			set_shader_parameter(property.name, layer_config.get(property.name))
+func get_layer_prefix(layer_idx : layer_index) -> String:
+	match layer_idx:
+		layer_index.LAYER_A:
+			return "layer_A_"
+		layer_index.LAYER_B:
+			return "layer_B_"
+		layer_index.LAYER_C:
+			return "layer_C_"
+		_:
+			return ""
