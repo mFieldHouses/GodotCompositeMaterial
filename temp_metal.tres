@@ -30,6 +30,7 @@ gradient = SubResource("Gradient_ty5yp")
 [resource]
 render_priority = 0
 shader = ExtResource("4_ql43p")
+shader_parameter/albedo_channel = 0
 shader_parameter/vertex_displacement_mode = 0
 shader_parameter/vertex_displacement_scale = -1.0
 shader_parameter/layer_C_enabled = true

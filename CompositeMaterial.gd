@@ -2,12 +2,12 @@
 extends ShaderMaterial
 class_name CompositeMaterial
 
-@export var layers : Array[CompositeMaterialLayer]:
+@export var layers : Array[CompositeMaterialLayer]: #Array of resources storing parameters of seperate layers
 	set(x):
 		layers = x
 		build_material()
 
-var material_units : Array[ShaderMaterial]
+var material_units : Array[ShaderMaterial] #Array of actual materials being displayed. One material unit represents up to 3 layers.
 
 var material_unit_configs
 
@@ -32,6 +32,7 @@ var export_path_dialog : EditorFileDialog
 	set(x):
 		enable_alpha = x
 		build_material()
+	
 func _init() -> void:
 	if enable_alpha:
 		shader = load("res://addons/CompositeMaterial/shaders/CompositeMaterialUnitAE.gdshader")
@@ -44,9 +45,13 @@ func _init() -> void:
 	#EditorInterface.get_base_control().add_child(export_path_dialog)
 	
 func build_material() -> void:
+	print(compose_shader_code(layers.size()))
+	
 	print("rebuilding material")
 	material_unit_configs = []
 	material_units = []
+	next_pass = null
+	clear_all_shader_parameters()
 	
 	#EditorInterface.get_editor_toaster().push_toast("Building material...")
 
@@ -60,7 +65,7 @@ func build_material() -> void:
 			
 		idx += 1
 	
-	print(material_unit_configs)
+	#print(material_unit_configs)
 	
 	var unit_idx : int = 0
 	var previous_material : ShaderMaterial
@@ -73,7 +78,7 @@ func build_material() -> void:
 			unit_material_instance = self
 			layer_configs = unit_config
 		else:
-			unit_material_instance = CompositeMaterialLayerShaderMaterial.create(unit_config, enable_alpha)
+			unit_material_instance = CompositeMaterialLayerShaderMaterial.create(unit_config, true)
 			previous_material.next_pass = unit_material_instance
 			
 		material_units.append(unit_material_instance)
@@ -88,6 +93,7 @@ func build_material() -> void:
 		unit_idx += 1
 	
 	print(material_units)
+	print(self.shader)
 			
 	emit_changed()
 	#EditorInterface.get_editor_toaster().push_toast("Done building material!")
@@ -118,7 +124,7 @@ func update_config(new_config : CompositeMaterialLayer, layer_idx : layer_index)
 	for property in new_config.get_property_list():
 		if layer_configs[layer_idx].get(property.name) != null:
 			set_shader_parameter(get_layer_prefix(layer_idx) + property.name, layer_configs[layer_idx].get(property.name))
-			#print("setting shader property ", get_layer_prefix(layer_idx) + property.name, " to ", layer_configs[layer_idx].get(property.name))
+
 
 func get_layer_prefix(layer_idx : layer_index) -> String:
 	match layer_idx:
@@ -130,3 +136,50 @@ func get_layer_prefix(layer_idx : layer_index) -> String:
 			return "layer_C_"
 		_:
 			return ""
+
+func clear_all_shader_parameters():
+	for param in shader.get_shader_uniform_list():
+		set_shader_parameter(param.name, null)
+
+func compose_shader_code(layer_num : int) -> String: ##Returns CompositeMaterial shader code containing [param size] layers.
+	var compose_sc = func compose_simple_sc(line_base : String, sc_size : int) -> String:
+		var result : String
+		for i in sc_size:
+			var layer_idx = i + 1
+			result += "case " + str(layer_idx) + ": " + line_base % layer_idx + " "
+				
+		return result
+	
+	var strings = load("res://addons/CompositeMaterial/shader_composition_strings.gd")
+	
+	var result : String = strings.base_string
+	
+	var parameters : String
+	var get_layer_uv_offset : String
+	var get_layer_uv : String
+	var get_layer_map_uv_index : String
+	var get_layer_mask_mixing_step : String
+	var get_layer_step_mixing_operation : String
+	var get_layer_step_mixing_threshold : String
+	var get_layer_mask_post_color_ramp_value : String
+	var get_layer_post_effect_parameter : String
+	var get_layer_texture_mask_texture : String
+	var get_layer_texture_mask_enabled : String
+	var get_layer_directional_mask_color_ramp_value : String
+	var get_layer_positional_mask_color_ramp_value : String
+	var get_layer_normal_map_slope_mask_color_ramp_value : String
+	var get_layer_uv_mask_color_ramp_value : String
+	var get_layer_uv_mask_min : String
+	var get_layer_uv_mask_max : String
+	
+	for i in layer_num:
+		var layer_idx : int = i + 1
+		
+		parameters += (strings.parameters_string.replace("%s", str(layer_idx))) + "\n"
+	
+	result = result.replace("%parameters", parameters)
+	
+	result = result.replace("%get_layer_enabled_sc", compose_sc.call("return layer_%s_enabled;", layer_num))
+	result = result.replace("%get_layer_mask_amplification_sc", compose_sc.call("return layer_%s_mask_amplification;", layer_num))
+	
+	return result

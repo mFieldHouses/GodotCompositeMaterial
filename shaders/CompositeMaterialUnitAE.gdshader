@@ -5,7 +5,7 @@ shader_type spatial;
 
 //Todo: triplanar mapping, vertex displacement normal recalculation, implement changing order of layers (bottom, middle, top), uv rotation by uv offset map r channel, uv mask
 
-render_mode cull_disabled, depth_draw_always;
+render_mode cull_disabled, depth_prepass_alpha;
 
 //indeces/enums:
 //

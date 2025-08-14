@@ -5,7 +5,7 @@ shader_type spatial;
 
 //Todo: triplanar mapping, vertex displacement normal recalculation, implement changing order of layers (bottom, middle, top), uv rotation by uv offset map r channel, uv mask
 
-render_mode cull_disabled, depth_prepass_alpha;
+render_mode cull_disabled, depth_prepass_alpha, unshaded;
 
 //indeces/enums:
 //
@@ -565,6 +565,19 @@ varying vec3 vertex_color;
 //==========================================================================
 
 
+
+
+int get_processing_layer_assigned_layer(int layer_processing_index) {
+	if (layer_A_processing_index == layer_processing_index) {
+		return 1;
+	}
+	else if (layer_B_processing_index == layer_processing_index) {
+		return 2;
+	}
+	else if (layer_C_processing_index == layer_processing_index) {
+		return 3;
+	}
+}
 
 bool get_layer_enabled(int layer_index) {
 	switch (layer_index) {
@@ -1230,6 +1243,10 @@ void fragment() {
 	vec3 normal_mix = vec3(0.5, 1.0, 0.5);
 
 	//bool layer_index_1_enabled = get_layer_processing_index
+
+	int layer_bottom_assigned_layer = get_processing_layer_assigned_layer(1);
+	int layer_middle_assigned_layer = get_processing_layer_assigned_layer(2);
+	int layer_top_assigned_layer = get_processing_layer_assigned_layer(3);
 
 	if (layer_A_enabled == true) {
 		vec2 uv1 = (UV + get_layer_uv_offset(1, 0, UV) + layer_A_uv1_offset) * layer_A_uv1_scale;
