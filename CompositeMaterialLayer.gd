@@ -53,12 +53,13 @@ signal parameter_changed
 @export_enum("UV1", "UV2") var occlusion_map_UV_assignment := 0;
 @export_enum("UV1", "UV2") var roughness_map_UV_assignment := 0;
 @export_enum("UV1", "UV2") var metallic_map_UV_assignment := 0;
-@export_enum("UV1", "UV2") var texture_mask_A_UV_assignment := 0;
+@export_enum("UV1", "UV2") var UV_offset_map_UV_assignment := 0;
+@export_enum("UV1", "UV2") var texture_mask_A_UV_assignment := 1;
 @export_enum("UV1", "UV2") var texture_mask_B_UV_assignment := 1;
 @export_enum("UV1", "UV2") var UV_mask_UV_assignment := 0;
 
 @export_group("ORM")
-@export_enum("Single map", "Seperate maps") var orm_mode := 1;
+@export_enum("Single map", "Seperate maps") var orm_mode := 0;
 @export var orm_map : Texture2D:
 	set(x):
 		orm_map = x
@@ -166,16 +167,3 @@ signal parameter_changed
 @export_enum("Add", "Subtract", "Multiply") var UV_mask_XY_mixing_operation := 0;
 @export_enum("X-Y", "Y-X") var UV_mask_XY_mixing_order := 0;
 @export_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") var UV_mask_mixing_step := 6;
-
-#func _init() -> void:
-#	parameter_changed.connect(test)
-#	parameter_changed.emit()
-#
-#func change_parameter():
-	#print("change parameter")
-	#parameter_changed.emit()
-
-#func test():
-#	print("teeheee")
-#	OS.delay_msec(100)
-#	parameter_changed.emit()

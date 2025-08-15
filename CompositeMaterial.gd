@@ -4,14 +4,11 @@ class_name CompositeMaterial
 
 @export var layers : Array[CompositeMaterialLayer]: #Array of resources storing parameters of seperate layers
 	set(x):
+		previous_layers_size = layers.size()
 		layers = x
 		build_material()
 
-var material_units : Array[ShaderMaterial] #Array of actual materials being displayed. One material unit represents up to 3 layers.
-
-var material_unit_configs
-
-var layer_configs
+var previous_layers_size : int = 0
 	
 enum layer_index {LAYER_A = 0, LAYER_B = 1, LAYER_C = 2}
 
@@ -45,62 +42,31 @@ func _init() -> void:
 	#EditorInterface.get_base_control().add_child(export_path_dialog)
 	
 func build_material() -> void:
-	print(compose_shader_code(layers.size()))
-	
 	print("rebuilding material")
-	material_unit_configs = []
-	material_units = []
-	next_pass = null
+	if previous_layers_size != layers.size():
+		var new_shader = Shader.new()
+		new_shader.set_code(compose_shader_code(layers.size()))
+		shader = new_shader
+		
 	clear_all_shader_parameters()
 	
 	#EditorInterface.get_editor_toaster().push_toast("Building material...")
-
-	for i in range(floori(layers.size() / 3.0) + 1):
-		material_unit_configs.append([])
 	
-	var idx : int = 0
+	var layer_idx : int = 0
 	for layer_config in layers:
-		if layer_config != null:
-			material_unit_configs[floori(idx / 3.0)].append(layer_config)
-			
-		idx += 1
-	
-	#print(material_unit_configs)
-	
-	var unit_idx : int = 0
-	var previous_material : ShaderMaterial
-	for unit_config in material_unit_configs:
-		if unit_config == []:
-			break
+		if layer_config == null:
+			continue
 		
-		var unit_material_instance
-		if unit_idx == 0:
-			unit_material_instance = self
-			layer_configs = unit_config
-		else:
-			unit_material_instance = CompositeMaterialLayerShaderMaterial.create(unit_config, true)
-			previous_material.next_pass = unit_material_instance
-			
-		material_units.append(unit_material_instance)
-		previous_material = unit_material_instance
+		for connected_signal in layer_config.get_incoming_connections():
+			layer_config.disconnect(connected_signal.signal.get_name(), connected_signal.callable.get_method())
 		
-		var layer_idx : int = 0
-		for layer_config in unit_config:
-			if !layer_config.is_connected("changed", update_unit_configuration):
-				layer_config.changed.connect(update_unit_configuration.bind(unit_idx, layer_idx))
-			update_unit_configuration(unit_idx, layer_idx)
-			layer_idx += 1
-		unit_idx += 1
-	
-	print(material_units)
-	print(self.shader)
+		if !layer_config.is_connected("changed", update_config):
+			layer_config.changed.connect(update_config.bind(layer_config))
+		layer_config.emit_changed()
+		layer_idx += 1
 			
 	emit_changed()
 	#EditorInterface.get_editor_toaster().push_toast("Done building material!")
-
-func update_unit_configuration(unit_index : int, layer_index : int):
-	material_units[unit_index].update_config(material_unit_configs[unit_index][layer_index], layer_index)
-
 
 #func export_material():
 	#print("export")
@@ -117,13 +83,12 @@ func update_unit_configuration(unit_index : int, layer_index : int):
 #
 	#writer.close()
 
-#This function is necessary to have the base class also act as a material unit, improving performance because we'll need less passes and thus less draw calls
-func update_config(new_config : CompositeMaterialLayer, layer_idx : layer_index):
-	print("update config")
-	layer_configs[layer_idx] = new_config
+func update_config(new_config : CompositeMaterialLayer):
+	var layer_idx = layers.find(new_config) + 1
+	print("update config for layer ", layer_idx)
 	for property in new_config.get_property_list():
-		if layer_configs[layer_idx].get(property.name) != null:
-			set_shader_parameter(get_layer_prefix(layer_idx) + property.name, layer_configs[layer_idx].get(property.name))
+		if new_config.get(property.name) != null:
+			set_shader_parameter("layer_" + str(layer_idx) +"_" + property.name, new_config.get(property.name))
 
 
 func get_layer_prefix(layer_idx : layer_index) -> String:
@@ -146,7 +111,7 @@ func compose_shader_code(layer_num : int) -> String: ##Returns CompositeMaterial
 		var result : String
 		for i in sc_size:
 			var layer_idx = i + 1
-			result += "case " + str(layer_idx) + ": " + line_base % layer_idx + " "
+			result += "case " + str(layer_idx) + ": " + line_base.replace("%s", str(layer_idx)) + " "
 				
 		return result
 	
@@ -155,31 +120,55 @@ func compose_shader_code(layer_num : int) -> String: ##Returns CompositeMaterial
 	var result : String = strings.base_string
 	
 	var parameters : String
-	var get_layer_uv_offset : String
-	var get_layer_uv : String
-	var get_layer_map_uv_index : String
-	var get_layer_mask_mixing_step : String
-	var get_layer_step_mixing_operation : String
-	var get_layer_step_mixing_threshold : String
-	var get_layer_mask_post_color_ramp_value : String
-	var get_layer_post_effect_parameter : String
-	var get_layer_texture_mask_texture : String
-	var get_layer_texture_mask_enabled : String
-	var get_layer_directional_mask_color_ramp_value : String
-	var get_layer_positional_mask_color_ramp_value : String
-	var get_layer_normal_map_slope_mask_color_ramp_value : String
-	var get_layer_uv_mask_color_ramp_value : String
-	var get_layer_uv_mask_min : String
-	var get_layer_uv_mask_max : String
+	var fragment_snippets : String
+	
+	var start_time = Time.get_ticks_msec()
 	
 	for i in layer_num:
 		var layer_idx : int = i + 1
 		
 		parameters += (strings.parameters_string.replace("%s", str(layer_idx))) + "\n"
-	
+		fragment_snippets += (strings.fragment_snippet_string.replace("%s", str(layer_idx))) + "\n"
+		
 	result = result.replace("%parameters", parameters)
+	result = result.replace("%layer_fragment_snippets", fragment_snippets)
 	
-	result = result.replace("%get_layer_enabled_sc", compose_sc.call("return layer_%s_enabled;", layer_num))
-	result = result.replace("%get_layer_mask_amplification_sc", compose_sc.call("return layer_%s_mask_amplification;", layer_num))
+	result = result.replace("%get_layer_enabled_sc", compose_sc.call(strings.get_layer_enabled_string, layer_num))
+	result = result.replace("%get_layer_uv_offset_sc", compose_sc.call(strings.get_layer_uv_offset_string, layer_num))
+	result = result.replace("%get_layer_uv_sc", compose_sc.call(strings.get_layer_uv_string, layer_num))
+	result = result.replace("%get_layer_map_uv_index_sc", compose_sc.call(strings.get_layer_map_uv_index_string, layer_num))
+	result = result.replace("%get_layer_mask_mixing_step_sc", compose_sc.call(strings.get_layer_mask_mixing_step_string, layer_num))
+	result = result.replace("%get_layer_step_mixing_operation_sc", compose_sc.call(strings.get_layer_step_mixing_operation_string, layer_num))
+	result = result.replace("%get_layer_step_mixing_threshold_sc", compose_sc.call(strings.get_layer_step_mixing_threshold_string, layer_num))
+	result = result.replace("%get_layer_mask_amplification_sc", compose_sc.call(strings.get_layer_mask_amplification_string, layer_num))
+	result = result.replace("%get_layer_mask_post_color_ramp_value_sc", compose_sc.call(strings.get_layer_mask_post_color_ramp_value_string, layer_num))
+	result = result.replace("%get_layer_post_effect_sc", compose_sc.call(strings.get_layer_post_effect_string, layer_num))
+	result = result.replace("%get_layer_post_effect_parameter_sc", compose_sc.call(strings.get_layer_post_effect_parameter_string, layer_num))
+	result = result.replace("%get_layer_texture_mask_texture_sc", compose_sc.call(strings.get_layer_texture_mask_texture_string, layer_num))
+	result = result.replace("%get_layer_texture_mask_enabled_sc", compose_sc.call(strings.get_layer_texture_mask_enabled_string, layer_num))
+	result = result.replace("%get_layer_texture_masks_subtraction_order_sc", compose_sc.call(strings.get_layer_texture_masks_subtraction_order_string, layer_num))
+	result = result.replace("%get_layer_texture_mask_mix_operation_sc", compose_sc.call(strings.get_layer_texture_mask_mix_operation_string, layer_num))
+	result = result.replace("%get_layer_directional_mask_mode_sc", compose_sc.call(strings.get_layer_directional_mask_mode_string, layer_num))
+	result = result.replace("%get_layer_directional_mask_space_sc", compose_sc.call(strings.get_layer_directional_mask_space_string, layer_num))
+	result = result.replace("%get_layer_directional_mask_color_ramp_value_sc", compose_sc.call(strings.get_layer_directional_mask_color_ramp_value_string, layer_num))
+	result = result.replace("%get_layer_positional_mask_mode_sc", compose_sc.call(strings.get_layer_positional_mask_mode_string, layer_num))
+	result = result.replace("%get_layer_positional_mask_axis_sc", compose_sc.call(strings.get_layer_positional_mask_axis_string, layer_num))
+	result = result.replace("%get_layer_positional_mask_min_sc", compose_sc.call(strings.get_layer_positional_mask_min_string, layer_num))
+	result = result.replace("%get_layer_positional_mask_max_sc", compose_sc.call(strings.get_layer_positional_mask_max_string, layer_num))
+	result = result.replace("%get_layer_positional_mask_color_ramp_value_sc", compose_sc.call(strings.get_layer_positional_mask_color_ramp_value_string, layer_num))
+	result = result.replace("%get_layer_vertex_color_mask_mode_sc", compose_sc.call(strings.get_layer_vertex_color_mask_mode_string, layer_num))
+	result = result.replace("%get_layer_vertex_color_mask_color_ramp_value_sc", compose_sc.call(strings.get_layer_vertex_color_mask_color_ramp_value_string, layer_num))
+	result = result.replace("%get_layer_normal_map_slope_mask_mode_sc", compose_sc.call(strings.get_layer_normal_map_slope_mask_mode_string, layer_num))
+	result = result.replace("%get_normal_map_slope_mask_for_layer_sc", compose_sc.call(strings.get_normal_map_slope_mask_for_layer_string, layer_num))
+	result = result.replace("%get_layer_normal_map_slope_mask_color_ramp_value_sc", compose_sc.call(strings.get_layer_normal_map_slope_mask_color_ramp_value_string, layer_num))
+	result = result.replace("%get_layer_uv_mask_enabled_sc", compose_sc.call(strings.get_layer_UV_mask_enabled_string, layer_num))
+	result = result.replace("%get_layer_uv_mask_mixing_operation_sc", compose_sc.call(strings.get_layer_UV_mask_mixing_operation_string, layer_num))
+	result = result.replace("%get_layer_uv_mask_mixing_order_sc", compose_sc.call(strings.get_layer_UV_mask_mixing_order_string, layer_num))
+	result = result.replace("%get_layer_uv_mask_color_ramp_value_sc", compose_sc.call(strings.get_layer_UV_mask_color_ramp_value_string, layer_num))
+	result = result.replace("%get_layer_uv_mask_min_sc", compose_sc.call(strings.get_layer_UV_mask_min_string, layer_num))
+	result = result.replace("%get_layer_uv_mask_max_sc", compose_sc.call(strings.get_layer_UV_mask_max_string, layer_num))
+	
+	var end_time = Time.get_ticks_msec()
+	EditorInterface.get_editor_toaster().push_toast("Rewrote shader in " + str(end_time - start_time) + "ms!")
 	
 	return result

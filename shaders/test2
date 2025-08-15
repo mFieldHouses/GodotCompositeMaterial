@@ -1,0 +1,105 @@
+group_uniforms layer_%s;
+
+uniform bool layer_A_enabled = true;
+
+uniform sampler2D layer_A_albedo : source_color, hint_default_transparent;
+
+uniform sampler2D layer_A_normal : hint_normal;
+
+uniform bool layer_A_propagate_normals = false;
+
+uniform vec2 layer_A_uv1_scale = vec2(1.0);
+uniform vec2 layer_A_uv1_offset = vec2(0.0);
+
+uniform sampler2D layer_A_uv1_offset_map : hint_default_transparent, filter_nearest;
+uniform vec2 layer_A_uv1_offset_map_scale = vec2(1.0, 1.0);
+
+uniform float layer_A_uv1_offset_map_factor = 1.0;
+
+uniform vec2 layer_A_uv2_scale = vec2(1.0);
+uniform vec2 layer_A_uv2_offset = vec2(0.0);
+
+uniform sampler2D layer_A_uv2_offset_map : hint_default_transparent, filter_nearest;
+uniform vec2 layer_A_uv2_offset_map_scale = vec2(1.0, 1.0);
+
+uniform float layer_A_uv2_offset_map_factor = 1.0;
+
+uniform int layer_A_normal_map_UV_assignment : hint_enum("UV1", "UV2") = 0;
+uniform int layer_A_albedo_map_UV_assignment : hint_enum("UV1", "UV2") = 0;
+uniform int layer_A_occlusion_map_UV_assignment : hint_enum("UV1", "UV2") = 0;
+uniform int layer_A_roughness_map_UV_assignment : hint_enum("UV1", "UV2") = 0;
+uniform int layer_A_metallic_map_UV_assignment : hint_enum("UV1", "UV2") = 0;
+uniform int layer_A_UV_offset_map_UV_assignment : hint_enum("UV1", "UV2") = 0;
+uniform int layer_A_texture_mask_A_UV_assignment : hint_enum("UV1", "UV2") = 1;
+uniform int layer_A_texture_mask_B_UV_assignment : hint_enum("UV1", "UV2") = 1;
+uniform int layer_A_UV_mask_UV_assignment : hint_enum("UV1", "UV2") = 0;
+
+uniform int layer_A_orm_mode : hint_enum("Single map", "Seperate maps") = 0;
+uniform sampler2D layer_A_orm_map : hint_default_transparent;
+uniform sampler2D layer_A_occlusion_map : hint_default_transparent;
+uniform sampler2D layer_A_roughness_map : hint_default_transparent;
+uniform sampler2D layer_A_metallic_map : hint_default_transparent;
+
+uniform bool layer_A_consolidate_masks = false;
+
+uniform float layer_A_mask_amplification : hint_range(0.0, 10.0) = 1.0;
+
+uniform int layer_A_step_2_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
+uniform float layer_A_step_2_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
+uniform int layer_A_step_3_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
+uniform float layer_A_step_3_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
+uniform int layer_A_step_4_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
+uniform float layer_A_step_4_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
+uniform int layer_A_step_5_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
+uniform float layer_A_step_5_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
+uniform int layer_A_step_6_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
+uniform float layer_A_step_6_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
+uniform sampler2D layer_A_post_color_ramp : hint_default_transparent;
+uniform int layer_A_post_effect : hint_enum("None", "Drip", "Expand-Blur") = 0;
+uniform float layer_A_post_effect_parameter_1 : hint_range(0.0, 1.0) = 0.1;
+uniform float layer_A_post_effect_parameter_2 = 0.0;
+uniform float layer_A_post_effect_parameter_3 = 0.0;
+
+uniform bool layer_A_texture_mask_A_enabled = true;
+uniform sampler2D layer_A_texture_mask_A : hint_default_transparent;
+uniform bool layer_A_texture_mask_B_enabled = false;
+uniform sampler2D layer_A_texture_mask_B : hint_default_transparent;
+
+uniform int layer_A_texture_masks_mix_operation: hint_enum("Add", "Subtract", "Multiply") = 0;
+
+uniform int layer_A_texture_masks_subtraction_order: hint_enum("A - B", "B - A") = 0;
+uniform int layer_A_texture_masks_mixing_step: hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") = 1;
+
+
+uniform int layer_A_directional_mask_mode : hint_enum("Disabled", "X", "X+", "X-", "Y", "Y+", "Y-", "Z", "Z+", "Z-");
+uniform int layer_A_directional_mask_space : hint_enum("Global", "Local") = 0;
+uniform sampler2D layer_A_directional_mask_color_ramp : hint_default_transparent;
+uniform int layer_A_directional_mask_mixing_step: hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") = 2;
+
+uniform int layer_A_positional_mask_mode : hint_enum("Disabled", "Local", "Global") = 0;
+uniform sampler2D layer_A_positional_mask_color_ramp : hint_default_transparent;
+uniform int layer_A_positional_mask_axis : hint_enum("X", "Y", "Z") = 1;
+
+uniform float layer_A_positional_mask_max = 1.0;
+uniform float layer_A_positional_mask_min = -1.0;
+uniform int layer_A_positional_mask_mixing_step: hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") = 3;
+
+uniform int layer_A_vertex_color_mask_mode : hint_enum("Disabled", "Red", "Green", "Blue") = 0;
+uniform sampler2D layer_A_vertex_color_mask_color_ramp : hint_default_transparent;
+uniform int layer_A_vertex_color_mask_mixing_step: hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") = 4;
+
+uniform int layer_A_normal_map_slope_mask_mode : hint_enum("Disabled", "Pre-Mask", "Post-Mask") = 0;
+uniform int layer_A_normal_map_slope_mask_source : hint_enum("Previous Layer", "Current Layer") = 0;
+uniform sampler2D layer_A_normal_map_slope_mask_color_ramp : hint_default_transparent;
+uniform int layer_A_normal_map_slope_mask_mixing_step : hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5") = 5;
+
+uniform bool layer_A_UV_mask_enabled = false;
+uniform int layer_A_UV_mask_mixing_step : hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") = 6;
+uniform float layer_A_UV_mask_X_min = 0.0;
+uniform float layer_A_UV_mask_X_max = 1.0;
+uniform sampler2D layer_A_UV_mask_X_color_ramp : hint_default_transparent;
+uniform float layer_A_UV_mask_Y_min = 0.0;
+uniform float layer_A_UV_mask_Y_max = 1.0;
+uniform sampler2D layer_A_UV_mask_Y_color_ramp : hint_default_transparent;
+uniform int layer_A_UV_mask_XY_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
+uniform int layer_A_UV_mask_XY_mixing_order : hint_enum("X-Y", "Y-X") = 0;
