@@ -18,6 +18,9 @@ func _input(event: InputEvent) -> void:
 			
 			elif event.button_index == MOUSE_BUTTON_LEFT:
 				dragging = event.pressed
+				if event.pressed == false:
+					dragging = false
+					
 		
 			if camera.position.z < 0.1:
 				camera.position.z = 0.1
@@ -35,3 +38,4 @@ func _on_mouse_entered() -> void:
 
 func _on_mouse_exited() -> void:
 	listening = false
+	dragging = false

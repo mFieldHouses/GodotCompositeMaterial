@@ -863,16 +863,16 @@ int get_layer_vertex_color_mask_mode(int layer) {
 	}
 }
 
-float get_layer_vertex_color_mask_color_ramp_value(int layer) {
+float get_layer_vertex_color_mask_color_ramp_value(int layer, float factor) {
 	switch (layer) {
 		case 1:
-			vec4 color_ramp_color = texture(layer_A_vertex_color_mask_color_ramp, vec2(factor, 0));
+			vec4 color_ramp_color = texture(layer_A_vertex_color_mask_color_ramp, vec2((factor * 0.98) + 0.01, 0)); 
 			return mix(factor, color_ramp_color.r, color_ramp_color.a);
 		case 2:
-			vec4 color_ramp_color = texture(layer_B_vertex_color_mask_color_ramp, vec2(factor, 0));
+			vec4 color_ramp_color = texture(layer_B_vertex_color_mask_color_ramp, vec2((factor * 0.98) + 0.01, 0));
 			return mix(factor, color_ramp_color.r, color_ramp_color.a);
 		case 3:
-			vec4 color_ramp_color = texture(layer_C_vertex_color_mask_color_ramp, vec2(factor, 0));
+			vec4 color_ramp_color = texture(layer_C_vertex_color_mask_color_ramp, vec2((factor * 0.98) + 0.01, 0));
 			return mix(factor, color_ramp_color.r, color_ramp_color.a);
 	}
 }
@@ -1060,14 +1060,11 @@ float get_vertex_color_mask_for_layer(int layer) {
 		case 0:
 			return 0.0;
 		case 1:
-			float color_ramp_color = get_layer_vertex_color_mask_color_ramp_value(layer);
-			return mix(vertex_color.r, color_ramp_color.r, color_ramp_color.a);
+			return get_layer_vertex_color_mask_color_ramp_value(layer, vertex_color.r);
 		case 2:
-			float color_ramp_color = get_layer_vertex_color_mask_color_ramp_value(layer);
-			return mix(vertex_color.g, color_ramp_color.g, color_ramp_color.a);
+			return get_layer_vertex_color_mask_color_ramp_value(layer, vertex_color.g);
 		case 3:
-			float color_ramp_color = get_layer_vertex_color_mask_color_ramp_value(layer);
-			return mix(vertex_color.b, color_ramp_color.b, color_ramp_color.a);
+			return get_layer_vertex_color_mask_color_ramp_value(layer, vertex_color.b);
 		}
 }
 

@@ -60,7 +60,7 @@ const get_layer_positional_mask_color_ramp_value_string : String = 'vec2 color_r
 
 const get_layer_vertex_color_mask_mode_string : String = 'return layer_%s_vertex_color_mask_mode;'
 
-const get_layer_vertex_color_mask_color_ramp_value_string : String = 'vec4 color_ramp_color = texture(layer_%s_vertex_color_mask_color_ramp, vec2(factor, 0)); return mix(factor, color_ramp_color.r, color_ramp_color.a);'
+const get_layer_vertex_color_mask_color_ramp_value_string : String = 'vec4 color_ramp_color = texture(layer_%s_vertex_color_mask_color_ramp, vec2((factor * 0.98) + 0.01, 0)); return mix(factor, color_ramp_color.r, color_ramp_color.a);'
 
 const get_layer_normal_map_slope_mask_min_string : String = 'return layer_%s_normal_map_slope_mask_min;';
 
@@ -84,4 +84,4 @@ const get_layer_UV_mask_min_string : String = 'return layer_%s_UV_mask_X_min * f
 
 const get_layer_UV_mask_max_string : String = 'return layer_%s_UV_mask_X_max * float(int(axis) == 0) + layer_%s_UV_mask_Y_max * float(int(axis) == 1);';
 
-const get_layer_UV_mask_color_ramp_value_string : String = 'vec4 color_ramp_color = texture(layer_%s_UV_mask_X_color_ramp, vec2(factor, 0)) * float(int(axis) == 0) + texture(layer_%s_UV_mask_Y_color_ramp, vec2(factor, 0)) * float(int(axis) == 1); return mix(factor, color_ramp_color.r, color_ramp_color.a);';
+const get_layer_UV_mask_color_ramp_value_string : String = 'vec4 color_ramp_color = texture(layer_%s_UV_mask_X_color_ramp, vec2((factor * 0.98) + 0.01, 0)) * float(int(axis) == 0) + texture(layer_%s_UV_mask_Y_color_ramp, vec2((factor * 0.98) + 0.01, 0)) * float(int(axis) == 1); return mix(factor, color_ramp_color.r, color_ramp_color.a);';

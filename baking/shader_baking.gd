@@ -17,10 +17,8 @@ signal baking_metallic
 signal baking_normal
 signal generating_normal_map
 
-func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name : String, texture_size : Vector2i = Vector2i(512,512)) -> void:
+func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name : String) -> void:
 	print("start baking")
-	
-	var resulting_image = Image.create_empty(texture_size.x, texture_size.y, false, Image.FORMAT_RGBA8)
 	
 	var viewport_result = ViewportTexture.new()
 	viewport_result.viewport_path = $baking_viewport/viewport.get_path() #We need the absolute path here. This whole window is parented to our main editor so therer's no other way for us to retrieve the absolute path.
@@ -70,8 +68,8 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 		$baking_viewport/viewport/faces.add_child(isolated_face)
 		isolated_face.set_surface_override_material(0, material_instance)
 		
-	$baking_viewport/viewport.size = texture_size
-		
+	$baking_viewport/viewport.size = Vector2i(config.resolution_x, config.resolution_y)
+	
 		#$SubViewportContainer/viewport.get_texture()
 		#
 		#await RenderingServer.frame_post_draw
@@ -93,7 +91,12 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 		material_instance.set_shader_parameter("albedo_channel", 0)
 		await RenderingServer.frame_post_draw
 		image_to_be_saved = $baking_viewport/viewport.get_texture().get_image()
-		image_to_be_saved.save_png("/home/mathias/Desktop/projects/shadowstrider/shadowstrider/output_textures/" + base_name + "_albedo.png")
+		if !config.enable_alpha:
+			image_to_be_saved.convert(Image.FORMAT_RGB8)
+		
+		var output_path : String = config.output_path + "/" + base_name + "_albedo.png"
+		config.albedo_tex_path = output_path
+		image_to_be_saved.save_png(output_path)
 	
 	if config.bake_roughness:
 		baking_roughness.emit()
@@ -101,7 +104,12 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 		await RenderingServer.frame_post_draw
 		image_to_be_saved = $baking_viewport/viewport.get_texture().get_image()
 		image_to_be_saved.srgb_to_linear()
-		image_to_be_saved.save_png("/home/mathias/Desktop/projects/shadowstrider/shadowstrider/output_textures/" + base_name + "_roughness.png")
+		if !config.enable_alpha:
+			image_to_be_saved.convert(Image.FORMAT_RGB8)
+		
+		var output_path : String = config.output_path + "/" + base_name + "_roughness.png"
+		config.roughness_tex_path = output_path
+		image_to_be_saved.save_png(output_path)
 	
 	if config.bake_metallic:
 		baking_metallic.emit()
@@ -109,27 +117,41 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 		await RenderingServer.frame_post_draw
 		image_to_be_saved = $baking_viewport/viewport.get_texture().get_image()
 		image_to_be_saved.srgb_to_linear()
-		image_to_be_saved.save_png("/home/mathias/Desktop/projects/shadowstrider/shadowstrider/output_textures/" + base_name + "_metallic.png")
+		if !config.enable_alpha:
+			image_to_be_saved.convert(Image.FORMAT_RGB8)
+		
+		var output_path : String = config.output_path + "/" + base_name + "_metallic.png"
+		config.metallic_tex_path = output_path
+		image_to_be_saved.save_png(output_path)
 	
 	if config.bake_normal:
 		baking_normal.emit()
 		material_instance.set_shader_parameter("albedo_channel", 3)
 		await RenderingServer.frame_post_draw
 		image_to_be_saved = $baking_viewport/viewport.get_texture().get_image()
-		image_to_be_saved.normal_map_to_xy()
+		image_to_be_saved.convert(Image.FORMAT_RGB8)
 		generating_normal_map.emit()
-		generate_blue_channel_from_xy_normal_map(image_to_be_saved)
-		image_to_be_saved.save_png("/home/mathias/Desktop/projects/shadowstrider/shadowstrider/output_textures/" + base_name + "_normal.png")
+		#generate_blue_channel_from_xy_normal_map(image_to_be_saved) #TODO: Implement way to convert XY (red-green) normal maps to XYZ normal maps for universal compatibility
+		
+		var output_path : String = config.output_path + "/" + base_name + "_normal.png"
+		config.normal_tex_path = output_path
+		image_to_be_saved.save_png(output_path)
 	
 	for child in $baking_viewport/viewport/faces.get_children():
 		child.queue_free()
 	
+	config.done_baking = true
+	
 	finished_baking.emit()
 
-func generate_blue_channel_from_xy_normal_map(input_image : Image):
+func generate_blue_channel_from_xy_normal_map(input_image : Image): #Not in use, still looking for solution
+	print(input_image.get_pixel(10,300))
 	for x in input_image.get_width():
 		for y in input_image.get_height():
 			var color = input_image.get_pixel(x,y)
-			#print(color)
+			
+			if color.b > 0:
+				continue
+			
 			var blue = sqrt(1 - (color.r*color.r + color.g*color.g))
-			input_image.set_pixel(x,y, Color(color.r, color.g, blue))
+			input_image.set_pixel(x,y, Color.from_rgba8(color.r * 255, color.g * 255, blue * 255))

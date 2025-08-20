@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://djy1se88fyext"]
+[gd_scene load_steps=21 format=3 uid="uid://djy1se88fyext"]
 
 [ext_resource type="Script" uid="uid://dkcw0u1kcatdp" path="res://addons/CompositeMaterial/baking/bake_tool_interface.gd" id="1_74n10"]
 [ext_resource type="Script" uid="uid://digbbstl0ov4f" path="res://addons/CompositeMaterial/baking/mesh_list.gd" id="2_haqp2"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://cbcpj4816nja2" path="res://addons/CompositeMaterial/baking/output_path_container.gd" id="6_3px2b"]
 [ext_resource type="ButtonGroup" uid="uid://03se0xm23sxc" path="res://addons/CompositeMaterial/buttongroup1.tres" id="6_18wgi"]
 [ext_resource type="Texture2D" uid="uid://1mi2fmqs5ryu" path="res://addons/CompositeMaterial/Folder.svg" id="6_tj3y8"]
+[ext_resource type="ButtonGroup" uid="uid://br03mngl42ytx" path="res://addons/CompositeMaterial/button_group_model_save_format.tres" id="9_1mtts"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_74n10"]
 bg_color = Color(0.120418, 0.120418, 0.120418, 1)
@@ -96,10 +97,9 @@ size_flags_horizontal = 8
 text = " Invert Selection"
 flat = true
 
-[node name="hide_unbakeable" type="Button" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer"]
+[node name="hide_unbakeable" type="CheckButton" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
-toggle_mode = true
 text = "Hide Unbakeable"
 flat = true
 
@@ -178,6 +178,8 @@ alignment = 2
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 0
+mouse_force_pass_scroll_events = false
 stretch = true
 script = ExtResource("5_wj3ou")
 
@@ -257,6 +259,16 @@ theme_override_colors/font_color = Color(0.980392, 0.501961, 0.501961, 1)
 text = "This mesh does not use CompositeMaterial and can not be baked using this tool."
 autowrap_mode = 2
 
+[node name="resolution_x" type="SpinBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/VBoxContainer"]
+layout_mode = 2
+max_value = 8192.0
+value = 512.0
+
+[node name="resolution_y" type="SpinBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/VBoxContainer"]
+layout_mode = 2
+max_value = 8192.0
+value = 512.0
+
 [node name="output_path_container" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
 layout_mode = 2
 script = ExtResource("6_3px2b")
@@ -311,7 +323,7 @@ layout_mode = 2
 text = "Channels:"
 metadata/ignore = false
 
-[node name="channels" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
+[node name="channels" type="HFlowContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
 layout_mode = 2
 
 [node name="bake_albedo" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/channels"]
@@ -334,12 +346,17 @@ layout_mode = 2
 button_pressed = true
 text = "Normal"
 
+[node name="enable_alpha" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/channels"]
+layout_mode = 2
+text = "Alpha"
+
 [node name="HSeparator3" type="HSeparator" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 metadata/ignore = false
 
 [node name="General" type="MarginContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config"]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 5
@@ -355,7 +372,6 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-button_pressed = true
 text = "Generate model"
 flat = true
 
@@ -363,7 +379,7 @@ flat = true
 layout_mode = 2
 selected = 0
 item_count = 3
-popup/item_0/text = "Generation mode"
+popup/item_0/text = "Select Generation mode"
 popup/item_0/id = 0
 popup/item_0/disabled = true
 popup/item_0/separator = true
@@ -372,16 +388,29 @@ popup/item_1/id = 1
 popup/item_2/text = "From all meshes, keep old materials for disabled"
 popup/item_2/id = 2
 
+[node name="save_as_tscn" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer"]
+layout_mode = 2
+button_pressed = true
+button_group = ExtResource("9_1mtts")
+text = "Save as .tscn"
+
+[node name="save_as_gltf" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer"]
+layout_mode = 2
+disabled = true
+button_group = ExtResource("9_1mtts")
+text = "Save as .gltf (coming soon!)"
+
 [node name="output_model_path" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer"]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/output_model_path"]
+[node name="model_output_path" type="LineEdit" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/output_model_path"]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Output model path"
 
 [node name="browse_output_model_path" type="Button" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/output_model_path"]
 layout_mode = 2
+icon = ExtResource("6_tj3y8")
 
 [node name="option_buttons" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer"]
 layout_mode = 2
@@ -442,4 +471,5 @@ projection = 1
 [connection signal="mouse_exited" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer" to="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer" method="_on_mouse_exited"]
 [connection signal="text_changed" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/VBoxContainer/output_name" to="." method="save_config"]
 [connection signal="button_down" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/output_path_container/browse_path" to="." method="_on_browse_path_button_down"]
+[connection signal="button_down" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/output_model_path/browse_output_model_path" to="." method="_on_browse_output_model_path_button_down"]
 [connection signal="button_down" from="bake_tool_interface/VBoxContainer/option_buttons/bake" to="." method="_on_bake_button_down"]

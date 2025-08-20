@@ -5,7 +5,6 @@ extends HBoxContainer
 
 func _ready() -> void:
 	$options.get_popup().id_pressed.connect(select_option)
-	print(get_tree().get_nodes_in_group("bake_interface_root"))
 
 func select_option(id):
 	match id:

@@ -10,10 +10,11 @@ func setup():
 	for child in mesh_list.get_children():
 		if child is HBoxContainer and child.has_node("label"):
 			child.get_node("label").button_down.connect(button_pressed.bind(child.name))
-			child.get_node("checkbox").pressed.connect(mesh_toggled.bind(child.name))
+			child.get_node("checkbox").toggled.connect(mesh_toggled.bind(child.name))
 
-func mesh_toggled(mesh_name : String):
-	background.mesh_selected(mesh_name)
+func mesh_toggled(state : bool, mesh_name : String):
+	background.mesh_configs[mesh_name].enabled = state
+	background.select_mesh(mesh_name)
 		
 func button_pressed(button_name : String):
 	mesh_selected.emit(button_name)
