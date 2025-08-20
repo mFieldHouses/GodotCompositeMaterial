@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://d3smijjgdsx44"]
+
+[ext_resource type="Script" uid="uid://d3fqsijr3pnjj" path="res://addons/CompositeMaterial/baking/shader_baking.gd" id="1_mcb8f"]
+
+[sub_resource type="TorusMesh" id="TorusMesh_5hts1"]
+inner_radius = 0.3
+outer_radius = 0.5
+
+[node name="shader_baking" type="Node3D"]
+script = ExtResource("1_mcb8f")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="viewport" type="SubViewport" parent="SubViewportContainer"]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1024, 1024)
+render_target_update_mode = 4
+
+[node name="ortho_camera" type="Camera3D" parent="SubViewportContainer/viewport"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1, 0)
+keep_aspect = 0
+projection = 1
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/viewport"]
+visible = false
+mesh = SubResource("TorusMesh_5hts1")

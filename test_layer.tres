@@ -45,6 +45,7 @@ albedo_map_UV_assignment = 0
 occlusion_map_UV_assignment = 0
 roughness_map_UV_assignment = 0
 metallic_map_UV_assignment = 0
+UV_offset_map_UV_assignment = 0
 texture_mask_A_UV_assignment = 0
 texture_mask_B_UV_assignment = 1
 UV_mask_UV_assignment = 0

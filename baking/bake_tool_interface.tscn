@@ -1,0 +1,445 @@
+[gd_scene load_steps=20 format=3 uid="uid://djy1se88fyext"]
+
+[ext_resource type="Script" uid="uid://dkcw0u1kcatdp" path="res://addons/CompositeMaterial/baking/bake_tool_interface.gd" id="1_74n10"]
+[ext_resource type="Script" uid="uid://digbbstl0ov4f" path="res://addons/CompositeMaterial/baking/mesh_list.gd" id="2_haqp2"]
+[ext_resource type="Script" uid="uid://brhsepdv0d2c5" path="res://addons/CompositeMaterial/baking/mesh_label_text.gd" id="3_8x60a"]
+[ext_resource type="Script" uid="uid://bnyglktsbfdm0" path="res://addons/CompositeMaterial/baking/mesh_config.gd" id="4_8qnc0"]
+[ext_resource type="Script" uid="uid://d3fqsijr3pnjj" path="res://addons/CompositeMaterial/baking/shader_baking.gd" id="5_p2j5d"]
+[ext_resource type="Script" uid="uid://hqkc6lha11ef" path="res://addons/CompositeMaterial/baking/mesh_viewport.gd" id="5_wj3ou"]
+[ext_resource type="Script" uid="uid://cbcpj4816nja2" path="res://addons/CompositeMaterial/baking/output_path_container.gd" id="6_3px2b"]
+[ext_resource type="ButtonGroup" uid="uid://03se0xm23sxc" path="res://addons/CompositeMaterial/buttongroup1.tres" id="6_18wgi"]
+[ext_resource type="Texture2D" uid="uid://1mi2fmqs5ryu" path="res://addons/CompositeMaterial/Folder.svg" id="6_tj3y8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_74n10"]
+bg_color = Color(0.120418, 0.120418, 0.120418, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_18wgi"]
+bg_color = Color(0, 0, 0, 0.196078)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8x60a"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8qnc0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_p2j5d"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wj3ou"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wj3ou"]
+bg_color = Color(0, 0, 0, 0.196078)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_haqp2"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_8x60a"]
+sky_material = SubResource("ProceduralSkyMaterial_haqp2")
+
+[sub_resource type="Environment" id="Environment_8qnc0"]
+background_mode = 2
+sky = SubResource("Sky_8x60a")
+ambient_light_source = 2
+ambient_light_color = Color(0.562958, 0.562958, 0.562958, 1)
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="background" type="Panel" groups=["bake_interface_root"]]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_74n10")
+script = ExtResource("1_74n10")
+
+[node name="bake_tool_interface" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="bake_tool_interface"]
+layout_mode = 2
+
+[node name="HSplitContainer" type="HSplitContainer" parent="bake_tool_interface/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+split_offset = -450
+
+[node name="mesh_list" type="VBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+script = ExtResource("2_haqp2")
+
+[node name="model_name" type="Label" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list"]
+layout_mode = 2
+
+[node name="toggle_all" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="invert_all" type="Button" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = " Invert Selection"
+flat = true
+
+[node name="hide_unbakeable" type="Button" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+toggle_mode = true
+text = "Hide Unbakeable"
+flat = true
+
+[node name="HSeparator" type="HSeparator" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list"]
+layout_mode = 2
+
+[node name="mesh_list_scroll" type="ScrollContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_18wgi")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/mesh_list_scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="empty" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/mesh_list_scroll/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="checkbox" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/mesh_list_scroll/VBoxContainer/empty"]
+layout_mode = 2
+flat = true
+
+[node name="label" type="Button" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/mesh_list_scroll/VBoxContainer/empty"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+alignment = 0
+
+[node name="text" type="RichTextLabel" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/mesh_list_scroll/VBoxContainer/empty/label"]
+layout_mode = 1
+offset_top = 5.0
+offset_right = 260.0
+offset_bottom = 45.0
+mouse_filter = 2
+theme_override_styles/fill = SubResource("StyleBoxEmpty_8x60a")
+theme_override_styles/background = SubResource("StyleBoxEmpty_8qnc0")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_p2j5d")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_wj3ou")
+bbcode_enabled = true
+text = "asdasd [color=#808080]hi"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+script = ExtResource("3_8x60a")
+
+[node name="mesh_config_scroll" type="ScrollContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer"]
+layout_mode = 2
+
+[node name="mesh_config" type="TabContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_wj3ou")
+current_tab = 0
+script = ExtResource("4_8qnc0")
+
+[node name="Mesh" type="MarginContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh"]
+layout_mode = 2
+
+[node name="header" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+size_flags_horizontal = 3
+stretch = true
+script = ExtResource("5_wj3ou")
+
+[node name="preview_viewport" type="SubViewport" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer"]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(218, 200)
+render_target_update_mode = 4
+
+[node name="camera_pivot" type="Node3D" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer/preview_viewport"]
+
+[node name="Camera3D" type="Camera3D" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer/preview_viewport/camera_pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
+current = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer/preview_viewport"]
+environment = SubResource("Environment_8qnc0")
+
+[node name="meshes" type="Node3D" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer/preview_viewport"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer/preview_viewport"]
+transform = Transform3D(0.105766, -0.756562, 0.645312, 0.122368, 0.653922, 0.7466, -0.986833, 0, 0.161742, 0, 0, 0)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="source_mesh_name" type="Label" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="options" type="MenuButton" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/VBoxContainer/source_mesh_name"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -15.5
+offset_bottom = 15.5
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_horizontal = 0
+text = " ... "
+item_count = 6
+popup/item_0/text = "Copy config"
+popup/item_0/id = 0
+popup/item_1/text = "Paste config"
+popup/item_1/id = 1
+popup/item_1/disabled = true
+popup/item_2/id = 100
+popup/item_2/disabled = true
+popup/item_2/separator = true
+popup/item_3/text = "Copy config to all meshes"
+popup/item_3/id = 2
+popup/item_4/text = "Copy config to enabled meshes"
+popup/item_4/id = 3
+popup/item_5/text = "Copy config to disabled meshes"
+popup/item_5/id = 5
+popup/item_5/disabled = true
+
+[node name="output_name" type="LineEdit" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+placeholder_text = "Output Name"
+emoji_menu_enabled = false
+virtual_keyboard_enabled = false
+
+[node name="warning_unbakeable" type="Label" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.980392, 0.501961, 0.501961, 1)
+text = "This mesh does not use CompositeMaterial and can not be baked using this tool."
+autowrap_mode = 2
+
+[node name="output_path_container" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("6_3px2b")
+
+[node name="output_path" type="LineEdit" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/output_path_container"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+placeholder_text = "Output Path"
+emoji_menu_enabled = false
+virtual_keyboard_enabled = false
+
+[node name="browse_path" type="Button" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/output_path_container"]
+layout_mode = 2
+icon = ExtResource("6_tj3y8")
+
+[node name="options" type="MenuButton" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/output_path_container"]
+layout_mode = 2
+text = " ... "
+item_count = 3
+popup/item_0/text = "Copy to all meshes"
+popup/item_0/id = 0
+popup/item_1/text = "Copy to enabled meshes"
+popup/item_1/id = 1
+popup/item_2/text = "Copy to disabled meshes"
+popup/item_2/id = 2
+
+[node name="bake_onto_self" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+button_pressed = true
+button_group = ExtResource("6_18wgi")
+text = "Bake onto self"
+flat = true
+
+[node name="bake_onto_other" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+button_group = ExtResource("6_18wgi")
+text = "Bake onto other mesh"
+flat = true
+
+[node name="HSeparator2" type="HSeparator" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+metadata/ignore = false
+
+[node name="Label" type="Label" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
+layout_mode = 2
+text = "Channels:"
+metadata/ignore = false
+
+[node name="channels" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
+layout_mode = 2
+
+[node name="bake_albedo" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/channels"]
+layout_mode = 2
+button_pressed = true
+text = "Albedo"
+
+[node name="bake_roughness" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/channels"]
+layout_mode = 2
+button_pressed = true
+text = "Roughness"
+
+[node name="bake_metallic" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/channels"]
+layout_mode = 2
+button_pressed = true
+text = "Metallic"
+
+[node name="bake_normal" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/channels"]
+layout_mode = 2
+button_pressed = true
+text = "Normal"
+
+[node name="HSeparator3" type="HSeparator" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+metadata/ignore = false
+
+[node name="General" type="MarginContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General"]
+layout_mode = 2
+
+[node name="generate_model" type="CheckBox" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+button_pressed = true
+text = "Generate model"
+flat = true
+
+[node name="generation_mode" type="OptionButton" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer"]
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "Generation mode"
+popup/item_0/id = 0
+popup/item_0/disabled = true
+popup/item_0/separator = true
+popup/item_1/text = "From enabled meshes"
+popup/item_1/id = 1
+popup/item_2/text = "From all meshes, keep old materials for disabled"
+popup/item_2/id = 2
+
+[node name="output_model_path" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/output_model_path"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Output model path"
+
+[node name="browse_output_model_path" type="Button" parent="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/output_model_path"]
+layout_mode = 2
+
+[node name="option_buttons" type="HBoxContainer" parent="bake_tool_interface/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="num_selected" type="Label" parent="bake_tool_interface/VBoxContainer/option_buttons"]
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="cancel" type="Button" parent="bake_tool_interface/VBoxContainer/option_buttons"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Cancel"
+
+[node name="bake" type="Button" parent="bake_tool_interface/VBoxContainer/option_buttons"]
+layout_mode = 2
+size_flags_horizontal = 0
+action_mode = 0
+keep_pressed_outside = true
+text = "Bake"
+
+[node name="status" type="Label" parent="bake_tool_interface/VBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="baking" type="Node3D" parent="."]
+script = ExtResource("5_p2j5d")
+
+[node name="baking_viewport" type="SubViewportContainer" parent="baking"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 24.0
+offset_right = -620.0
+offset_bottom = 536.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="viewport" type="SubViewport" parent="baking/baking_viewport"]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="ortho_camera" type="Camera3D" parent="baking/baking_viewport/viewport"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1, 0)
+projection = 1
+
+[node name="faces" type="Node3D" parent="baking/baking_viewport/viewport"]
+
+[connection signal="pressed" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer/toggle_all" to="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list" method="_on_toggle_all_pressed"]
+[connection signal="toggled" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer/toggle_all" to="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list" method="_on_toggle_all_toggled"]
+[connection signal="button_down" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer/invert_all" to="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list" method="toggle_all_meshes"]
+[connection signal="toggled" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer/hide_unbakeable" to="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list" method="_on_hide_unbakeable_toggled"]
+[connection signal="mouse_entered" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer" to="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer" to="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer" method="_on_mouse_exited"]
+[connection signal="text_changed" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/VBoxContainer/output_name" to="." method="save_config"]
+[connection signal="button_down" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/output_path_container/browse_path" to="." method="_on_browse_path_button_down"]
+[connection signal="button_down" from="bake_tool_interface/VBoxContainer/option_buttons/bake" to="." method="_on_bake_button_down"]

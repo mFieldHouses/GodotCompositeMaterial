@@ -2,6 +2,8 @@
 extends ShaderMaterial
 class_name CompositeMaterial
 
+signal finish_building
+
 @export var layers : Array[CompositeMaterialLayer]: #Array of resources storing parameters of seperate layers
 	set(x):
 		previous_layers_size = layers.size()
@@ -30,22 +32,11 @@ var export_path_dialog : EditorFileDialog
 		enable_alpha = x
 		build_material()
 	
-func _init() -> void:
-	if enable_alpha:
-		shader = load("res://addons/CompositeMaterial/shaders/CompositeMaterialUnitAE.gdshader")
-	else:
-		shader = load("res://addons/CompositeMaterial/shaders/CompositeMaterialUnitAD.gdshader")
-	#export_path_dialog = EditorFileDialog.new()
-	#export_path_dialog.file_mode = EditorFileDialog.FILE_MODE_SAVE_FILE
-	#export_path_dialog.current_file = "Unnamed Material.cpm"
-	#
-	#EditorInterface.get_base_control().add_child(export_path_dialog)
-	
-func build_material() -> void:
-	print("rebuilding material")
+func build_material(shaded : bool = true) -> void:
+	print("rebuilding material " + resource_path)
 	if previous_layers_size != layers.size():
 		var new_shader = Shader.new()
-		new_shader.set_code(compose_shader_code(layers.size()))
+		new_shader.set_code(compose_shader_code(layers.size(), shaded))
 		shader = new_shader
 		
 	clear_all_shader_parameters()
@@ -66,6 +57,8 @@ func build_material() -> void:
 		layer_idx += 1
 			
 	emit_changed()
+	print("Done building")
+	finish_building.emit()
 	#EditorInterface.get_editor_toaster().push_toast("Done building material!")
 
 #func export_material():
@@ -90,23 +83,11 @@ func update_config(new_config : CompositeMaterialLayer):
 		if new_config.get(property.name) != null:
 			set_shader_parameter("layer_" + str(layer_idx) +"_" + property.name, new_config.get(property.name))
 
-
-func get_layer_prefix(layer_idx : layer_index) -> String:
-	match layer_idx:
-		layer_index.LAYER_A:
-			return "layer_A_"
-		layer_index.LAYER_B:
-			return "layer_B_"
-		layer_index.LAYER_C:
-			return "layer_C_"
-		_:
-			return ""
-
 func clear_all_shader_parameters():
 	for param in shader.get_shader_uniform_list():
 		set_shader_parameter(param.name, null)
 
-func compose_shader_code(layer_num : int) -> String: ##Returns CompositeMaterial shader code containing [param size] layers.
+func compose_shader_code(layer_num: int, shaded: bool) -> String: ##Returns CompositeMaterial shader code containing [param size] layers.
 	var compose_sc = func compose_simple_sc(line_base : String, sc_size : int) -> String:
 		var result : String
 		for i in sc_size:
@@ -117,7 +98,11 @@ func compose_shader_code(layer_num : int) -> String: ##Returns CompositeMaterial
 	
 	var strings = load("res://addons/CompositeMaterial/shader_composition_strings.gd")
 	
-	var result : String = strings.base_string
+	var result : String
+	if shaded:
+		result = strings.render_mode_shaded_string + strings.base_string
+	else:
+		result = strings.render_mode_unshaded_string + strings.base_string
 	
 	var parameters : String
 	var fragment_snippets : String
@@ -169,6 +154,7 @@ func compose_shader_code(layer_num : int) -> String: ##Returns CompositeMaterial
 	result = result.replace("%get_layer_uv_mask_max_sc", compose_sc.call(strings.get_layer_UV_mask_max_string, layer_num))
 	
 	var end_time = Time.get_ticks_msec()
-	EditorInterface.get_editor_toaster().push_toast("Rewrote shader in " + str(end_time - start_time) + "ms!")
+	if Engine.is_editor_hint():
+		EditorInterface.get_editor_toaster().push_toast("Rewrote shader in " + str(end_time - start_time) + "ms!")
 	
 	return result
