@@ -1,7 +1,3 @@
-shader_type spatial;
-
-render_mode cull_disabled, depth_prepass_alpha;
-
 uniform int albedo_channel = 0;
 
 group_uniforms vertex_displacement;
@@ -104,6 +100,12 @@ int get_layer_texture_masks_subtraction_order(int layer) {
 int get_layer_texture_mask_mix_operation(int layer) {
 	switch (layer) {
 		%get_layer_texture_mask_mix_operation_sc
+	}
+}
+
+float get_layer_texture_mask_color_ramp_value(int layer, float factor, int a_or_b) {
+	switch (layer) {
+		%get_layer_texture_mask_color_ramp_value_sc
 	}
 }
 
@@ -221,6 +223,8 @@ float get_texture_mask_for_layer(int layer, vec2 mask_a_uv, vec2 mask_b_uv) {
 
 	vec4 texture_mask_A_texture = get_layer_texture_mask_texture(layer, 0, mask_a_uv);
 	vec4 texture_mask_B_texture = get_layer_texture_mask_texture(layer, 1, mask_b_uv);
+	vec4 texture_mask_A_factor = vec4(get_layer_texture_mask_color_ramp_value(layer, texture_mask_A_texture.r, 0));
+	vec4 texture_mask_B_factor = vec4(get_layer_texture_mask_color_ramp_value(layer, texture_mask_B_texture.r, 1));
 
 	int texture_masks_subtraction_order = get_layer_texture_masks_subtraction_order(layer);
 
@@ -229,20 +233,20 @@ float get_texture_mask_for_layer(int layer, vec2 mask_a_uv, vec2 mask_b_uv) {
 
 	switch (get_layer_texture_mask_mix_operation(layer)) {
 		case 0:
-			texture_mask_mix = (texture_mask_A_texture.r * texture_mask_A_texture.a * float(texture_mask_A_enabled)) + (texture_mask_B_texture.r * texture_mask_B_texture.a * float(texture_mask_B_enabled));
+			texture_mask_mix = (texture_mask_A_factor.r * texture_mask_A_factor.a * float(texture_mask_A_enabled)) + (texture_mask_B_factor.r * texture_mask_B_factor.a * float(texture_mask_B_enabled));
 			break;
 		case 1:
 			switch (texture_masks_subtraction_order) {
 				case 0:
-					texture_mask_mix = (texture_mask_A_texture.r * texture_mask_A_texture.a * float(texture_mask_A_enabled)) - (texture_mask_B_texture.r * texture_mask_B_texture.a * float(texture_mask_B_enabled));
+					texture_mask_mix = (texture_mask_A_factor.r * texture_mask_A_factor.a * float(texture_mask_A_enabled)) - (texture_mask_B_factor.r * texture_mask_B_factor.a * float(texture_mask_B_enabled));
 					break;
 				case 1:
-					texture_mask_mix = (texture_mask_B_texture.r * texture_mask_B_texture.a * float(texture_mask_B_enabled)) - (texture_mask_A_texture.r * texture_mask_A_texture.a * float(texture_mask_A_enabled));
+					texture_mask_mix = (texture_mask_B_factor.r * texture_mask_B_factor.a * float(texture_mask_B_enabled)) - (texture_mask_A_factor.r * texture_mask_A_factor.a * float(texture_mask_A_enabled));
 					break;
 			}
 			break;
 		case 2:
-			texture_mask_mix = texture_mask_A_texture.r * texture_mask_B_texture.r;
+			texture_mask_mix = texture_mask_A_factor.r * texture_mask_B_factor.r;
 			break;
 	}
 
@@ -345,10 +349,10 @@ float get_uv_mask_for_layer(int layer, vec2 uv) {
 }
 
 float get_layer_mask_step_mix(int layer, int step, vec2 uv1, vec2 uv2, vec3 local_surface_normal, vec3 global_surface_normal, vec3 local_vertex_position, vec3 global_vertex_position) {
-	vec2 mask_a_uv = (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(1, 5) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(layer, 5) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(layer, 5) == 1)) * float(layer == 3);
-	vec2 mask_b_uv = (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(1, 6) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(layer, 6) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(layer, 6) == 1)) * float(layer == 3);
+	vec2 mask_a_uv = (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(layer, 5) == 1));
+	vec2 mask_b_uv = (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(layer, 6) == 1));
 
-	vec2 uv_mask_uv = (uv1 * float(get_layer_map_uv_index(1, 7) == 0) + uv2 * float(get_layer_map_uv_index(1, 7) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(2, 7) == 0) + uv2 * float(get_layer_map_uv_index(2, 7) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(3, 7) == 0) + uv2 * float(get_layer_map_uv_index(3, 7) == 1)) * float(layer == 3);
+	vec2 uv_mask_uv = (uv1 * float(get_layer_map_uv_index(layer, 7) == 0) + uv2 * float(get_layer_map_uv_index(layer, 7) == 1));
 
 	vec2 normal_map_uv = uv1 * float(get_layer_map_uv_index(layer, 0) == 0) + uv2 * float(get_layer_map_uv_index(layer, 0) == 1);
 

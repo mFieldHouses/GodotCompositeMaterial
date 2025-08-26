@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://ddg8cw7bww7sv"]
+[gd_scene load_steps=2 format=3 uid="uid://ddg8cw7bww7sv"]
+
+[ext_resource type="Script" uid="uid://dh2qybav5agab" path="res://addons/CompositeMaterial/studio/main_scene.gd" id="1_lfrno"]
 
 [node name="MainScene" type="Control"]
 layout_mode = 3
@@ -7,3 +9,37 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_lfrno")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+offset_right = 1152.0
+offset_bottom = 648.0
+size_flags_vertical = 3
+
+[node name="Toolbar" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Load" type="Button" parent="VBox/Toolbar"]
+layout_mode = 2
+text = "Load"
+flat = true
+
+[node name="Bake" type="Button" parent="VBox/Toolbar"]
+layout_mode = 2
+text = "Bake"
+flat = true
+
+[node name="Viewport" type="Control" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Tabs" type="TabContainer" parent="VBox/Viewport"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="button_down" from="VBox/Toolbar/Load" to="." method="_on_load_button_down"]

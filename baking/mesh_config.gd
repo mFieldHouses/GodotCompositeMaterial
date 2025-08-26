@@ -10,14 +10,19 @@ func _ready():
 
 func _process(delta: float) -> void:
 	if background:
-		get_node("Mesh/VBoxContainer/header/VBoxContainer/source_mesh_name/options").get_popup().set_item_disabled(5, background.currently_copied_config == null)
+		get_node("Mesh/VBoxContainer/header/VBoxContainer/source_mesh_name/options").get_popup().set_item_disabled(1, background.currently_copied_config == null)
 	pass
 
 func config_option_pressed(idx : int):
+	print(idx)
 	match idx:
 		0:
 			background.copy_current_config()
 		1:
 			background.paste_onto_current_config()
-		4:
+		3:
 			background.copy_current_config_to_all()
+		4:
+			background.copy_current_config_to_enabled(true)
+		5:
+			background.copy_current_config_to_enabled(false)

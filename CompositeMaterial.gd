@@ -4,11 +4,15 @@ class_name CompositeMaterial
 
 signal finish_building
 
+var requires_building : bool = false
+
 @export var layers : Array[CompositeMaterialLayer]: #Array of resources storing parameters of seperate layers
 	set(x):
 		previous_layers_size = layers.size()
 		layers = x
 		build_material()
+		
+@export var autolock_material : bool = true ##Prevents the material from rewriting and recompiling the shader code automatically, reducing lag upon startup significantly.
 
 var previous_layers_size : int = 0
 	
@@ -26,14 +30,14 @@ enum layer_index {LAYER_A = 0, LAYER_B = 1, LAYER_C = 2}
 #@export var base_metallic_map : Texture2D
 var export_path_dialog : EditorFileDialog
 
-@export var offset_noise_by_world_transform : bool = false
-@export var enable_alpha : bool = false: ##Enable this if you want to have partially transparent materials. Can take a big impact on perfomance if used excessively.
-	set(x):
-		enable_alpha = x
-		build_material()
 	
 func build_material(shaded : bool = true) -> void:
-	print("rebuilding material " + resource_path)
+	if !Engine.is_editor_hint() and autolock_material:
+		print("skipping building material ", self)
+		return
+	
+	print("rebuilding material ", self)
+	
 	if previous_layers_size != layers.size():
 		var new_shader = Shader.new()
 		new_shader.set_code(compose_shader_code(layers.size(), shaded))
@@ -78,7 +82,7 @@ func build_material(shaded : bool = true) -> void:
 
 func update_config(new_config : CompositeMaterialLayer):
 	var layer_idx = layers.find(new_config) + 1
-	print("update config for layer ", layer_idx)
+	#print("update config for layer ", layer_idx)
 	for property in new_config.get_property_list():
 		if new_config.get(property.name) != null:
 			set_shader_parameter("layer_" + str(layer_idx) +"_" + property.name, new_config.get(property.name))
@@ -133,6 +137,7 @@ func compose_shader_code(layer_num: int, shaded: bool) -> String: ##Returns Comp
 	result = result.replace("%get_layer_texture_mask_enabled_sc", compose_sc.call(strings.get_layer_texture_mask_enabled_string, layer_num))
 	result = result.replace("%get_layer_texture_masks_subtraction_order_sc", compose_sc.call(strings.get_layer_texture_masks_subtraction_order_string, layer_num))
 	result = result.replace("%get_layer_texture_mask_mix_operation_sc", compose_sc.call(strings.get_layer_texture_mask_mix_operation_string, layer_num))
+	result = result.replace("%get_layer_texture_mask_color_ramp_value_sc", compose_sc.call(strings.get_layer_texture_mask_color_ramp_value_string, layer_num))
 	result = result.replace("%get_layer_directional_mask_mode_sc", compose_sc.call(strings.get_layer_directional_mask_mode_string, layer_num))
 	result = result.replace("%get_layer_directional_mask_space_sc", compose_sc.call(strings.get_layer_directional_mask_space_string, layer_num))
 	result = result.replace("%get_layer_directional_mask_color_ramp_value_sc", compose_sc.call(strings.get_layer_directional_mask_color_ramp_value_string, layer_num))
@@ -158,3 +163,9 @@ func compose_shader_code(layer_num: int, shaded: bool) -> String: ##Returns Comp
 		EditorInterface.get_editor_toaster().push_toast("Rewrote shader in " + str(end_time - start_time) + "ms!")
 	
 	return result
+
+
+#func _get(property: StringName):
+	#if property == "shader":
+		#build_material()
+		#requires_building = true

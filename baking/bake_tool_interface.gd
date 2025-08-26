@@ -77,7 +77,7 @@ func open_model(path : String):
 			update_mesh_label(new_mesh_config)
 			
 			var mesh = child.duplicate()
-			$bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer/preview_viewport/meshes.add_child(mesh)
+			$bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/viewport_background/SubViewportContainer/preview_viewport/meshes.add_child(mesh)
 			mesh.position = Vector3(0,0,0)
 			mesh.visible = false
 		
@@ -95,7 +95,7 @@ func select_mesh(mesh_name):
 	%General.visible = false #Switch from General tab to Mesh tab if General tab was being viewed. TabContainer automatically takes care of this.
 
 func show_mesh_in_viewport(mesh_name):
-	for mesh in $bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/SubViewportContainer/preview_viewport/meshes.get_children():
+	for mesh in $bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/viewport_background/SubViewportContainer/preview_viewport/meshes.get_children():
 		if mesh.name == mesh_name:
 			mesh.visible = true
 		else:
@@ -151,7 +151,7 @@ func save_config(test = ""):
 func update_mesh_label(config : MeshBakingConfig):
 	get_node("bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/mesh_list_scroll/VBoxContainer").get_node(config.source_mesh_name).get_node("label/text").update_name(config.source_mesh_name, config.output_name, config.supported)
 
-func update_all_mesh_names():
+func update_all_mesh_labels():
 	for config in mesh_configs:
 		config = mesh_configs[config]
 		update_mesh_label(config)
@@ -169,20 +169,33 @@ func copy_property_to_enabled(property_name : String, state : bool):
 
 
 func copy_current_config():
+	print("copy")
 	currently_copied_config = currently_edited_config
 
 func paste_onto_current_config():
+	print("paste")
 	currently_edited_config.paste(currently_copied_config)
-	load_config(currently_edited_config)
+	load_config(currently_edited_config) #No saving because the changes are pasted directly to the target config. Just load immediately and done
 	update_mesh_label(currently_edited_config)
 
 func copy_current_config_to_all():
+	print("copy to all")
 	copy_current_config()
 	
 	for config in mesh_configs:
 		mesh_configs[config].paste(currently_copied_config)
 	
-	update_all_mesh_names()
+	update_all_mesh_labels()
+
+func copy_current_config_to_enabled(state : bool):
+	print("copy to enabled ", state)
+	for mesh_name in mesh_configs:
+		var mesh_config : MeshBakingConfig = mesh_configs[mesh_name]
+		
+		if mesh_config.enabled == state:
+			mesh_config.paste(currently_edited_config)
+	
+	update_all_mesh_labels()
 
 func update_num_selected():
 	var num_selected : int = 0
@@ -257,7 +270,14 @@ func _on_bake_button_down() -> void:
 	await editor_file_system.filesystem_changed
 	
 	if generate_model:
-		save_model(meshes_to_bake)
+		match generation_mode:
+			1:
+				save_model(meshes_to_bake)
+			2:	
+				var meshes : Array[MeshBakingConfig]
+				for mesh_name in mesh_configs:
+					meshes.append(mesh_configs[mesh_name])
+				save_model(meshes)
 	
 	get_node("bake_tool_interface/VBoxContainer/option_buttons/cancel").text = "Close"
 
@@ -283,9 +303,14 @@ func pre_bake_error_screen(errors : Array, can_proceed : bool): ##Returns whethe
 
 func save_model(mesh_configs : Array[MeshBakingConfig]): ##Saves a collection of meshes in a .tscn file
 	var scene = PackedScene.new()
+	var scene_root = Node3D.new()
+	var scene_name : PackedStringArray = model_output_path.get_basename().split("/")
+	scene_root.name = scene_name[scene_name.size() - 1]
 	
 	for mesh_config in mesh_configs:
 		var mesh_to_save : MeshInstance3D = model.get_node(mesh_config.source_mesh_name).duplicate()
+		
+		print(mesh_to_save.get_active_material(0))
 		
 		var new_material : StandardMaterial3D = StandardMaterial3D.new()
 		if mesh_config.bake_albedo:
@@ -294,12 +319,16 @@ func save_model(mesh_configs : Array[MeshBakingConfig]): ##Saves a collection of
 			new_material.roughness_texture = load(mesh_config.roughness_tex_path)
 		if mesh_config.bake_metallic:
 			new_material.metallic_texture = load(mesh_config.metallic_tex_path)
+			new_material.metallic = 1
 		if mesh_config.bake_normal:
 			new_material.normal_texture = load(mesh_config.normal_tex_path)
+			new_material.normal_enabled = true
 		mesh_to_save.set_surface_override_material(0, new_material)
 		
-		scene.pack(mesh_to_save)
+		scene_root.add_child(mesh_to_save)
+		mesh_to_save.owner = scene_root
 	
+	scene.pack(scene_root)
 	ResourceSaver.save(scene, model_output_path)
 
 func _on_browse_path_button_down() -> void:

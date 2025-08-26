@@ -126,8 +126,10 @@ uniform float layer_C_post_effect_parameter_3 = 0.0;
 group_uniforms layer_C.texture_masks;
 uniform bool layer_C_texture_mask_A_enabled = true;
 uniform sampler2D layer_C_texture_mask_A : hint_default_transparent;
+uniform sampler2D layer_C_texture_mask_A_color_ramp : hint_default_transparent;
 uniform bool layer_C_texture_mask_B_enabled = false;
 uniform sampler2D layer_C_texture_mask_B : hint_default_transparent;
+uniform sampler2D layer_C_texture_mask_B_color_ramp : hint_default_transparent;
 
 /**
  * What operation will be executed to mix masks A and B together. Depending on the mixing operation, the "Enabled" property per mask may be ignored.
@@ -303,8 +305,10 @@ uniform float layer_B_post_effect_parameter_3 = 0.0;
 group_uniforms layer_B.texture_masks;
 uniform bool layer_B_texture_mask_A_enabled = true;
 uniform sampler2D layer_B_texture_mask_A : hint_default_transparent;
+uniform sampler2D layer_B_texture_mask_A_color_ramp : hint_default_transparent;
 uniform bool layer_B_texture_mask_B_enabled = false;
 uniform sampler2D layer_B_texture_mask_B : hint_default_transparent;
+uniform sampler2D layer_B_texture_mask_B_color_ramp : hint_default_transparent;
 
 /**
  * What operation will be executed to mix masks A and B together. Depending on the mixing operation, the "Enabled" property per mask may be ignored.
@@ -478,8 +482,10 @@ uniform float layer_A_post_effect_parameter_3 = 0.0;
 group_uniforms layer_A.texture_masks;
 uniform bool layer_A_texture_mask_A_enabled = true;
 uniform sampler2D layer_A_texture_mask_A : hint_default_transparent;
+uniform sampler2D layer_A_texture_mask_A_color_ramp : hint_default_transparent;
 uniform bool layer_A_texture_mask_B_enabled = false;
 uniform sampler2D layer_A_texture_mask_B : hint_default_transparent;
+uniform sampler2D layer_A_texture_mask_B_color_ramp : hint_default_transparent;
 
 /**
  * What operation will be executed to mix masks A and B together. Depending on the mixing operation, the "Enabled" property per mask may be ignored.
@@ -758,6 +764,20 @@ int get_layer_texture_mask_mix_operation(int layer) {
 	}
 }
 
+float get_layer_texture_mask_color_ramp_value(int layer, float factor, int a_or_b) {
+	switch (layer) {
+		case 1:
+			vec2 color_ramp_factor = texture(layer_A_texture_mask_A_color_ramp, vec2((factor * 0.98) + 0.01)).ra * float(a_or_b == 0) + texture(layer_A_texture_mask_B_color_ramp, vec2((factor * 0.98) + 0.01)).ra * float(a_or_b);
+			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
+		case 2:
+			vec2 color_ramp_factor = texture(layer_B_texture_mask_A_color_ramp, vec2((factor * 0.98) + 0.01)).ra * float(a_or_b == 0) + texture(layer_B_texture_mask_B_color_ramp, vec2((factor * 0.98) + 0.01)).ra * float(a_or_b);
+			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
+		case 3:
+			vec2 color_ramp_factor = texture(layer_C_texture_mask_A_color_ramp, vec2((factor * 0.98) + 0.01)).ra * float(a_or_b == 0) + texture(layer_C_texture_mask_B_color_ramp, vec2((factor * 0.98) + 0.01)).ra * float(a_or_b);
+			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
+	}
+}
+
 int get_layer_directional_mask_mode(int layer) {
 	switch (layer) {
 		case 1:
@@ -866,7 +886,7 @@ int get_layer_vertex_color_mask_mode(int layer) {
 float get_layer_vertex_color_mask_color_ramp_value(int layer, float factor) {
 	switch (layer) {
 		case 1:
-			vec4 color_ramp_color = texture(layer_A_vertex_color_mask_color_ramp, vec2((factor * 0.98) + 0.01, 0)); 
+			vec4 color_ramp_color = texture(layer_A_vertex_color_mask_color_ramp, vec2((factor * 0.98) + 0.01, 0));
 			return mix(factor, color_ramp_color.r, color_ramp_color.a);
 		case 2:
 			vec4 color_ramp_color = texture(layer_B_vertex_color_mask_color_ramp, vec2((factor * 0.98) + 0.01, 0));
@@ -981,6 +1001,8 @@ float get_texture_mask_for_layer(int layer, vec2 mask_a_uv, vec2 mask_b_uv) {
 
 	vec4 texture_mask_A_texture = get_layer_texture_mask_texture(layer, 0, mask_a_uv);
 	vec4 texture_mask_B_texture = get_layer_texture_mask_texture(layer, 1, mask_b_uv);
+	vec4 texture_mask_A_factor = vec4(get_layer_texture_mask_color_ramp_value(layer, texture_mask_A_texture.r, 0));
+	vec4 texture_mask_B_factor = vec4(get_layer_texture_mask_color_ramp_value(layer, texture_mask_B_texture.r, 1));
 
 	int texture_masks_subtraction_order = get_layer_texture_masks_subtraction_order(layer);
 
@@ -989,20 +1011,20 @@ float get_texture_mask_for_layer(int layer, vec2 mask_a_uv, vec2 mask_b_uv) {
 
 	switch (get_layer_texture_mask_mix_operation(layer)) {
 		case 0:
-			texture_mask_mix = (texture_mask_A_texture.r * texture_mask_A_texture.a * float(texture_mask_A_enabled)) + (texture_mask_B_texture.r * texture_mask_B_texture.a * float(texture_mask_B_enabled));
+			texture_mask_mix = (texture_mask_A_factor.r * texture_mask_A_factor.a * float(texture_mask_A_enabled)) + (texture_mask_B_factor.r * texture_mask_B_factor.a * float(texture_mask_B_enabled));
 			break;
 		case 1:
 			switch (texture_masks_subtraction_order) {
 				case 0:
-					texture_mask_mix = (texture_mask_A_texture.r * texture_mask_A_texture.a * float(texture_mask_A_enabled)) - (texture_mask_B_texture.r * texture_mask_B_texture.a * float(texture_mask_B_enabled));
+					texture_mask_mix = (texture_mask_A_factor.r * texture_mask_A_factor.a * float(texture_mask_A_enabled)) - (texture_mask_B_factor.r * texture_mask_B_factor.a * float(texture_mask_B_enabled));
 					break;
 				case 1:
-					texture_mask_mix = (texture_mask_B_texture.r * texture_mask_B_texture.a * float(texture_mask_B_enabled)) - (texture_mask_A_texture.r * texture_mask_A_texture.a * float(texture_mask_A_enabled));
+					texture_mask_mix = (texture_mask_B_factor.r * texture_mask_B_factor.a * float(texture_mask_B_enabled)) - (texture_mask_A_factor.r * texture_mask_A_factor.a * float(texture_mask_A_enabled));
 					break;
 			}
 			break;
 		case 2:
-			texture_mask_mix = texture_mask_A_texture.r * texture_mask_B_texture.r;
+			texture_mask_mix = texture_mask_A_factor.r * texture_mask_B_factor.r;
 			break;
 	}
 

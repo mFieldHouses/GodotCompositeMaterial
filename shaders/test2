@@ -62,8 +62,10 @@ uniform float layer_A_post_effect_parameter_3 = 0.0;
 
 uniform bool layer_A_texture_mask_A_enabled = true;
 uniform sampler2D layer_A_texture_mask_A : hint_default_transparent;
+uniform sampler2D layer_A_texture_mask_A_color_ramp : hint_default_transparent;
 uniform bool layer_A_texture_mask_B_enabled = false;
 uniform sampler2D layer_A_texture_mask_B : hint_default_transparent;
+uniform sampler2D layer_A_texture_mask_B_color_ramp : hint_default_transparent;
 
 uniform int layer_A_texture_masks_mix_operation: hint_enum("Add", "Subtract", "Multiply") = 0;
 

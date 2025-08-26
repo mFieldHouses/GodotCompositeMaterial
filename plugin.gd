@@ -30,7 +30,7 @@ func _enter_tree() -> void:
 	#Add tab and scene for CPM studio
 	studio_main_scene_instance = studio_main_scene.instantiate()
 	EditorInterface.get_editor_main_screen().add_child(studio_main_scene_instance)
-	#studio_main_scene_instance.visible = false
+	studio_main_scene_instance.visible = false
 	
 func _exit_tree() -> void:
 	remove_custom_type("CompositeMaterial")
@@ -50,6 +50,9 @@ func _has_main_screen():
 func _get_plugin_name():
 	return "CPM Studio"
 
+func _make_visible(visible):
+	if studio_main_scene_instance:
+		studio_main_scene_instance.visible = visible
 
 func _get_plugin_icon():
 	# Must return some kind of Texture for the icon.

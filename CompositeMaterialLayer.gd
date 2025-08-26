@@ -103,8 +103,10 @@ signal parameter_changed
 @export_group("Texture Masks")
 @export var texture_mask_A_enabled := true;
 @export var texture_mask_A : Texture2D
+@export var texture_mask_A_color_ramp : Texture2D
 @export var texture_mask_B_enabled := false;
 @export var texture_mask_B : Texture2D
+@export var texture_mask_B_color_ramp : Texture2D
 
 @export_enum("Add", "Subtract", "Multiply") var texture_masks_mix_operation := 0;
 
