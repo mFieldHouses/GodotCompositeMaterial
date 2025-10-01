@@ -1257,7 +1257,7 @@ void vertex() {
 	local_vertex_normal = NORMAL.rgb;
 	global_vertex_normal = local_vertex_normal * MODEL_NORMAL_MATRIX;
 	local_vertex_pos = VERTEX.xyz;
-	global_vertex_pos = (vec4(local_vertex_normal, 1.0) * MODEL_MATRIX).xyz;
+	global_vertex_pos = (vec4(local_vertex_pos, 1.0) * MODEL_MATRIX).xyz;
 }
 
 void fragment() {

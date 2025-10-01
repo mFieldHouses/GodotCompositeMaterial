@@ -6,6 +6,8 @@ signal finish_building
 
 var requires_building : bool = false
 
+@export_multiline var material_notes : String
+
 @export var layers : Array[CompositeMaterialLayer]: #Array of resources storing parameters of seperate layers
 	set(x):
 		previous_layers_size = layers.size()
