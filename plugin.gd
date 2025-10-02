@@ -48,7 +48,7 @@ func _has_main_screen():
 
 
 func _get_plugin_name():
-	return "CPM Studio"
+	return "CM Studio"
 
 func _make_visible(visible):
 	if studio_main_scene_instance:

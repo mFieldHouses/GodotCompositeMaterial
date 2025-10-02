@@ -1,8 +1,56 @@
-[gd_scene load_steps=2 format=3 uid="uid://ddg8cw7bww7sv"]
+[gd_scene load_steps=19 format=3 uid="uid://ddg8cw7bww7sv"]
 
 [ext_resource type="Script" uid="uid://dh2qybav5agab" path="res://addons/CompositeMaterial/studio/main_scene.gd" id="1_lfrno"]
+[ext_resource type="Script" uid="uid://cop36pp6nbsr3" path="res://addons/CompositeMaterial/studio/camera.gd" id="2_l4ul5"]
+[ext_resource type="Script" uid="uid://ch48q06fetyx1" path="res://addons/CompositeMaterial/studio/toolbar.gd" id="2_whta4"]
+[ext_resource type="Shader" uid="uid://2dh83rsrewy8" path="res://addons/CompositeMaterial/studio/floor_grid.gdshader" id="3_f60qu"]
+[ext_resource type="Texture2D" uid="uid://b0qk5jcgbuiu3" path="res://assets/textures/hdri/free hdr_map_808.jpg" id="4_4xuos"]
+[ext_resource type="Texture2D" uid="uid://52hc2kiwdedv" path="res://addons/CompositeMaterial/studio/grid.png" id="4_whta4"]
+[ext_resource type="Script" uid="uid://m46rks1gp5no" path="res://addons/CompositeMaterial/studio/grid_settings.gd" id="6_nxdy4"]
+[ext_resource type="Script" uid="uid://c01mmlfu4wmc6" path="res://addons/CompositeMaterial/studio/material_list.gd" id="7_l3rff"]
 
-[node name="MainScene" type="Control"]
+[sub_resource type="Gradient" id="Gradient_l4ul5"]
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.42745098)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ekmql"]
+gradient = SubResource("Gradient_l4ul5")
+width = 1024
+height = 1024
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f60qu"]
+texture = SubResource("GradientTexture2D_ekmql")
+
+[sub_resource type="SphereMesh" id="SphereMesh_lfrno"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_l3rff"]
+panorama = ExtResource("4_4xuos")
+
+[sub_resource type="Sky" id="Sky_mh6i6"]
+sky_material = SubResource("PanoramaSkyMaterial_l3rff")
+
+[sub_resource type="Environment" id="Environment_lfrno"]
+background_mode = 2
+sky = SubResource("Sky_mh6i6")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nxdy4"]
+render_priority = 0
+shader = ExtResource("3_f60qu")
+shader_parameter/grid_texture = ExtResource("4_whta4")
+shader_parameter/transparency = 0.49
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_l4ul5"]
+material = SubResource("ShaderMaterial_nxdy4")
+size = Vector2(40, 40)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l3rff"]
+bg_color = Color(0, 0, 0, 0.2509804)
+border_width_top = 1
+border_width_bottom = 1
+expand_margin_bottom = 2.0
+
+[node name="MainScene" type="Control" groups=["root_control"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,13 +60,14 @@ grow_vertical = 2
 script = ExtResource("1_lfrno")
 
 [node name="VBox" type="VBoxContainer" parent="."]
-layout_mode = 2
+layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 size_flags_vertical = 3
 
 [node name="Toolbar" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
+script = ExtResource("2_whta4")
 
 [node name="Load" type="Button" parent="VBox/Toolbar"]
 layout_mode = 2
@@ -26,20 +75,234 @@ text = "Load"
 flat = true
 
 [node name="Bake" type="Button" parent="VBox/Toolbar"]
+visible = false
 layout_mode = 2
 text = "Bake"
 flat = true
 
+[node name="View" type="MenuButton" parent="VBox/Toolbar"]
+layout_mode = 2
+text = "View"
+item_count = 1
+popup/item_0/text = "Grid options..."
+popup/item_0/id = 0
+
+[node name="Lighting" type="MenuButton" parent="VBox/Toolbar"]
+layout_mode = 2
+text = "Lighting & Environment"
+item_count = 6
+popup/item_0/text = "Lighting type"
+popup/item_0/id = 0
+popup/item_0/separator = true
+popup/item_1/text = "1-Point"
+popup/item_1/id = 1
+popup/item_2/text = "3-Point"
+popup/item_2/id = 2
+popup/item_3/text = "Directional"
+popup/item_3/id = 5
+popup/item_4/text = "Configuration"
+popup/item_4/id = 3
+popup/item_4/separator = true
+popup/item_5/text = "Relative to camera"
+popup/item_5/checkable = 1
+popup/item_5/id = 4
+
+[node name="Environment" type="MenuButton" parent="VBox/Toolbar"]
+layout_mode = 2
+text = "Environment"
+item_count = 5
+popup/item_0/text = "HDRI Enabled"
+popup/item_0/checkable = 1
+popup/item_0/id = 0
+popup/item_1/text = "HDRI"
+popup/item_1/id = 1
+popup/item_1/separator = true
+popup/item_2/text = "Studio"
+popup/item_2/checkable = 2
+popup/item_2/id = 2
+popup/item_3/text = "Clear Skies"
+popup/item_3/checkable = 2
+popup/item_3/id = 3
+popup/item_4/text = "Overcast"
+popup/item_4/checkable = 2
+popup/item_4/id = 4
+
+[node name="TabBar" type="TabBar" parent="VBox"]
+layout_mode = 2
+
 [node name="Viewport" type="Control" parent="VBox"]
+clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Tabs" type="TabContainer" parent="VBox/Viewport"]
+[node name="Panel" type="Panel" parent="VBox/Viewport"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_f60qu")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="VBox/Viewport"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="VBox/Viewport/SubViewportContainer"]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1152, 609)
+render_target_update_mode = 4
+
+[node name="camera_pivot" type="Node3D" parent="VBox/Viewport/SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.85165375, 0.52410483, 0, -0.52410483, 0.85165375, 0, 0, 0)
+
+[node name="camera" type="Camera3D" parent="VBox/Viewport/SubViewportContainer/SubViewport/camera_pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+script = ExtResource("2_l4ul5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="VBox/Viewport/SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+visible = false
+mesh = SubResource("SphereMesh_lfrno")
+
+[node name="environment" type="WorldEnvironment" parent="VBox/Viewport/SubViewportContainer/SubViewport"]
+unique_name_in_owner = true
+environment = SubResource("Environment_lfrno")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="VBox/Viewport/SubViewportContainer/SubViewport"]
+transform = Transform3D(0.5920132, 0.55374324, -0.58556706, 0, 0.72657466, 0.6870875, 0.8059283, -0.40676484, 0.43014178, 0, 0, 0)
+shadow_enabled = true
+
+[node name="ground_plane" type="MeshInstance3D" parent="VBox/Viewport/SubViewportContainer/SubViewport"]
+unique_name_in_owner = true
+mesh = SubResource("PlaneMesh_l4ul5")
+
+[node name="close_model" type="Button" parent="VBox/Viewport"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -59.0
+offset_top = 8.0
+offset_right = -9.0
+offset_bottom = 39.0
+grow_horizontal = 0
+text = "Close"
+
+[node name="toolbar" type="MarginContainer" parent="VBox/Viewport"]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 41.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBox/Viewport/toolbar"]
+layout_mode = 2
+
+[node name="bake" type="Button" parent="VBox/Viewport/toolbar/HBoxContainer"]
+layout_mode = 2
+text = "Bake Model"
+
+[node name="import_settings" type="Button" parent="VBox/Viewport/toolbar/HBoxContainer"]
+layout_mode = 2
+text = "Model Import Settings..."
+
+[node name="material_list" type="Control" parent="VBox/Viewport"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 1
+anchors_preset = 0
+offset_left = 14.0
+offset_top = 45.0
+offset_right = 214.0
+offset_bottom = 160.0
+script = ExtResource("7_l3rff")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBox/Viewport/material_list"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 1
+offset_right = 200.0
+offset_bottom = 65.0
+mouse_behavior_recursive = 2
+
+[node name="drag" type="Panel" parent="VBox/Viewport/material_list/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+mouse_behavior_recursive = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l3rff")
+
+[node name="Label" type="Label" parent="VBox/Viewport/material_list/VBoxContainer/drag"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Material List"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="material_list" type="VBoxContainer" parent="VBox/Viewport/material_list/VBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="VBox/Viewport/material_list/VBoxContainer/material_list"]
+layout_mode = 2
+text = "test"
+
+[node name="grid_settings" type="Window" parent="."]
+unique_name_in_owner = true
+oversampling_override = 1.0
+size = Vector2i(300, 200)
+visible = false
+script = ExtResource("6_nxdy4")
+
+[node name="MarginContainer" type="MarginContainer" parent="grid_settings"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBox" type="VBoxContainer" parent="grid_settings/MarginContainer"]
+layout_mode = 2
+
+[node name="visible" type="CheckBox" parent="grid_settings/MarginContainer/VBox"]
+layout_mode = 2
+button_pressed = true
+text = "Grid Visible"
+
+[node name="HSeparator" type="HSeparator" parent="grid_settings/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="opacity_lbl" type="Label" parent="grid_settings/MarginContainer/VBox"]
+layout_mode = 2
+text = "Grid Opacity"
+
+[node name="opacity" type="HSlider" parent="grid_settings/MarginContainer/VBox"]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.5
+
+[node name="size_lbl" type="Label" parent="grid_settings/MarginContainer/VBox"]
+layout_mode = 2
+text = "Grid Size"
+
+[node name="size" type="HSlider" parent="grid_settings/MarginContainer/VBox"]
+layout_mode = 2
+value = 10.0
 
 [connection signal="button_down" from="VBox/Toolbar/Load" to="." method="_on_load_button_down"]
