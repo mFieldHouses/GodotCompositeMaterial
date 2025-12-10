@@ -24,6 +24,10 @@ var model_output_path : String = "":
 		model_output_path = x
 		%General/VBoxContainer/output_model_path/model_output_path.text = x
 
+
+
+
+
 func setup(init_path : String = ""):
 	var editor_settings = EditorInterface.get_editor_settings()
 	var new_stylebox = StyleBoxFlat.new()
@@ -48,7 +52,17 @@ func setup(init_path : String = ""):
 	
 	%General/VBoxContainer/generate_model.toggled.connect(func x(x): generate_model = x)
 	%General/VBoxContainer/generation_mode.get_popup().id_pressed.connect(func x(x): generation_mode = x)
-
+	
+	print("has cached config: ", _model_has_cached_config())
+	$bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/model_name/retrieve_config.disabled = !_model_has_cached_config()
+	$bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/model_name/retrieve_config.pressed.connect(_recover_cached_config)
+	
+	
+	
+	
+	
+	
+	
 func open_model(path : String):
 	model = load(path).instantiate()
 	model_name = model.name
@@ -91,12 +105,23 @@ func open_model(path : String):
 	
 	select_mesh(mesh_configs.keys()[0])
 	
+	
+	
+	
+	
+	
+	
 func select_mesh(mesh_name):
-	save_config()
-	load_config(mesh_configs[mesh_name])
+	save_mesh_config()
+	load_mesh_config(mesh_configs[mesh_name])
 	update_num_selected()
 	show_mesh_in_viewport(mesh_name)
 	%General.visible = false #Switch from General tab to Mesh tab if General tab was being viewed. TabContainer automatically takes care of this.
+
+
+
+
+
 
 func show_mesh_in_viewport(mesh_name):
 	for mesh in $bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/Mesh/VBoxContainer/header/viewport_background/SubViewportContainer/preview_viewport/meshes.get_children():
@@ -105,7 +130,12 @@ func show_mesh_in_viewport(mesh_name):
 		else:
 			mesh.visible = false
 
-func load_config(config : MeshBakingConfig):
+
+
+
+
+
+func load_mesh_config(config : Resource): #MeshBakingConfig
 	currently_edited_config = config
 	var apply_config_value_to_node = func x(value, node): if node is LineEdit or node is Label: node.text = value elif node is CheckBox or node is CheckButton: node.button_pressed = value elif node is SpinBox: node.value = value
 	
@@ -125,12 +155,16 @@ func load_config(config : MeshBakingConfig):
 	else:
 		mesh_config_ui.get_node("header/VBoxContainer/warning_unbakeable").visible = false
 	
-func save_config(test = ""):
+	
+	
+	
+	
+func save_mesh_config(test = ""):
 	
 	if currently_edited_config:
 		var config = currently_edited_config
 		
-		var save_config_value_from_node = \
+		var save_mesh_config_value_from_node = \
 			func x(value, node): 
 				var target_property_name = node.name 
 				if node is LineEdit: 
@@ -143,27 +177,73 @@ func save_config(test = ""):
 		for property in config.get_property_list():
 			for child in mesh_config_ui.get_children():
 				if child.name == property.name and !child.has_meta("ignore"):
-					save_config_value_from_node.call(config.get(property.name), child)
+					save_mesh_config_value_from_node.call(config.get(property.name), child)
 				elif child.has_node(property.name):
-					save_config_value_from_node.call(config.get(property.name), child.get_node(property.name))
+					save_mesh_config_value_from_node.call(config.get(property.name), child.get_node(property.name))
 			
 			if mesh_config_ui.get_node("header/VBoxContainer").has_node(property.name):
-				save_config_value_from_node.call(config.get(property.name), mesh_config_ui.get_node("header/VBoxContainer").get_node(property.name))
+				save_mesh_config_value_from_node.call(config.get(property.name), mesh_config_ui.get_node("header/VBoxContainer").get_node(property.name))
 			
 		update_mesh_label(config)
 
+
+
+func load_model_config(config : ModelBakingConfig) -> void:
+	mesh_configs = config.mesh_configs
+	
+	$bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/generate_model.button_pressed = config.generate_model
+	generate_model = config.generate_model
+	$bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/generation_mode.select(config.model_generation_mode)
+	generation_mode = config.model_generation_mode
+	$bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/output_model_path/model_output_path.text = config.model_output_path
+	model_output_path = config.model_output_path
+	
+	var _mesh_to_select_name : String
+	for config_name in mesh_configs:
+		load_mesh_config(mesh_configs[config_name])
+		if mesh_configs[config_name].supported:
+			_mesh_to_select_name = config_name
+	
+	select_mesh(_mesh_to_select_name)
+	
+
+func save_model_config() -> void:
+	var _new_config_file : ModelBakingConfig = ModelBakingConfig.new()
+	_new_config_file.mesh_configs = mesh_configs.duplicate(true)
+	#for _config_name in mesh_configs:
+		#ResourceSaver.save(mesh_configs[_config_name], "res://addons/CompositeMaterial/baking/configuration_cache/.mesh_baking_configs/" + _config_name + ".tres", 4)
+	#
+	_new_config_file.generate_model = $bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/generate_model.button_pressed
+	_new_config_file.model_generation_mode = $bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/generation_mode.selected
+	_new_config_file.model_output_path = $bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/output_model_path/model_output_path.text
+	
+	ResourceSaver.save(_new_config_file, "res://addons/CompositeMaterial/baking/configuration_cache/" + model_name + ".tres")
+
+
 func update_mesh_label(config : MeshBakingConfig):
 	get_node("bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/mesh_list_scroll/VBoxContainer").get_node(config.source_mesh_name).get_node("label/text").update_name(config.source_mesh_name, config.output_name, config.supported)
+
+
+
+
 
 func update_all_mesh_labels():
 	for config in mesh_configs:
 		config = mesh_configs[config]
 		update_mesh_label(config)
 
+
+
+
+
 func copy_property_to_all(property_name : String):
 	for config in mesh_configs:
 		config = mesh_configs[config]
 		config.set(property_name, currently_edited_config.get(property_name))
+
+
+
+
 
 func copy_property_to_enabled(property_name : String, state : bool):
 	for mesh_name in mesh_configs:
@@ -172,15 +252,25 @@ func copy_property_to_enabled(property_name : String, state : bool):
 			config.set(property_name, currently_edited_config.get(property_name))
 
 
+
+
+
 func copy_current_config():
 	print("copy")
 	currently_copied_config = currently_edited_config
 
+
+
+
+
 func paste_onto_current_config():
 	print("paste")
 	currently_edited_config.paste(currently_copied_config)
-	load_config(currently_edited_config) #No saving because the changes are pasted directly to the target config. Just load immediately and done
+	load_mesh_config(currently_edited_config) #No saving because the changes are pasted directly to the target config. Just load immediately and done
 	update_mesh_label(currently_edited_config)
+
+
+
 
 func copy_current_config_to_all():
 	print("copy to all")
@@ -214,7 +304,8 @@ func update_num_selected():
 	$bake_tool_interface/VBoxContainer/option_buttons/num_selected.text = str(num_selected) + " selected for baking"
 
 func _on_bake_button_down() -> void:
-	save_config()
+	save_mesh_config()
+	save_model_config()
 	
 	var meshes_to_bake : Array[MeshBakingConfig] = [] #Array of configs of meshes that ought to be baked
 	
@@ -293,7 +384,7 @@ func pre_bake_error_screen(errors : Array, can_proceed : bool): ##Returns whethe
 	
 	var text : String
 	for error in errors:
-		text = text + error + "\n"
+		text = text + " * " + error + "\n"
 	
 	new_dialog.dialog_text = text
 	add_child(new_dialog)
@@ -325,7 +416,9 @@ func save_model(mesh_configs : Array[MeshBakingConfig]): ##Saves a collection of
 		if mesh_config.bake_normal:
 			new_material.normal_texture = load(mesh_config.normal_tex_path)
 			new_material.normal_enabled = true
-		mesh_to_save.set_surface_override_material(0, new_material)
+		
+		if mesh_to_save.get_active_material(0) is CompositeMaterial:
+			mesh_to_save.set_surface_override_material(0, new_material)
 		
 		scene_root.add_child(mesh_to_save)
 		mesh_to_save.owner = scene_root
@@ -340,7 +433,7 @@ func _on_browse_path_button_down() -> void:
 	#new_file_dialog.set_filters(PackedStringArray(["*.gltf, *.fbx, *.obj ; 3D Models","*.tscn ; Godot Scenes"]))
 	
 	add_child(new_file_dialog)
-	new_file_dialog.dir_selected.connect(func x(path): currently_edited_config.output_path = path; load_config(currently_edited_config))
+	new_file_dialog.dir_selected.connect(func x(path): currently_edited_config.output_path = path; load_mesh_config(currently_edited_config))
 	new_file_dialog.canceled.connect(func cancel(): new_file_dialog.queue_free())
 	new_file_dialog.popup_centered(Vector2i(800,600))
 
@@ -354,3 +447,14 @@ func _on_browse_output_model_path_button_down() -> void:
 	new_file_dialog.file_selected.connect(func x(path): model_output_path = path)
 	new_file_dialog.canceled.connect(func cancel(): new_file_dialog.queue_free())
 	new_file_dialog.popup_centered(Vector2i(800,600))
+
+func _model_has_cached_config() -> bool:
+	return FileAccess.file_exists("res://addons/CompositeMaterial/baking/configuration_cache/" + model_name + ".tres")
+
+func _recover_cached_config() -> void:
+	var _c : Resource = load("res://addons/CompositeMaterial/baking/configuration_cache/" + model_name + ".tres")
+	#_c.set_script(load("res://addons/CompositeMaterial/baking/model_baking_config.gd"))
+	
+	var _mbc : ModelBakingConfig = _c as ModelBakingConfig
+	print(_c.mesh_configs, _mbc.mesh_configs)
+	load_model_config(_c as ModelBakingConfig)
