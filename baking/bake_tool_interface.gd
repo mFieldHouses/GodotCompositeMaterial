@@ -24,21 +24,25 @@ var model_output_path : String = "":
 		model_output_path = x
 		%General/VBoxContainer/output_model_path/model_output_path.text = x
 
-func setup():
+func setup(init_path : String = ""):
 	var editor_settings = EditorInterface.get_editor_settings()
 	var new_stylebox = StyleBoxFlat.new()
 	new_stylebox.bg_color = editor_settings.get_setting("interface/theme/base_color").darkened(0.3)
 	add_theme_stylebox_override("panel", new_stylebox)
-
-	var new_file_dialog = EditorFileDialog.new()
-	new_file_dialog.title = "Open model to bake"
-	new_file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
-	new_file_dialog.set_filters(PackedStringArray(["*.gltf, *.fbx, *.obj ; 3D Models","*.tscn ; Godot Scenes"]))
 	
-	add_child(new_file_dialog)
-	new_file_dialog.file_selected.connect(open_model)
-	new_file_dialog.canceled.connect(func cancel(): get_parent().get_parent().queue_free())
-	new_file_dialog.popup_centered(Vector2i(800,600))
+	if init_path == "":
+		var new_file_dialog = EditorFileDialog.new()
+		new_file_dialog.title = "Open model to bake"
+		new_file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
+		new_file_dialog.set_filters(PackedStringArray(["*.gltf, *.fbx, *.obj ; 3D Models","*.tscn ; Godot Scenes"]))
+		
+		add_child(new_file_dialog)
+		new_file_dialog.file_selected.connect(open_model)
+		new_file_dialog.canceled.connect(func cancel(): get_parent().get_parent().queue_free())
+		new_file_dialog.popup_centered(Vector2i(800,600))
+	
+	else:
+		open_model(init_path)
 	
 	get_node("bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list").mesh_selected.connect(select_mesh)
 	
@@ -309,8 +313,6 @@ func save_model(mesh_configs : Array[MeshBakingConfig]): ##Saves a collection of
 	
 	for mesh_config in mesh_configs:
 		var mesh_to_save : MeshInstance3D = model.get_node(mesh_config.source_mesh_name).duplicate()
-		
-		print(mesh_to_save.get_active_material(0))
 		
 		var new_material : StandardMaterial3D = StandardMaterial3D.new()
 		if mesh_config.bake_albedo:

@@ -7,7 +7,7 @@ var _dragging_offset : Vector2
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	$VBoxContainer/drag.gui_input.connect(_drag_bar_received_input)
-	get_tree().get_first_node_in_group("root_control").scene_loaded.connect(_load_scene)
+	get_tree().get_first_node_in_group("root_control").config_loaded.connect(_load_scene)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -35,8 +35,8 @@ func _toggle_collapse() -> void:
 	else:
 		$VBoxContainer/drag/Label.text = "Material List ..."
 
-func _load_scene(scene_node : Node3D) -> void:
-	_update_material_list(scene_node)
+func _load_scene(scene_config : Dictionary) -> void:
+	_update_material_list(scene_config.instance)
 
 func _update_material_list(scene : Node3D) -> void:
 	for _child in $VBoxContainer/material_list.get_children():

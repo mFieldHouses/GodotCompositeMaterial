@@ -18,13 +18,13 @@ bg_color = Color(0.120418, 0.120418, 0.120418, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_18wgi"]
 bg_color = Color(0, 0, 0, 0.196078)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8x60a"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8qnc0"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wj3ou"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_p2j5d"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wj3ou"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8qnc0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8x60a"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wj3ou"]
 bg_color = Color(0, 0, 0, 0.196078)
@@ -141,10 +141,10 @@ offset_top = 5.0
 offset_right = 260.0
 offset_bottom = 45.0
 mouse_filter = 2
-theme_override_styles/fill = SubResource("StyleBoxEmpty_8x60a")
-theme_override_styles/background = SubResource("StyleBoxEmpty_8qnc0")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_p2j5d")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_wj3ou")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_p2j5d")
+theme_override_styles/background = SubResource("StyleBoxEmpty_8qnc0")
+theme_override_styles/fill = SubResource("StyleBoxEmpty_8x60a")
 bbcode_enabled = true
 text = "asdasd [color=#808080]hi"
 fit_content = true

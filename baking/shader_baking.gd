@@ -17,7 +17,7 @@ signal baking_metallic
 signal baking_normal
 signal generating_normal_map
 
-func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name : String) -> void:
+func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name : String, temp : bool = false) -> void:
 	var viewport_result = ViewportTexture.new()
 	viewport_result.viewport_path = $baking_viewport/viewport.get_path() #We need the absolute path here. This whole window is parented to our main editor so therer's no other way for us to retrieve the absolute path.
 	
@@ -45,6 +45,9 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 		var _v3pos = MDT.get_vertex(vertex3)
 		var v3col = MDT.get_vertex_color(vertex3)
 		
+		#var uv_midpoint = (v1uv + v2uv + v3uv) / 3.0
+		#var face_size
+		
 		var _min_x = min(v1uv.x, v2uv.x, v2uv.x)
 		var _max_x = max(v1uv.x, v2uv.x, v2uv.x)
 		var _min_y = min(v1uv.y, v2uv.y, v2uv.y)
@@ -68,20 +71,6 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 		
 	$baking_viewport/viewport.size = Vector2i(config.resolution_x, config.resolution_y)
 	
-		#$SubViewportContainer/viewport.get_texture()
-		#
-		#await RenderingServer.frame_post_draw
-		#
-		#var face_result = $viewport.get_texture().get_image()
-		#face_result.convert(Image.FORMAT_RGBA8)
-		#resulting_image.blend_rect(face_result, Rect2i(Vector2i(0, 0), Vector2i(texture_size - Vector2i(1,1))), Vector2i(0,0))
-		#
-		#viewport_result.get_image().save_jpg("/home/mathias/Desktop/projects/shadowstrider/shadowstrider/output_textures/test.jpg")
-		#
-		#print("next face")
-		#
-		#previous_face = isolated_face
-	#
 	var image_to_be_saved : Image
 	
 	if config.bake_albedo:
@@ -92,6 +81,7 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 		
 		var output_path : String = config.output_path + "/" + base_name + "_albedo.png"
 		config.albedo_tex_path = output_path
+		image_expand(image_to_be_saved)
 		save_or_add_to_png(config, output_path, image_to_be_saved)
 	
 	if config.bake_roughness:
@@ -103,6 +93,7 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 
 		var output_path : String = config.output_path + "/" + base_name + "_roughness.png"
 		config.roughness_tex_path = output_path
+		image_expand(image_to_be_saved)
 		save_or_add_to_png(config, output_path, image_to_be_saved)
 	
 	if config.bake_metallic:
@@ -114,6 +105,7 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 
 		var output_path : String = config.output_path + "/" + base_name + "_metallic.png"
 		config.metallic_tex_path = output_path
+		image_expand(image_to_be_saved)
 		save_or_add_to_png(config, output_path, image_to_be_saved)
 	
 	if config.bake_normal:
@@ -128,6 +120,7 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 		
 		var output_path : String = config.output_path + "/" + base_name + "_normal.png"
 		config.normal_tex_path = output_path
+		image_expand(image_to_be_saved)
 		save_or_add_to_png(config, output_path, image_to_be_saved, true)
 	
 	for child in $baking_viewport/viewport/faces.get_children():
@@ -162,8 +155,7 @@ func save_or_add_to_png(config : MeshBakingConfig, output_path : String, image_t
 			#generate_blue_channel_from_xy_normal_map(image_to_be_saved)
 		image_to_be_saved.save_png(output_path)
 
-func fix_normal_map(input_image : Image): #Not in use, still looking for solution
-	print(input_image.get_pixel(0,0))
+func fix_normal_map(input_image : Image):
 	for x in input_image.get_width():
 		for y in input_image.get_height():
 			var color = input_image.get_pixel(x,y)
@@ -179,3 +171,48 @@ func fix_normal_map(input_image : Image): #Not in use, still looking for solutio
 			input_image.set_pixel(x,y, Color(color_vector.x, color_vector.y, color_vector.z))
 	
 	#input_image.convert(Image.FORMAT_RGB8)
+
+func image_expand(input_image : Image):
+	print("expanding image")
+	var _img_width : int = input_image.get_width()
+	var _img_height : int = input_image.get_height()
+	
+	var _new_image : Image = Image.create_empty(_img_width, _img_height, false, Image.FORMAT_RGBA8)
+	
+	for x in _img_width:
+		for y in _img_height:
+			var _pc = input_image.get_pixel(x,y)
+			if input_image.get_pixel(x,y)[0] < 0.05 and input_image.get_pixel(x,y)[1] < 0.05 and input_image.get_pixel(x,y)[2] < 0.05 or input_image.get_pixel(x,y)[3] == 0.0: #the pixel is empty/unused:
+				var _color_components : Array[Color] = []
+				
+				var _offsets_to_check = [
+							  [0, -1], 
+					[-1,  0],          [1,  0],
+							  [0,  1],
+				]
+				
+				#var _offsets_to_check = [
+					#[-1, -1], [0, -1], [1, -1],
+					#[-1,  0],          [1,  0],
+					#[-1,  1], [0,  1], [1,  1]
+				#]
+				
+				for _offset in _offsets_to_check:
+					var _p = input_image.get_pixel((x + _offset[0]) % _img_width, (y + _offset[1]) % _img_height)
+					
+					if _p[0] > 0.05 and _p[1] > 0.05 and _p[2] > 0.05:
+						_color_components.append(_p)
+				
+				if _color_components.size() > 0:
+					var _avg_color : Color
+					for _comp in _color_components:
+						_avg_color += _comp
+					
+					_avg_color /= _color_components.size()
+					
+					_new_image.set_pixel(x, y, _avg_color)
+		
+			else:
+				_new_image.set_pixel(x, y, _pc)
+	
+	input_image.copy_from(_new_image)

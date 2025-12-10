@@ -92,18 +92,50 @@ func _process(delta: float) -> void:
 				
 				idx += 1
 
+signal _choice_made(state : bool)
 func bake_popup():
+	var bake_scene : Node = load("res://addons/CompositeMaterial/baking/bake_tool_interface.tscn").instantiate()
+	
 	bake_popup_dialogue = Window.new()
 	bake_popup_dialogue.title = "CompositeMaterial Baker"
 	add_child(bake_popup_dialogue)
-	bake_popup_dialogue.popup_centered(Vector2i(800,600))
+	bake_popup_dialogue.visible = false
 	
-	var close_func = func close(): bake_popup_dialogue.queue_free()
+	var close_func = func close(): bake_popup_dialogue.visible = false
 	
 	bake_popup_dialogue.close_requested.connect(close_func)
 	
-	var bake_scene : Node = load("res://addons/CompositeMaterial/baking/bake_tool_interface.tscn").instantiate()
 	bake_popup_dialogue.add_child(bake_scene)
 	bake_scene.get_node("bake_tool_interface/VBoxContainer/option_buttons/cancel").pressed.connect(close_func)
 	
-	bake_scene.setup()
+	var _selected_scene_path : String = ""
+	if EditorInterface.get_selection().get_top_selected_nodes():
+		_selected_scene_path = EditorInterface.get_selection().get_top_selected_nodes()[0].scene_file_path
+	
+	if _selected_scene_path != "":
+		var _dg : AcceptDialog = ConfirmationDialog.new()
+		_dg.title = "Bake"
+		_dg.dialog_text = "Do you want to bake the currently selected model?"
+		_dg.cancel_button_text = "No"
+		_dg.ok_button_text = "Yes"
+		add_child(_dg)
+		_dg.popup_centered(Vector2i(100,100))
+		
+		_dg.confirmed.connect(func():
+			_choice_made.emit(true)
+			)
+		_dg.canceled.connect(func():
+			_choice_made.emit(false)
+			)
+		
+		var _result = await _choice_made
+		
+		_dg.queue_free()
+		
+		if _result:
+			bake_popup_dialogue.popup_centered(Vector2i(800,600))
+			bake_scene.setup(_selected_scene_path)
+			return
+	
+	bake_popup_dialogue.popup_centered(Vector2i(800,600))
+	bake_scene.setup("")
