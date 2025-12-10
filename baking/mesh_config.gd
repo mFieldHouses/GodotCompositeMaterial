@@ -14,7 +14,6 @@ func _process(delta: float) -> void:
 	pass
 
 func config_option_pressed(idx : int):
-	print(idx)
 	match idx:
 		0:
 			background.copy_current_config()

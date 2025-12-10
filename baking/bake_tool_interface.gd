@@ -155,6 +155,8 @@ func load_mesh_config(config : Resource): #MeshBakingConfig
 	else:
 		mesh_config_ui.get_node("header/VBoxContainer/warning_unbakeable").visible = false
 	
+	update_all_mesh_labels()
+	
 	
 	
 	
@@ -210,9 +212,7 @@ func load_model_config(config : ModelBakingConfig) -> void:
 func save_model_config() -> void:
 	var _new_config_file : ModelBakingConfig = ModelBakingConfig.new()
 	_new_config_file.mesh_configs = mesh_configs.duplicate(true)
-	#for _config_name in mesh_configs:
-		#ResourceSaver.save(mesh_configs[_config_name], "res://addons/CompositeMaterial/baking/configuration_cache/.mesh_baking_configs/" + _config_name + ".tres", 4)
-	#
+	
 	_new_config_file.generate_model = $bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/generate_model.button_pressed
 	_new_config_file.model_generation_mode = $bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/generation_mode.selected
 	_new_config_file.model_output_path = $bake_tool_interface/VBoxContainer/HSplitContainer/mesh_config_scroll/mesh_config/General/VBoxContainer/output_model_path/model_output_path.text
@@ -452,9 +452,5 @@ func _model_has_cached_config() -> bool:
 	return FileAccess.file_exists("res://addons/CompositeMaterial/baking/configuration_cache/" + model_name + ".tres")
 
 func _recover_cached_config() -> void:
-	var _c : Resource = load("res://addons/CompositeMaterial/baking/configuration_cache/" + model_name + ".tres")
-	#_c.set_script(load("res://addons/CompositeMaterial/baking/model_baking_config.gd"))
-	
-	var _mbc : ModelBakingConfig = _c as ModelBakingConfig
-	print(_c.mesh_configs, _mbc.mesh_configs)
-	load_model_config(_c as ModelBakingConfig)
+	var _conf : ModelBakingConfig = load("res://addons/CompositeMaterial/baking/configuration_cache/" + model_name + ".tres") as ModelBakingConfig
+	load_model_config(_conf)
