@@ -311,6 +311,9 @@ func _on_bake_button_down() -> void:
 	
 	for mesh_name in mesh_configs:
 		var config = mesh_configs[mesh_name]
+		
+		print("baking at ", Vector2(config.resolution_x, config.resolution_y))
+		
 		if config.enabled:
 			meshes_to_bake.append(config)
 	
@@ -340,6 +343,26 @@ func _on_bake_button_down() -> void:
 	
 	#Second pass, when everything is OK we actually bake everything
 	
+	for _child in $progress/MarginContainer/VBox.get_children():
+		_child.queue_free()
+	
+	for config in meshes_to_bake:
+		var _new_label : Label = Label.new()
+		_new_label.text = config.source_mesh_name + ": Queued"
+		var _panel : Panel = Panel.new()
+		_panel.visible = false
+		_panel.anchor_bottom = 1.0
+		_panel.anchor_right = 1.0
+		_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+		_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
+		_new_label.add_child(_panel)
+		_panel.z_index = -1
+		$progress/MarginContainer/VBox.add_child(_new_label)
+		$baking.finished_baking.connect(func x(source_name): if source_name == config.source_mesh_name: _new_label.text = config.source_mesh_name + ": Done"; _panel.visible = false)
+		$baking.started_baking.connect(func x(source_name): if source_name == config.source_mesh_name: _new_label.text = "> " + config.source_mesh_name + ": Baking..."; _panel.visible = true)
+		
+	$progress.visible = true
+	
 	for config in meshes_to_bake:
 		var output_texture_name : String = ""
 		if config.output_name == "":
@@ -354,7 +377,7 @@ func _on_bake_button_down() -> void:
 		$baking.baking_metallic.connect(func x(): status_label.text = "(" + config.source_mesh_name + "): Baking metallic...")
 		$baking.baking_normal.connect(func x(): status_label.text = "(" + config.source_mesh_name + "): Baking normal...")
 		$baking.generating_normal_map.connect(func x(): status_label.text = "(" + config.source_mesh_name + "): Generating additional normal data...")
-		$baking.finished_baking.connect(func x(): status_label.text = "Done baking!"; print("finsihed baking mesh"))
+		$baking.finished_baking.connect(func x(x): status_label.text = "Done baking!"; print("finished baking mesh"))
 		
 		$baking.bake(config, model.get_node(config.source_mesh_name), output_texture_name)
 		
@@ -375,6 +398,8 @@ func _on_bake_button_down() -> void:
 				save_model(meshes)
 	
 	get_node("bake_tool_interface/VBoxContainer/option_buttons/cancel").text = "Close"
+	
+	$progress.visible = false
 
 func pre_bake_error_screen(errors : Array, can_proceed : bool): ##Returns whether the baker should proceed (true) or cancel (false). This value is stored in pre_bake_error_proceed
 	var new_dialog = ConfirmationDialog.new()

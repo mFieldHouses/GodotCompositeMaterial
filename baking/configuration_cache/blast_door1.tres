@@ -3,25 +3,26 @@
 [ext_resource type="Script" uid="uid://w62q586r85ks" path="res://addons/CompositeMaterial/baking/mesh_baking_config.gd" id="1_5wub2"]
 [ext_resource type="Script" uid="uid://globxfl16upk" path="res://addons/CompositeMaterial/baking/model_baking_config.gd" id="2_4oxuk"]
 
-[sub_resource type="Resource" id="Resource_grad0"]
-script = ExtResource("1_5wub2")
-supported = false
-enabled = false
-source_mesh_name = "Cylinder_001"
-
 [sub_resource type="Resource" id="Resource_3y1um"]
 script = ExtResource("1_5wub2")
 source_mesh_name = "door"
-output_name = "test_door"
-output_path = "res://test"
-resolution_x = 128.0
-bake_metallic = false
-bake_roughness = false
+output_name = "blast_door1"
+output_path = "res://assets/textures/baked/blast_door1"
+resolution_x = 1024.0
+resolution_y = 1024.0
 done_baking = true
-albedo_tex_path = "res://test/test_door_albedo.png"
-normal_tex_path = "res://test/test_door_normal.png"
+albedo_tex_path = "res://assets/textures/baked/blast_door1/blast_door1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/blast_door1/blast_door1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/blast_door1/blast_door1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/blast_door1/blast_door1_normal.png"
 
-[sub_resource type="Resource" id="Resource_syprv"]
+[sub_resource type="Resource" id="Resource_5wub2"]
+script = ExtResource("1_5wub2")
+source_mesh_name = "door"
+output_name = "blast_door"
+output_path = "res://assets/textures/baked/blast_door1"
+
+[sub_resource type="Resource" id="Resource_4oxuk"]
 script = ExtResource("1_5wub2")
 supported = false
 enabled = false
@@ -30,10 +31,7 @@ source_mesh_name = "frame"
 [resource]
 script = ExtResource("2_4oxuk")
 mesh_configs = {
-&"Cylinder_001": SubResource("Resource_grad0"),
-&"door": SubResource("Resource_3y1um"),
-&"frame": SubResource("Resource_syprv")
+&"Cylinder_001": SubResource("Resource_3y1um"),
+&"door": SubResource("Resource_5wub2"),
+&"frame": SubResource("Resource_4oxuk")
 }
-generate_model = true
-model_generation_mode = 2
-model_output_path = "res://test/door_test.tscn"

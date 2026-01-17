@@ -7,9 +7,10 @@ var previous_face
 
 @onready var ortho_camera = get_node("baking_viewport/viewport/ortho_camera")
 
-signal finished_baking
+signal finished_baking(source_name : String)
+signal started_baking(source_name : String)
 
-signal building_material
+signal building_material()
 signal building_mesh
 signal baking_albedo
 signal baking_roughness
@@ -18,6 +19,9 @@ signal baking_normal
 signal generating_normal_map
 
 func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name : String, temp : bool = false) -> void:
+	
+	started_baking.emit(config.source_mesh_name)
+	
 	var viewport_result = ViewportTexture.new()
 	viewport_result.viewport_path = $baking_viewport/viewport.get_path() #We need the absolute path here. This whole window is parented to our main editor so therer's no other way for us to retrieve the absolute path.
 	
@@ -128,7 +132,7 @@ func bake(config : MeshBakingConfig, mesh_instance : MeshInstance3D, base_name :
 	
 	config.done_baking = true
 	
-	finished_baking.emit()
+	finished_baking.emit(config.source_mesh_name)
 
 func save_or_add_to_png(config : MeshBakingConfig, output_path : String, image_to_be_saved : Image, normal_map : bool = false):
 	if FileAccess.file_exists(output_path):
@@ -173,46 +177,10 @@ func fix_normal_map(input_image : Image):
 	#input_image.convert(Image.FORMAT_RGB8)
 
 func image_expand(input_image : Image):
-	print("expanding image")
-	var _img_width : int = input_image.get_width()
-	var _img_height : int = input_image.get_height()
+	var _test = ImageM.new()
+	print("expanding img with width ", input_image.get_width())
+	_test.expand_image_boundaries(input_image, 2)
 	
-	var _new_image : Image = Image.create_empty(_img_width, _img_height, false, Image.FORMAT_RGBA8)
+	await get_tree().create_timer(1.0)
 	
-	for x in _img_width:
-		for y in _img_height:
-			var _pc = input_image.get_pixel(x,y)
-			if input_image.get_pixel(x,y)[0] < 0.05 and input_image.get_pixel(x,y)[1] < 0.05 and input_image.get_pixel(x,y)[2] < 0.05 or input_image.get_pixel(x,y)[3] == 0.0: #the pixel is empty/unused:
-				var _color_components : Array[Color] = []
-				
-				var _offsets_to_check = [
-							  [0, -1], 
-					[-1,  0],          [1,  0],
-							  [0,  1],
-				]
-				
-				#var _offsets_to_check = [
-					#[-1, -1], [0, -1], [1, -1],
-					#[-1,  0],          [1,  0],
-					#[-1,  1], [0,  1], [1,  1]
-				#]
-				
-				for _offset in _offsets_to_check:
-					var _p = input_image.get_pixel((x + _offset[0]) % _img_width, (y + _offset[1]) % _img_height)
-					
-					if _p[0] > 0.05 and _p[1] > 0.05 and _p[2] > 0.05:
-						_color_components.append(_p)
-				
-				if _color_components.size() > 0:
-					var _avg_color : Color
-					for _comp in _color_components:
-						_avg_color += _comp
-					
-					_avg_color /= _color_components.size()
-					
-					_new_image.set_pixel(x, y, _avg_color)
-		
-			else:
-				_new_image.set_pixel(x, y, _pc)
-	
-	input_image.copy_from(_new_image)
+	print("img width after expansion is ", input_image.get_width())

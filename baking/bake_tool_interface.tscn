@@ -549,6 +549,25 @@ projection = 1
 
 [node name="faces" type="Node3D" parent="baking/baking_viewport/viewport"]
 
+[node name="progress" type="Window" parent="."]
+oversampling_override = 1.0
+size = Vector2i(300, 500)
+visible = false
+
+[node name="MarginContainer" type="MarginContainer" parent="progress"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="progress/MarginContainer"]
+layout_mode = 2
+
 [connection signal="pressed" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer/toggle_all" to="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list" method="_on_toggle_all_pressed"]
 [connection signal="toggled" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer/toggle_all" to="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list" method="_on_toggle_all_toggled"]
 [connection signal="button_down" from="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list/HBoxContainer/invert_all" to="bake_tool_interface/VBoxContainer/HSplitContainer/mesh_list" method="toggle_all_meshes"]

@@ -1,0 +1,353 @@
+[gd_resource type="Resource" script_class="ModelBakingConfig" load_steps=31 format=3 uid="uid://blxwn0nymdw63"]
+
+[ext_resource type="Script" uid="uid://w62q586r85ks" path="res://addons/CompositeMaterial/baking/mesh_baking_config.gd" id="1_xdhve"]
+[ext_resource type="Script" uid="uid://globxfl16upk" path="res://addons/CompositeMaterial/baking/model_baking_config.gd" id="2_ktl2c"]
+
+[sub_resource type="Resource" id="Resource_edx1n"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Cube"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_hhv1j"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cube_001"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_qruqv"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cube_002"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_ts02k"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cube_003"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_5e1ww"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cube_004"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_ayv8d"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cube_005"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_jtwpr"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Cube_006"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_sqm1l"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Cube_007"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_x8lju"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cylinder_001"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_ln38d"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cylinder_002"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_eixkv"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cylinder_003"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_mi86i"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cylinder_004"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_7yqf2"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cylinder_005"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_y1aab"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cylinder_006"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_b8d7f"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "NurbsCurve"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_dp56h"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_8hj7e"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_001"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_enwqe"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_002"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_8ebod"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_004"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_e225v"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_005"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_55st1"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_006"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_ykxu4"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_007"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_hmdom"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_008"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_ryyps"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_009"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_nh548"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_010"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_pnmih"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_011"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_mupsc"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_012"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048.0
+resolution_y = 2048.0
+done_baking = true
+albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
+roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
+metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
+normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
+
+[sub_resource type="Resource" id="Resource_gvvlr"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_013"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048.0
+resolution_y = 2048.0
+
+[resource]
+script = ExtResource("2_ktl2c")
+mesh_configs = {
+&"Cube": SubResource("Resource_edx1n"),
+&"Cube_001": SubResource("Resource_hhv1j"),
+&"Cube_002": SubResource("Resource_qruqv"),
+&"Cube_003": SubResource("Resource_ts02k"),
+&"Cube_004": SubResource("Resource_5e1ww"),
+&"Cube_005": SubResource("Resource_ayv8d"),
+&"Cube_006": SubResource("Resource_jtwpr"),
+&"Cube_007": SubResource("Resource_sqm1l"),
+&"Cylinder_001": SubResource("Resource_x8lju"),
+&"Cylinder_002": SubResource("Resource_ln38d"),
+&"Cylinder_003": SubResource("Resource_eixkv"),
+&"Cylinder_004": SubResource("Resource_mi86i"),
+&"Cylinder_005": SubResource("Resource_7yqf2"),
+&"Cylinder_006": SubResource("Resource_y1aab"),
+&"NurbsCurve": SubResource("Resource_b8d7f"),
+&"Plane": SubResource("Resource_dp56h"),
+&"Plane_001": SubResource("Resource_8hj7e"),
+&"Plane_002": SubResource("Resource_enwqe"),
+&"Plane_004": SubResource("Resource_8ebod"),
+&"Plane_005": SubResource("Resource_e225v"),
+&"Plane_006": SubResource("Resource_55st1"),
+&"Plane_007": SubResource("Resource_ykxu4"),
+&"Plane_008": SubResource("Resource_hmdom"),
+&"Plane_009": SubResource("Resource_ryyps"),
+&"Plane_010": SubResource("Resource_nh548"),
+&"Plane_011": SubResource("Resource_pnmih"),
+&"Plane_012": SubResource("Resource_mupsc"),
+&"Plane_013": SubResource("Resource_gvvlr")
+}
+generate_model = true
+model_generation_mode = 2
+model_output_path = "res://assets/models/_dev/device1.tscn"
