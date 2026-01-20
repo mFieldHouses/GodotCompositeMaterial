@@ -99,7 +99,7 @@ const get_layer_UV_mask_max_string : String = 'return layer_%s_UV_mask_X_max * f
 
 const get_layer_UV_mask_color_ramp_value_string : String = 'vec4 color_ramp_color = texture(layer_%s_UV_mask_X_color_ramp, vec2((factor * 0.98) + 0.01, 0)) * float(int(axis) == 0) + texture(layer_%s_UV_mask_Y_color_ramp, vec2((factor * 0.98) + 0.01, 0)) * float(int(axis) == 1); return mix(factor, color_ramp_color.r, color_ramp_color.a);';
 
-static func compose_shader_code(layer_num : int, shaded : bool = true) -> String:
+func compose_shader_code(layer_num : int, shaded : bool = true) -> String:
 	var compose_sc = func compose_simple_sc(line_base : String, sc_size : int) -> String:
 		var result : String
 		for i in sc_size:

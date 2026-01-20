@@ -1,25 +1,26 @@
-[gd_resource type="Resource" script_class="ModelBakingConfig" load_steps=31 format=3 uid="uid://blxwn0nymdw63"]
+[gd_resource type="Resource" script_class="ModelBakingConfig" load_steps=71 format=3 uid="uid://blxwn0nymdw63"]
 
 [ext_resource type="Script" uid="uid://w62q586r85ks" path="res://addons/CompositeMaterial/baking/mesh_baking_config.gd" id="1_xdhve"]
 [ext_resource type="Script" uid="uid://globxfl16upk" path="res://addons/CompositeMaterial/baking/model_baking_config.gd" id="2_ktl2c"]
 
-[sub_resource type="Resource" id="Resource_edx1n"]
+[sub_resource type="Resource" id="Resource_xdhve"]
 script = ExtResource("1_xdhve")
 source_mesh_name = "Cube"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
 
-[sub_resource type="Resource" id="Resource_hhv1j"]
+[sub_resource type="Resource" id="Resource_ktl2c"]
 script = ExtResource("1_xdhve")
-supported = false
-enabled = false
+source_mesh_name = "Cube_002"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_edx1n"]
+script = ExtResource("1_xdhve")
 source_mesh_name = "Cube_001"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
@@ -30,7 +31,15 @@ resolution_y = 2048
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
-source_mesh_name = "Cube_002"
+source_mesh_name = "Cube_003"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_hhv1j"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
@@ -40,13 +49,29 @@ resolution_y = 2048
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
-source_mesh_name = "Cube_003"
+source_mesh_name = "Cube_005"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_5e1ww"]
+[sub_resource type="Resource" id="Resource_dp56h"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_001"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_ayv8d"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "NurbsCurve"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_8hj7e"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
@@ -56,43 +81,107 @@ output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_ayv8d"]
+[sub_resource type="Resource" id="Resource_b8d7f"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
-source_mesh_name = "Cube_005"
+source_mesh_name = "Plane_002"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_jtwpr"]
+[sub_resource type="Resource" id="Resource_5e1ww"]
 script = ExtResource("1_xdhve")
-source_mesh_name = "Cube_006"
+source_mesh_name = "Plane_004"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
 
-[sub_resource type="Resource" id="Resource_sqm1l"]
+[sub_resource type="Resource" id="Resource_enwqe"]
 script = ExtResource("1_xdhve")
-source_mesh_name = "Cube_007"
+source_mesh_name = "Plane_008"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
 
-[sub_resource type="Resource" id="Resource_x8lju"]
+[sub_resource type="Resource" id="Resource_8ebod"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_009"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_hmdom"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_010"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_ryyps"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_011"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_nh548"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_012"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_pnmih"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_005"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_mupsc"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_006"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_e225v"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_007"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_55st1"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_013"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_ykxu4"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
@@ -102,7 +191,7 @@ output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_ln38d"]
+[sub_resource type="Resource" id="Resource_gvvlr"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
@@ -112,7 +201,7 @@ output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_eixkv"]
+[sub_resource type="Resource" id="Resource_x8lju"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
@@ -122,7 +211,7 @@ output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_mi86i"]
+[sub_resource type="Resource" id="Resource_ln38d"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
@@ -132,7 +221,33 @@ output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_7yqf2"]
+[sub_resource type="Resource" id="Resource_eixkv"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Cube_006"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_mi86i"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Cube_007"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_jtwpr"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cylinder_006"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_sqm1l"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
@@ -146,208 +261,457 @@ resolution_y = 2048
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
-source_mesh_name = "Cylinder_006"
+source_mesh_name = "Plane_014"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_b8d7f"]
-script = ExtResource("1_xdhve")
-source_mesh_name = "NurbsCurve"
-output_name = "test_device1"
-output_path = "res://assets/textures/baked"
-resolution_x = 2048
-resolution_y = 2048
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
-
-[sub_resource type="Resource" id="Resource_dp56h"]
+[sub_resource type="Resource" id="Resource_7yqf2"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
-source_mesh_name = "Plane"
+source_mesh_name = "Plane_015"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_8hj7e"]
-script = ExtResource("1_xdhve")
-source_mesh_name = "Plane_001"
-output_name = "test_device1"
-output_path = "res://assets/textures/baked"
-resolution_x = 2048
-resolution_y = 2048
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
-
-[sub_resource type="Resource" id="Resource_enwqe"]
+[sub_resource type="Resource" id="Resource_oti3r"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
-source_mesh_name = "Plane_002"
+source_mesh_name = "Plane_016"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_8ebod"]
-script = ExtResource("1_xdhve")
-source_mesh_name = "Plane_004"
-output_name = "test_device1"
-output_path = "res://assets/textures/baked"
-resolution_x = 2048
-resolution_y = 2048
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
-
-[sub_resource type="Resource" id="Resource_e225v"]
+[sub_resource type="Resource" id="Resource_osk48"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
-source_mesh_name = "Plane_005"
+source_mesh_name = "Plane_018"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_55st1"]
+[sub_resource type="Resource" id="Resource_8box8"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
-source_mesh_name = "Plane_006"
+source_mesh_name = "Plane_017"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_ykxu4"]
+[sub_resource type="Resource" id="Resource_dkust"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
-source_mesh_name = "Plane_007"
+source_mesh_name = "Plane_019"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
 resolution_x = 2048
 resolution_y = 2048
 
-[sub_resource type="Resource" id="Resource_hmdom"]
-script = ExtResource("1_xdhve")
-source_mesh_name = "Plane_008"
-output_name = "test_device1"
-output_path = "res://assets/textures/baked"
-resolution_x = 2048
-resolution_y = 2048
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
-
-[sub_resource type="Resource" id="Resource_ryyps"]
-script = ExtResource("1_xdhve")
-source_mesh_name = "Plane_009"
-output_name = "test_device1"
-output_path = "res://assets/textures/baked"
-resolution_x = 2048
-resolution_y = 2048
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
-
-[sub_resource type="Resource" id="Resource_nh548"]
-script = ExtResource("1_xdhve")
-source_mesh_name = "Plane_010"
-output_name = "test_device1"
-output_path = "res://assets/textures/baked"
-resolution_x = 2048
-resolution_y = 2048
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
-
-[sub_resource type="Resource" id="Resource_pnmih"]
-script = ExtResource("1_xdhve")
-source_mesh_name = "Plane_011"
-output_name = "test_device1"
-output_path = "res://assets/textures/baked"
-resolution_x = 2048
-resolution_y = 2048
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
-
-[sub_resource type="Resource" id="Resource_mupsc"]
-script = ExtResource("1_xdhve")
-source_mesh_name = "Plane_012"
-output_name = "test_device1"
-output_path = "res://assets/textures/baked"
-resolution_x = 2048.0
-resolution_y = 2048.0
-done_baking = true
-albedo_tex_path = "res://assets/textures/baked/test_device1_albedo.png"
-roughness_tex_path = "res://assets/textures/baked/test_device1_roughness.png"
-metallic_tex_path = "res://assets/textures/baked/test_device1_metallic.png"
-normal_tex_path = "res://assets/textures/baked/test_device1_normal.png"
-
-[sub_resource type="Resource" id="Resource_gvvlr"]
+[sub_resource type="Resource" id="Resource_wkp0a"]
 script = ExtResource("1_xdhve")
 supported = false
 enabled = false
-source_mesh_name = "Plane_013"
+source_mesh_name = "Plane_021"
 output_name = "test_device1"
 output_path = "res://assets/textures/baked"
-resolution_x = 2048.0
-resolution_y = 2048.0
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_3xcgq"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cylinder_009"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_iv7q2"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_022"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_aim4i"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_023"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_dkh03"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_024"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_pvivs"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_025"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_47kof"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_026"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_dp3th"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_027"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_q6jec"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_028"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_lyt7j"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_029"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_226aw"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_030"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_7slps"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_031"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_qvw02"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_032"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_k3j6c"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_033"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_ij4j4"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_034"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_smxwp"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_035"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_14xix"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_036"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_8ukgb"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_020"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_jks1x"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Cube_008"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_jw34o"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_037"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_5je0k"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_038"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_dnj5k"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_039"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_b1bwi"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_041"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_me6s5"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cylinder_008"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_23aui"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_040"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_ff8c6"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cube_009"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_5o3ta"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Cube_010"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_xxi40"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Cube_011"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_g8f5t"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_042"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_g7qf4"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Plane_043"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_eao3x"]
+script = ExtResource("1_xdhve")
+supported = false
+enabled = false
+source_mesh_name = "Plane_044"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_bcrvb"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Cube_012"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_tnwbu"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Cylinder_012"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_vyhac"]
+script = ExtResource("1_xdhve")
+source_mesh_name = "Cylinder_007"
+output_name = "test_device1"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
 
 [resource]
 script = ExtResource("2_ktl2c")
 mesh_configs = {
-&"Cube": SubResource("Resource_edx1n"),
-&"Cube_001": SubResource("Resource_hhv1j"),
-&"Cube_002": SubResource("Resource_qruqv"),
-&"Cube_003": SubResource("Resource_ts02k"),
-&"Cube_004": SubResource("Resource_5e1ww"),
-&"Cube_005": SubResource("Resource_ayv8d"),
-&"Cube_006": SubResource("Resource_jtwpr"),
-&"Cube_007": SubResource("Resource_sqm1l"),
-&"Cylinder_001": SubResource("Resource_x8lju"),
-&"Cylinder_002": SubResource("Resource_ln38d"),
-&"Cylinder_003": SubResource("Resource_eixkv"),
-&"Cylinder_004": SubResource("Resource_mi86i"),
-&"Cylinder_005": SubResource("Resource_7yqf2"),
-&"Cylinder_006": SubResource("Resource_y1aab"),
-&"NurbsCurve": SubResource("Resource_b8d7f"),
-&"Plane": SubResource("Resource_dp56h"),
-&"Plane_001": SubResource("Resource_8hj7e"),
-&"Plane_002": SubResource("Resource_enwqe"),
-&"Plane_004": SubResource("Resource_8ebod"),
-&"Plane_005": SubResource("Resource_e225v"),
-&"Plane_006": SubResource("Resource_55st1"),
-&"Plane_007": SubResource("Resource_ykxu4"),
-&"Plane_008": SubResource("Resource_hmdom"),
-&"Plane_009": SubResource("Resource_ryyps"),
-&"Plane_010": SubResource("Resource_nh548"),
-&"Plane_011": SubResource("Resource_pnmih"),
-&"Plane_012": SubResource("Resource_mupsc"),
-&"Plane_013": SubResource("Resource_gvvlr")
+&"Cube": SubResource("Resource_xdhve"),
+&"Cube_001": SubResource("Resource_edx1n"),
+&"Cube_002": SubResource("Resource_ktl2c"),
+&"Cube_003": SubResource("Resource_qruqv"),
+&"Cube_004": SubResource("Resource_8hj7e"),
+&"Cube_005": SubResource("Resource_ts02k"),
+&"Cube_006": SubResource("Resource_eixkv"),
+&"Cube_007": SubResource("Resource_mi86i"),
+&"Cube_008": SubResource("Resource_jks1x"),
+&"Cube_009": SubResource("Resource_ff8c6"),
+&"Cube_010": SubResource("Resource_5o3ta"),
+&"Cube_011": SubResource("Resource_xxi40"),
+&"Cube_012": SubResource("Resource_bcrvb"),
+&"Cylinder_001": SubResource("Resource_ykxu4"),
+&"Cylinder_002": SubResource("Resource_gvvlr"),
+&"Cylinder_003": SubResource("Resource_x8lju"),
+&"Cylinder_004": SubResource("Resource_ln38d"),
+&"Cylinder_005": SubResource("Resource_sqm1l"),
+&"Cylinder_006": SubResource("Resource_jtwpr"),
+&"Cylinder_007": SubResource("Resource_vyhac"),
+&"Cylinder_008": SubResource("Resource_me6s5"),
+&"Cylinder_009": SubResource("Resource_3xcgq"),
+&"Cylinder_012": SubResource("Resource_tnwbu"),
+&"NurbsCurve": SubResource("Resource_ayv8d"),
+&"Plane": SubResource("Resource_hhv1j"),
+&"Plane_001": SubResource("Resource_dp56h"),
+&"Plane_002": SubResource("Resource_b8d7f"),
+&"Plane_004": SubResource("Resource_5e1ww"),
+&"Plane_005": SubResource("Resource_pnmih"),
+&"Plane_006": SubResource("Resource_mupsc"),
+&"Plane_007": SubResource("Resource_e225v"),
+&"Plane_008": SubResource("Resource_enwqe"),
+&"Plane_009": SubResource("Resource_8ebod"),
+&"Plane_010": SubResource("Resource_hmdom"),
+&"Plane_011": SubResource("Resource_ryyps"),
+&"Plane_012": SubResource("Resource_nh548"),
+&"Plane_013": SubResource("Resource_55st1"),
+&"Plane_014": SubResource("Resource_y1aab"),
+&"Plane_015": SubResource("Resource_7yqf2"),
+&"Plane_016": SubResource("Resource_oti3r"),
+&"Plane_017": SubResource("Resource_8box8"),
+&"Plane_018": SubResource("Resource_osk48"),
+&"Plane_019": SubResource("Resource_dkust"),
+&"Plane_020": SubResource("Resource_8ukgb"),
+&"Plane_021": SubResource("Resource_wkp0a"),
+&"Plane_022": SubResource("Resource_iv7q2"),
+&"Plane_023": SubResource("Resource_aim4i"),
+&"Plane_024": SubResource("Resource_dkh03"),
+&"Plane_025": SubResource("Resource_pvivs"),
+&"Plane_026": SubResource("Resource_47kof"),
+&"Plane_027": SubResource("Resource_dp3th"),
+&"Plane_028": SubResource("Resource_q6jec"),
+&"Plane_029": SubResource("Resource_lyt7j"),
+&"Plane_030": SubResource("Resource_226aw"),
+&"Plane_031": SubResource("Resource_7slps"),
+&"Plane_032": SubResource("Resource_qvw02"),
+&"Plane_033": SubResource("Resource_k3j6c"),
+&"Plane_034": SubResource("Resource_ij4j4"),
+&"Plane_035": SubResource("Resource_smxwp"),
+&"Plane_036": SubResource("Resource_14xix"),
+&"Plane_037": SubResource("Resource_jw34o"),
+&"Plane_038": SubResource("Resource_5je0k"),
+&"Plane_039": SubResource("Resource_dnj5k"),
+&"Plane_040": SubResource("Resource_23aui"),
+&"Plane_041": SubResource("Resource_b1bwi"),
+&"Plane_042": SubResource("Resource_g8f5t"),
+&"Plane_043": SubResource("Resource_g7qf4"),
+&"Plane_044": SubResource("Resource_eao3x")
 }
-generate_model = true
-model_generation_mode = 2
-model_output_path = "res://assets/models/_dev/device1.tscn"

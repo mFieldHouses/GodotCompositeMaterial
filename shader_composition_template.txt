@@ -1,0 +1,35 @@
+static func compose_shader_code(layer_num : int, shaded : bool = true) -> String:
+	var compose_sc = func compose_simple_sc(line_base : String, sc_size : int) -> String:
+		var result : String
+		for i in sc_size:
+			var layer_idx = i + 1
+			result += "case " + str(layer_idx) + ": " + line_base.replace("%s", str(layer_idx)) + " \n"
+				
+		return result
+	
+	
+	var result : String;
+	
+	if shaded:
+		result = render_mode_shaded_string
+	else:
+		result = render_mode_unshaded_string
+	
+	result += base_string
+	
+	var parameters : String
+	var fragment_snippets : String
+	
+	for i in layer_num:
+		var layer_idx : int = i + 1
+		
+		parameters += (parameters_string.replace("%s", str(layer_idx))) + "\n"
+		fragment_snippets += (fragment_snippet_string.replace("%s", str(layer_idx))) + "\n"
+		
+	result = result.replace("%parameters", parameters)
+	result = result.replace("%layer_fragment_snippets", fragment_snippets)
+	
+	for test in sc_mappings:
+		result = result.replace(test, compose_sc.call(sc_mappings[test], layer_num))
+	
+	return result
