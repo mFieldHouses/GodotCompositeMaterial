@@ -26,7 +26,7 @@ placeholder_text = "Input path (.gdshader)"
 
 [node name="output_path" type="LineEdit" parent="VBoxContainer"]
 layout_mode = 2
-text = "res://addons/CompositeMaterial/shader_composition_strings_output.gd"
+text = "res://addons/CompositeMaterial/shader_composition_strings.gd"
 placeholder_text = "Output path (.gd)"
 
 [node name="run" type="Button" parent="VBoxContainer"]

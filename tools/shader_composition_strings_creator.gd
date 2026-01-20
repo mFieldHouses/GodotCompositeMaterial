@@ -31,7 +31,7 @@ func run() -> void:
 	var _source_lines = _source_file.get_as_text().split("\n")
 	
 	var _output_file = FileAccess.open($VBoxContainer/output_path.text, FileAccess.WRITE)
-	_output_file.store_line("#This script has been generated using addons/CompositeMaterial/tools/shader_composition_strings_creator.tscn.\n#It is advised you also use that script. It automates the whole process.")
+	_output_file.store_line("#This script was generated using addons/CompositeMaterial/tools/shader_composition_strings_creator.tscn.\n#It is advised you also use that script. It automates the whole process.")
 	
 	_output_file.store_line("const render_mode_shaded_string : String = 'shader_type spatial; render_mode cull_disabled, depth_prepass_alpha;' \nconst render_mode_unshaded_string : String = 'shader_type spatial; render_mode cull_disabled, depth_prepass_alpha, unshaded;'")
 	
