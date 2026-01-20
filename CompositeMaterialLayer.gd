@@ -28,6 +28,10 @@ signal parameter_changed
 		emit_changed()
 
 @export_group("UV1", "uv1")
+
+@export_enum("From Mesh", "Triplanar") var uv1_mode = 0
+@export_enum("Local", "Global") var uv1_triplanar_mode = 0
+
 @export var uv1_scale := Vector2(1.0, 1.0);
 @export var uv1_offset := Vector2(0.0, 0.0);
 @export var uv1_offset_map : Texture2D;
@@ -38,6 +42,10 @@ signal parameter_changed
 		emit_changed()
 
 @export_group("UV2", "uv2")
+
+@export_enum("From Mesh", "Triplanar") var uv2_mode = 0
+@export_enum("Local", "Global") var uv2_triplanar_mode = 0
+
 @export var uv2_scale := Vector2(1.0, 1.0);
 @export var uv2_offset := Vector2(0.0, 0.0);
 @export var uv2_offset_map : Texture2D;

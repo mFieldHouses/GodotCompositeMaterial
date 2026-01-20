@@ -66,6 +66,6 @@ func clear_all_shader_parameters():
 		set_shader_parameter(param.name, null)
 
 func compose_shader_code(layer_num: int, shaded: bool) -> String: ##Returns CompositeMaterial shader code containing [param size] layers.
-	var strings = load("res://addons/CompositeMaterial/shader_composition_strings_output.gd")
+	var strings = load("res://addons/CompositeMaterial/shader_composition_strings.gd")
 	
 	return strings.compose_shader_code(layer_num, shaded)
