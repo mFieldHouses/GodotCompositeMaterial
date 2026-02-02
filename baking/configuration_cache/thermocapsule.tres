@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="ModelBakingConfig" format=3 uid="uid://cq71fa7v2dhid"]
+
+[ext_resource type="Script" uid="uid://w62q586r85ks" path="res://addons/CompositeMaterial/baking/mesh_baking_config.gd" id="1_axcxw"]
+[ext_resource type="Script" uid="uid://globxfl16upk" path="res://addons/CompositeMaterial/baking/model_baking_config.gd" id="2_xjaku"]
+
+[sub_resource type="Resource" id="Resource_axcxw"]
+script = ExtResource("1_axcxw")
+source_mesh_name = "Plane"
+output_name = "thermo_capsule"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_xjaku"]
+script = ExtResource("1_axcxw")
+source_mesh_name = "Plane_001"
+output_name = "thermo_capsule"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_o4agd"]
+script = ExtResource("1_axcxw")
+source_mesh_name = "Plane_005"
+output_name = "thermo_capsule"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[sub_resource type="Resource" id="Resource_00vxp"]
+script = ExtResource("1_axcxw")
+source_mesh_name = "Plane_002"
+output_name = "thermo_capsule"
+output_path = "res://assets/textures/baked"
+resolution_x = 2048
+resolution_y = 2048
+
+[resource]
+script = ExtResource("2_xjaku")
+mesh_configs = {
+&"Plane": SubResource("Resource_axcxw"),
+&"Plane_001": SubResource("Resource_xjaku"),
+&"Plane_002": SubResource("Resource_00vxp"),
+&"Plane_005": SubResource("Resource_o4agd")
+}

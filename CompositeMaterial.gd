@@ -16,6 +16,13 @@ var requires_building : bool = false
 		
 @export var autolock_material : bool = true ##Prevents the material from rewriting and recompiling the shader code automatically, reducing lag upon startup significantly.
 
+@export_tool_button("Rebuild material", "Reload") var rebuild_action = build_material
+@export_tool_button("Freeze") var freeze_action = freeze
+@export_tool_button("Unfreeze") var unfreeze_action = unfreeze
+
+var frozen : bool = false
+var unfrozen_shader : Shader
+
 var previous_layers_size : int = 0
 	
 var export_path_dialog : EditorFileDialog
@@ -53,6 +60,17 @@ func build_material(shaded : bool = true) -> void:
 	#print("Done building")
 	finish_building.emit()
 	#EditorInterface.get_editor_toaster().push_toast("Done building material!")
+
+func freeze() -> void:
+	frozen = true
+	notify_property_list_changed()
+	CPMFreezer.freeze_cpm(self)
+
+func unfreeze() -> void:
+	frozen = false
+	notify_property_list_changed()
+	shader = unfrozen_shader
+	
 
 func update_config(new_config : CompositeMaterialLayer):
 	var layer_idx = layers.find(new_config) + 1

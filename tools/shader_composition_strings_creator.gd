@@ -25,6 +25,7 @@ var _include_lines : bool = false
 var _buffer : String = ""
 
 var _sc_mappings : Dictionary[String, String] = {}
+var _compound_return_mappings : Dictionary[String, Dictionary] = {}
 
 func run() -> void:
 	var _source_file = FileAccess.open($VBoxContainer/input_path.text, FileAccess.READ)
@@ -78,14 +79,14 @@ func run() -> void:
 		
 		if _current_processing_state == "pre_base_string":
 			var _clean_line : String = _line.replace("'", "")
-			_base_string_buffer += _clean_line
+			_base_string_buffer += "\n" + _clean_line
 		
 		elif _current_processing_state == "parameters_string":
 			var _clean_line : String = _line.replace("'", "").replace("layer_A", "layer_%s")
-			_buffer += _clean_line
+			_buffer += "\n" + _clean_line
 			
 		elif _current_processing_state == "fragment_snippet_string":
-			_buffer += _line.replace("layer_A", "layer_%s").replace("(1", "(%s")
+			_buffer += "\n" + _line.replace("layer_A", "layer_%s").replace("(1", "(%s")
 		
 		elif _current_processing_state == "base_string" or _current_processing_state == "base2_string":
 			
@@ -114,20 +115,48 @@ func run() -> void:
 				_include_lines = false
 			elif _include_lines:
 				print("including ", _line.trim_prefix("//"))
-				_base_string_buffer += _line.trim_prefix("//")
+				_base_string_buffer += "\n" + _line.trim_prefix("//")
 			
 			elif _line.begins_with("//"): continue
 			
-			elif _line_is_function_declaration(_line) and (_line.begins_with("bool") or _line.begins_with("int") or _line.begins_with("vec2") or _line.begins_with("float") or _line.begins_with("vec3") or _line.begins_with("vec4")):
+			elif _line.contains("return (") and (_line.contains("t(layer ==") or _line.contains("&& layer ==")) and _awaiting_switch_statement:
+				_awaiting_switch_statement = false
+				print("contains return (")
+				var _depth : int = 0
+				var _idx : int = 0
+				
+				var _is_boolean_operation : bool = _line.contains("&&") or _line.contains("||")
+				
+				for _char in _line:
+					if _char == "(":
+						_depth += 1
+					if _char == ")":
+						_depth -= 1
+						if _depth == 0:
+							break
+					
+					_idx += 1
+				
+				var _component = _line.substr(0, _idx + 1).trim_prefix("return ")
+				_component = _component.replace("layer_A", "layer_%s")
+				_component = _component.replace("layer == 1", "layer == %s")
+				
+				var _result_line : String = ""
+				
+				_base_string_buffer += "\n" + "%cr_" + _temp_func_name + "_cr_"
+				_compound_return_mappings["%cr_" + _temp_func_name + "_cr_"] = {"string": _component, "is_boolean_operation": _is_boolean_operation}
+				
+			
+			elif _line_is_function_declaration(_line):
 				print("found new function declaration: ", _line)
 				_awaiting_switch_statement = true
 				_temp_func_name = _line.split(" ")[1].split("(")[0]
-				_base_string_buffer += _line + "\n"
+				_base_string_buffer += "\n" + _line
 			
 			elif _awaiting_switch_statement:
 				if _line.begins_with("switch (layer)"):
 					print("function needs an sc")
-					_base_string_buffer += _line + "%sc_" + _temp_func_name + "_sc_" #weird pattern stuff to prevent the String.replace() function from matching the wrong patterns
+					_base_string_buffer += "\n" + _line + "%sc_" + _temp_func_name + "_sc_" #weird pattern stuff to prevent the String.replace() function from matching the wrong patterns
 					_create_sc_from_next_line = true
 				else:
 					_base_string_buffer += _line
@@ -149,9 +178,10 @@ func run() -> void:
 						_ignore_new_cases = true
 			
 			elif !_create_sc_from_next_line:
-				_base_string_buffer += _line
+				_base_string_buffer += "\n" + _line
 	
 	_output_file.store_line("const sc_mappings : Dictionary[String, String] = " + JSON.stringify(_sc_mappings))
+	_output_file.store_line("const cr_mappings : Dictionary[String, Dictionary] = " + JSON.stringify(_compound_return_mappings))
 	
 	var _template_file = FileAccess.open("res://addons/CompositeMaterial/shader_composition_template.txt", FileAccess.READ)
 	_output_file.store_line("\n")
@@ -160,4 +190,4 @@ func run() -> void:
 		
 func _line_is_function_declaration(_line : String):
 	if _line.split(" ").size() < 2: return false
-	return _line.split(" ")[1].contains("(")
+	return _line.split(" ")[1].contains("(") and (_line.begins_with("bool") or _line.begins_with("int") or _line.begins_with("vec2") or _line.begins_with("float") or _line.begins_with("vec3") or _line.begins_with("vec4"))

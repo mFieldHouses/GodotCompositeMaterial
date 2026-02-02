@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://3pf0ww3qxu6o"]
+[gd_scene format=3 uid="uid://3pf0ww3qxu6o"]
 
 [ext_resource type="Script" uid="uid://bud78kf6pcu7s" path="res://addons/CompositeMaterial/tools/shader_composition_strings_creator.gd" id="1_oxwq5"]
 
-[node name="ShaderCompositionStringsCreator" type="Control"]
+[node name="ShaderCompositionStringsCreator" type="Control" unique_id=656484904]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_oxwq5")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=866519209]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,16 +19,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="input_path" type="LineEdit" parent="VBoxContainer"]
+[node name="input_path" type="LineEdit" parent="VBoxContainer" unique_id=426335351]
 layout_mode = 2
 text = "res://addons/CompositeMaterial/shaders/CompositeMaterialBase.gdshader"
 placeholder_text = "Input path (.gdshader)"
 
-[node name="output_path" type="LineEdit" parent="VBoxContainer"]
+[node name="output_path" type="LineEdit" parent="VBoxContainer" unique_id=431326450]
 layout_mode = 2
 text = "res://addons/CompositeMaterial/shader_composition_strings.gd"
 placeholder_text = "Output path (.gd)"
 
-[node name="run" type="Button" parent="VBoxContainer"]
+[node name="run" type="Button" parent="VBoxContainer" unique_id=653630544]
 layout_mode = 2
 text = "Run"

@@ -7,6 +7,25 @@ static func compose_shader_code(layer_num : int, shaded : bool = true) -> String
 				
 		return result
 	
+	var compose_cr = func compose_cr(base : Dictionary, size : int) -> String:
+		var result : String = "return "
+		for i in size:
+			var layer_idx = i + 1
+			result += base.string.replace("%s", str(layer_idx))
+			if base.is_boolean_operation:
+				result += " || "
+			else:
+				result += " + "
+		
+		if base.is_boolean_operation:
+			result = result.trim_suffix(" || ")
+		else:
+			result = result.trim_suffix(" + ")
+		
+		result += ";"
+				
+		return result
+	
 	
 	var result : String;
 	
@@ -29,7 +48,10 @@ static func compose_shader_code(layer_num : int, shaded : bool = true) -> String
 	result = result.replace("%parameters", parameters)
 	result = result.replace("%layer_fragment_snippets", fragment_snippets)
 	
-	for test in sc_mappings:
-		result = result.replace(test, compose_sc.call(sc_mappings[test], layer_num))
+	for mapping in sc_mappings:
+		result = result.replace(mapping, compose_sc.call(sc_mappings[mapping], layer_num))
+	
+	for mapping in cr_mappings:
+		result = result.replace(mapping, compose_cr.call(cr_mappings[mapping], layer_num))
 	
 	return result

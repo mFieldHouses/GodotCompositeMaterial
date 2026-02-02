@@ -32,16 +32,22 @@ func _enter_tree() -> void:
 	EditorInterface.get_editor_main_screen().add_child(studio_main_scene_instance)
 	studio_main_scene_instance.visible = false
 	
+	#Add ShaderFreezer autoload
+	add_autoload_singleton("CPMFreezer", "res://addons/CompositeMaterial/CPMFreezer.gd")
+	
 func _exit_tree() -> void:
+	#Undo everything done in _enter_tree()
 	remove_custom_type("CompositeMaterial")
 	remove_custom_type("CompositeMaterialLayer")
-	add_inspector_plugin(parameters_plugin)
+	remove_inspector_plugin(parameters_plugin)
 	remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, bake_button)
 	if bake_popup_dialogue:	
 		bake_popup_dialogue.queue_free()
 	
 	if studio_main_scene_instance:
 		studio_main_scene_instance.queue_free()
+	
+	remove_autoload_singleton("CPMFreezer")
 
 func _has_main_screen():
 	return true
