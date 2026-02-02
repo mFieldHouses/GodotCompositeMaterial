@@ -2,8 +2,12 @@ static func compose_shader_code(layer_num : int, shaded : bool = true) -> String
 	var compose_sc = func compose_simple_sc(line_base : String, sc_size : int) -> String:
 		var result : String
 		for i in sc_size:
+			
 			var layer_idx = i + 1
-			result += "case " + str(layer_idx) + ": " + line_base.replace("%s", str(layer_idx)) + " \n"
+			result += " \ncase " + str(layer_idx) + ": " + line_base.replace("%s", str(layer_idx))
+		
+		result += ";"
+		result += "\n"
 				
 		return result
 	

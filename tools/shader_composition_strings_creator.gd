@@ -91,8 +91,8 @@ func run() -> void:
 		elif _current_processing_state == "base_string" or _current_processing_state == "base2_string":
 			
 			if _ignore_new_cases:
-				if _line == "}":
-					print("found closing bracket. Stop ignoring")
+				if _line == "//end ignore_sc":
+					print("Stop ignoring new cases")
 					_ignore_new_cases = false
 				else:
 					print("ignoring for now")
@@ -164,18 +164,21 @@ func run() -> void:
 				_awaiting_switch_statement = false
 			
 			elif _create_sc_from_next_line:
-				if _line == "case 1:":
+				if _line.begins_with("case 1:"):
 					print("found case 1")
 					continue
 				else:
 					print("generating sc line, adding to _sc_mappings")
+					
+					if _line.begins_with("case 2:"):
+						_create_sc_from_next_line = false
+						_ignore_new_cases = true
+						continue
+					
 					var _clean_line : String = _line.replace("layer_A", "layer_%s")
 					if !_sc_mappings.has("%sc_" + _temp_func_name + "_sc_"):
 						_sc_mappings["%sc_" + _temp_func_name + "_sc_"] = ""
 					_sc_mappings["%sc_" + _temp_func_name + "_sc_"] += _clean_line
-					if _line.begins_with("return"):
-						_create_sc_from_next_line = false
-						_ignore_new_cases = true
 			
 			elif !_create_sc_from_next_line:
 				_base_string_buffer += "\n" + _line

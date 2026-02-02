@@ -1,7 +1,7 @@
 @tool
 extends EditorInspectorPlugin
 
-var hide_parameters = ["shader", "next_pass", "render_priority"]
+var hide_parameters = ["_shader", "next_pass", "render_priority"]
 var hide_when_frozen = ["layers", "autolock_material", "freeze_action", "rebuild_action"]
 var hide_when_not_frozen = ["unfreeze_action"]
 

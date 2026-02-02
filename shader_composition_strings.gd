@@ -12,7 +12,10 @@ uniform bool layer_%s_enabled = true;
 /**
  * In what place this layer will show. Layer 1 is the bottom layer, layer 3 the top layer. Do not set this to the same value on multiple layers.
  */
+//ignore
 uniform int layer_%s_processing_index : hint_enum("Bottom", "Middle", "Top") = 0;
+//end ignore
+uniform lowp float layer_%s_lod_level = 0;
 uniform sampler2D layer_%s_albedo : source_color, hint_default_transparent;
 uniform sampler2D layer_%s_normal : hint_normal;
 /**
@@ -91,7 +94,7 @@ uniform int layer_%s_step_5_mixing_operation : hint_enum("Add", "Subtract", "Mul
 uniform float layer_%s_step_5_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
 uniform int layer_%s_step_6_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
 uniform float layer_%s_step_6_mixing_threshold : hint_range(0.0, 1.0) = 0.0;
-uniform sampler2D layer_%s_post_color_ramp : hint_default_transparent;
+uniform sampler2D layer_%s_post_color_ramp : hint_default_transparent, repeat_disable;
 uniform int layer_%s_post_effect : hint_enum("None", "Drip", "Expand-Blur") = 0;
 uniform float layer_%s_post_effect_parameter_1 : hint_range(0.0, 1.0) = 0.1;
 uniform float layer_%s_post_effect_parameter_2 = 0.0;
@@ -99,10 +102,10 @@ uniform float layer_%s_post_effect_parameter_3 = 0.0;
 group_uniforms layer_%s.texture_masks;
 uniform bool layer_%s_texture_mask_A_enabled = true;
 uniform sampler2D layer_%s_texture_mask_A : hint_default_transparent;
-uniform sampler2D layer_%s_texture_mask_A_color_ramp : hint_default_transparent;
+uniform sampler2D layer_%s_texture_mask_A_color_ramp : hint_default_transparent, repeat_disable;
 uniform bool layer_%s_texture_mask_B_enabled = false;
 uniform sampler2D layer_%s_texture_mask_B : hint_default_transparent;
-uniform sampler2D layer_%s_texture_mask_B_color_ramp : hint_default_transparent;
+uniform sampler2D layer_%s_texture_mask_B_color_ramp : hint_default_transparent, repeat_disable;
 /**
  * What operation will be executed to mix masks A and B together. Depending on the mixing operation, the "Enabled" property per mask may be ignored.
  */
@@ -118,11 +121,11 @@ group_uniforms layer_%s.directional_mask;
  */
 uniform int layer_%s_directional_mask_mode : hint_enum("Disabled", "X", "X+", "X-", "Y", "Y+", "Y-", "Z", "Z+", "Z-");
 uniform int layer_%s_directional_mask_space : hint_enum("Global", "Local") = 0;
-uniform sampler2D layer_%s_directional_mask_color_ramp : hint_default_transparent;
+uniform sampler2D layer_%s_directional_mask_color_ramp : hint_default_transparent, repeat_disable;
 uniform int layer_%s_directional_mask_mixing_step: hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") = 2;
 group_uniforms layer_%s.positional_mask;
 uniform int layer_%s_positional_mask_mode : hint_enum("Disabled", "Local", "Global") = 0;
-uniform sampler2D layer_%s_positional_mask_color_ramp : hint_default_transparent;
+uniform sampler2D layer_%s_positional_mask_color_ramp : hint_default_transparent, repeat_disable;
 uniform int layer_%s_positional_mask_axis : hint_enum("X", "Y", "Z") = 1;
 /**
  * Position on the axis chosen starting at which the mask is 1. Doesnt apply to the Local positional mask mode.
@@ -141,22 +144,22 @@ group_uniforms layer_%s.vertex_color_mask;
  * Whether to use the objects vertex color properties as a mask. Useful for edgewear or adding deliberate spots of material to terrain.
  */
 uniform int layer_%s_vertex_color_mask_mode : hint_enum("Disabled", "Red", "Green", "Blue") = 0;
-uniform sampler2D layer_%s_vertex_color_mask_color_ramp : hint_default_transparent;
+uniform sampler2D layer_%s_vertex_color_mask_color_ramp : hint_default_transparent, repeat_disable;
 uniform int layer_%s_vertex_color_mask_mixing_step: hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") = 4;
 group_uniforms layer_%s.normal_map_slope_mask;
 uniform int layer_%s_normal_map_slope_mask_mode : hint_enum("Disabled", "Pre-Mask", "Post-Mask") = 0;
 uniform int layer_%s_normal_map_slope_mask_source : hint_enum("Previous Layer", "Current Layer") = 0;
-uniform sampler2D layer_%s_normal_map_slope_mask_color_ramp : hint_default_transparent;
+uniform sampler2D layer_%s_normal_map_slope_mask_color_ramp : hint_default_transparent, repeat_disable;
 uniform int layer_%s_normal_map_slope_mask_mixing_step : hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5") = 5;
 group_uniforms layer_%s.UV_mask;
 uniform bool layer_%s_UV_mask_enabled = false;
 uniform int layer_%s_UV_mask_mixing_step : hint_enum("Step 1:1", "Step 2:2", "Step 3:3", "Step 4:4", "Step 5:5", "Step 6:6") = 6;
 uniform float layer_%s_UV_mask_X_min = 0.0;
 uniform float layer_%s_UV_mask_X_max = 1.0;
-uniform sampler2D layer_%s_UV_mask_X_color_ramp : hint_default_transparent;
+uniform sampler2D layer_%s_UV_mask_X_color_ramp : hint_default_transparent, repeat_disable;
 uniform float layer_%s_UV_mask_Y_min = 0.0;
 uniform float layer_%s_UV_mask_Y_max = 1.0;
-uniform sampler2D layer_%s_UV_mask_Y_color_ramp : hint_default_transparent;
+uniform sampler2D layer_%s_UV_mask_Y_color_ramp : hint_default_transparent, repeat_disable;
 uniform int layer_%s_UV_mask_XY_mixing_operation : hint_enum("Add", "Subtract", "Multiply") = 0;
 uniform int layer_%s_UV_mask_XY_mixing_order : hint_enum("X-Y", "Y-X") = 0;'
 
@@ -193,11 +196,22 @@ int layer_%s_albedo_uv_map_index = get_layer_map_uv_index(%s,1);
 int layer_%s_occlusion_uv_map_index = get_layer_map_uv_index(%s,2);
 int layer_%s_roughness_uv_map_index = get_layer_map_uv_index(%s,3);
 int layer_%s_metallic_uv_map_index = get_layer_map_uv_index(%s,4);
-vec4 layer_%s_albedo_texture = texture(layer_%s_albedo, uv1 * float(layer_%s_albedo_uv_map_index == 0) + uv2 * float(layer_%s_albedo_uv_map_index == 1));
-vec2 layer_%s_occlusion_factor = texture(layer_%s_occlusion_map, uv1 * float(layer_%s_occlusion_uv_map_index == 0) + uv2 * float(layer_%s_occlusion_uv_map_index == 1)).ra * float(layer_%s_orm_mode) + texture(layer_%s_orm_map, uv1 * float(layer_%s_occlusion_uv_map_index == 0) + uv2 * float(layer_%s_occlusion_uv_map_index == 1)).ra * (%s.0 - float(layer_%s_orm_mode));
-vec2 layer_%s_roughness_factor = texture(layer_%s_roughness_map, uv1 * float(layer_%s_roughness_uv_map_index == 0) + uv2 * float(layer_%s_roughness_uv_map_index == 1)).ra * float(layer_%s_orm_mode) + texture(layer_%s_orm_map, uv1 * float(layer_%s_roughness_uv_map_index == 0) + uv2 * float(layer_%s_roughness_uv_map_index == 1)).ga * (%s.0 - float(layer_%s_orm_mode));
-vec2 layer_%s_metallic_factor = texture(layer_%s_metallic_map, uv1 * float(layer_%s_metallic_uv_map_index == 0) + uv2 * float(layer_%s_metallic_uv_map_index == 1)).ra * float(layer_%s_orm_mode) + texture(layer_%s_orm_map, uv1 * float(layer_%s_metallic_uv_map_index == 0) + uv2 * float(layer_%s_metallic_uv_map_index == 1)).ra * (%s.0 - float(layer_%s_orm_mode));
-vec3 layer_%s_normal_map = texture(layer_%s_normal, uv1 * float(layer_%s_normal_uv_map_index == 0) + uv2 * float(layer_%s_normal_uv_map_index == 1)).rgb;
+vec4 layer_%s_albedo_texture = textureLod(layer_%s_albedo, uv1 * float(layer_%s_albedo_uv_map_index == 0) + uv2 * float(layer_%s_albedo_uv_map_index == 1), layer_%s_lod_level);
+vec2 layer_%s_occlusion_factor;
+vec2 layer_%s_roughness_factor;
+vec2 layer_%s_metallic_factor;
+switch (layer_%s_orm_mode) {
+case 0:
+vec4 orm_color = textureLod(layer_%s_orm_map, uv1 * float(layer_%s_occlusion_uv_map_index == 0) + uv2 * float(layer_%s_occlusion_uv_map_index == 1), layer_%s_lod_level);
+layer_%s_occlusion_factor = orm_color.ra;
+layer_%s_roughness_factor = orm_color.ga;
+layer_%s_metallic_factor = orm_color.ba;
+default:
+layer_%s_occlusion_factor = textureLod(layer_%s_occlusion_map, uv1 * float(layer_%s_occlusion_uv_map_index == 0) + uv2 * float(layer_%s_occlusion_uv_map_index == 1), layer_%s_lod_level).ra;
+layer_%s_roughness_factor = textureLod(layer_%s_roughness_map, uv1 * float(layer_%s_roughness_uv_map_index == 0) + uv2 * float(layer_%s_roughness_uv_map_index == 1), layer_%s_lod_level).ra;
+layer_%s_metallic_factor = textureLod(layer_%s_metallic_map, uv1 * float(layer_%s_metallic_uv_map_index == 0) + uv2 * float(layer_%s_metallic_uv_map_index == 1), layer_%s_lod_level).ra;
+};
+vec3 layer_%s_normal_map = textureLod(layer_%s_normal, uv1 * float(layer_%s_normal_uv_map_index == 0) + uv2 * float(layer_%s_normal_uv_map_index == 1), layer_%s_lod_level).rgb;
 int mask_A_uv_map_index = get_layer_map_uv_index(%s, 5);
 int mask_B_uv_map_index = get_layer_map_uv_index(%s, 6);
 float layer_%s_mask_factor = get_resulting_mask_for_layer(%s, uv1, uv2, local_vertex_normal, global_vertex_normal, local_vertex_pos, global_vertex_pos);
@@ -227,7 +241,6 @@ int get_layer_uv_mode(int layer, int uv_map_index) {
 }
 vec2 get_layer_uv_offset(int layer, int uv_map_index, vec2 uv) {
 switch (layer) {%sc_get_layer_uv_offset_sc_
-}
 }
 vec2 get_layer_uv_scale(int layer, int uv_map_index) {
 %cr_get_layer_uv_scale_cr_
@@ -278,7 +291,6 @@ float get_layer_mask_amplification(int layer) {
 float get_layer_mask_post_color_ramp_value(int layer, float factor) {
 switch (layer) {%sc_get_layer_mask_post_color_ramp_value_sc_
 }
-}
 int get_layer_post_effect(int layer) {
 %cr_get_layer_post_effect_cr_
 }
@@ -287,7 +299,6 @@ float get_layer_post_effect_parameter(int layer, int parameter_index) {
 }
 vec4 get_layer_texture_mask_texture(int layer, int a_or_b, vec2 uv) {
 switch (layer) {%sc_get_layer_texture_mask_texture_sc_
-}
 }
 bool get_layer_texture_mask_enabled(int layer, int a_or_b) {
 %cr_get_layer_texture_mask_enabled_cr_
@@ -301,7 +312,6 @@ int get_layer_texture_mask_mix_operation(int layer) {
 float get_layer_texture_mask_color_ramp_value(int layer, float factor, int a_or_b) {
 switch (layer) {%sc_get_layer_texture_mask_color_ramp_value_sc_
 }
-}
 int get_layer_directional_mask_mode(int layer) {
 %cr_get_layer_directional_mask_mode_cr_
 }
@@ -310,7 +320,6 @@ int get_layer_directional_mask_space(int layer) {
 }
 float get_layer_directional_mask_color_ramp_value(int layer, float factor) {
 switch (layer) {%sc_get_layer_directional_mask_color_ramp_value_sc_
-}
 }
 int get_layer_positional_mask_mode(int layer) {
 %cr_get_layer_positional_mask_mode_cr_
@@ -327,20 +336,17 @@ float get_layer_positional_mask_max(int layer) {
 float get_layer_positional_mask_color_ramp_value(int layer, float factor) {
 switch (layer) {%sc_get_layer_positional_mask_color_ramp_value_sc_
 }
-}
 int get_layer_vertex_color_mask_mode(int layer) {
 %cr_get_layer_vertex_color_mask_mode_cr_
 }
 float get_layer_vertex_color_mask_color_ramp_value(int layer, float factor) {
 switch (layer) {%sc_get_layer_vertex_color_mask_color_ramp_value_sc_
 }
-}
 int get_layer_normal_map_slope_mask_mode(int layer) {
 %cr_get_layer_normal_map_slope_mask_mode_cr_
 }
 float get_layer_normal_map_slope_mask_color_ramp_value(int layer, float factor) {
 switch (layer) {%sc_get_layer_normal_map_slope_mask_color_ramp_value_sc_
-}
 }
 bool get_layer_uv_mask_enabled(int layer) {
 %cr_get_layer_uv_mask_enabled_cr_
@@ -353,7 +359,6 @@ int get_layer_uv_mask_mixing_order(int layer) {
 }
 float get_layer_uv_mask_color_ramp_value(int layer, bool axis, float factor) {
 switch (layer) {%sc_get_layer_uv_mask_color_ramp_value_sc_
-}
 }
 float get_layer_uv_mask_min(int layer, bool axis) {
 %cr_get_layer_uv_mask_min_cr_
@@ -442,7 +447,6 @@ return get_layer_vertex_color_mask_color_ramp_value(layer, vertex_color.b);
 }
 float get_normal_map_slope_mask_for_layer(int layer, vec2 uv) {
 switch (layer) {%sc_get_normal_map_slope_mask_for_layer_sc_
-}
 }
 float get_uv_mask_for_layer(int layer, vec2 uv) {float x_max = get_layer_uv_mask_max(layer, false);
 float x_min = get_layer_uv_mask_min(layer, false);
@@ -605,7 +609,7 @@ ROUGHNESS = roughness_mix;
 METALLIC = metallic_mix;
 NORMAL_MAP = normal_mix;
 }'
-const sc_mappings : Dictionary[String, String] = {"%sc_get_layer_directional_mask_color_ramp_value_sc_":"vec2 color_ramp_factor = texture(layer_%s_directional_mask_color_ramp, vec2((factor * 0.98) + 0.0)).ra;return mix(factor, color_ramp_factor.x, color_ramp_factor.y);","%sc_get_layer_mask_post_color_ramp_value_sc_":"vec2 color_ramp_factor = texture(layer_%s_post_color_ramp, vec2((factor * 0.98) + 0.01, 0.0)).ra;return mix(factor, color_ramp_factor.x, color_ramp_factor.y);","%sc_get_layer_normal_map_slope_mask_color_ramp_value_sc_":"vec4 color_ramp_color = texture(layer_%s_normal_map_slope_mask_color_ramp, vec2((factor * 0.98) + 0.1, 0.0));return mix(factor, color_ramp_color.r, color_ramp_color.a);","%sc_get_layer_positional_mask_color_ramp_value_sc_":"vec2 color_ramp_factor = texture(layer_%s_positional_mask_color_ramp, vec2((factor * 0.98) + 0.1, 0.0)).ra;return mix(factor, color_ramp_factor.x, color_ramp_factor.y);","%sc_get_layer_texture_mask_color_ramp_value_sc_":"vec2 color_ramp_factor = texture(layer_%s_texture_mask_A_color_ramp, vec2((factor * 0.98) + 0.01)).ra * float(a_or_b == 0) + texture(layer_%s_texture_mask_B_color_ramp, vec2((factor * 0.98) + 0.01)).ra * float(a_or_b);return mix(factor, color_ramp_factor.x, color_ramp_factor.y);","%sc_get_layer_texture_mask_texture_sc_":"return (texture(layer_%s_texture_mask_A, uv) * (1.0 - float(a_or_b))) + (texture(layer_%s_texture_mask_B, uv) * float(a_or_b));","%sc_get_layer_uv_mask_color_ramp_value_sc_":"vec4 color_ramp_color = texture(layer_%s_UV_mask_X_color_ramp, vec2(factor, 0)) * float(int(axis) == 0) + texture(layer_%s_UV_mask_Y_color_ramp, vec2(factor, 0)) * float(int(axis) == 1);return mix(factor, color_ramp_color.r, color_ramp_color.a);","%sc_get_layer_uv_offset_sc_":"return ((texture(layer_%s_uv1_offset_map, uv * layer_%s_uv1_offset_map_scale).rg - vec2(0.5)) * 2.0) * texture(layer_%s_uv1_offset_map, uv).a * layer_%s_uv1_offset_map_factor * float(uv_map_index == 0) + ((texture(layer_%s_uv2_offset_map, uv * layer_%s_uv2_offset_map_scale).rg - vec2(0.5)) * 2.0) * texture(layer_%s_uv2_offset_map, uv).a * layer_%s_uv2_offset_map_factor * float(uv_map_index == 1);","%sc_get_layer_vertex_color_mask_color_ramp_value_sc_":"vec4 color_ramp_color = texture(layer_%s_vertex_color_mask_color_ramp, vec2((factor * 0.98) + 0.01, 0));return mix(factor, color_ramp_color.r, color_ramp_color.a);","%sc_get_normal_map_slope_mask_for_layer_sc_":"vec4 normal_map_value = texture(layer_%s_normal, uv);float mask_value = (abs(normal_map_value.r - 0.5) * float(abs(normal_map_value.r - 0.5) > abs(normal_map_value.g - 0.5)) + abs(normal_map_value.g - 0.5) * float(abs(normal_map_value.r - 0.5) < abs(normal_map_value.g - 0.5))) * float(get_layer_normal_map_slope_mask_mode(1) != 0);return get_layer_normal_map_slope_mask_color_ramp_value(1, mask_value);"}
+const sc_mappings : Dictionary[String, String] = {"%sc_get_layer_directional_mask_color_ramp_value_sc_":"vec2 color_ramp_factor = textureLod(layer_%s_directional_mask_color_ramp, vec2((factor * 0.98) + 0.0), 5).ra;return mix(factor, color_ramp_factor.x, color_ramp_factor.y);","%sc_get_layer_mask_post_color_ramp_value_sc_":"{vec2 color_ramp_factor = textureLod(layer_%s_post_color_ramp, vec2((factor * 0.98) + 0.01, 0.0), 5).ra;return mix(factor, color_ramp_factor.x, color_ramp_factor.y);}","%sc_get_layer_normal_map_slope_mask_color_ramp_value_sc_":"vec4 color_ramp_color = textureLod(layer_%s_normal_map_slope_mask_color_ramp, vec2((factor * 0.98) + 0.1, 0.0), 5);return mix(factor, color_ramp_color.r, color_ramp_color.a);","%sc_get_layer_positional_mask_color_ramp_value_sc_":"vec2 color_ramp_factor = textureLod(layer_%s_positional_mask_color_ramp, vec2((factor * 0.98) + 0.1, 0.0), 5).ra;return mix(factor, color_ramp_factor.x, color_ramp_factor.y);","%sc_get_layer_texture_mask_color_ramp_value_sc_":"{vec2 color_ramp_factor;switch (a_or_b) { case 0: color_ramp_factor = textureLod(layer_%s_texture_mask_A_color_ramp, vec2((factor * 0.98) + 0.01), 5).ra;default:color_ramp_factor = textureLod(layer_%s_texture_mask_B_color_ramp, vec2((factor * 0.98) + 0.01), 5).ra;};return mix(factor, color_ramp_factor.x, color_ramp_factor.y);}","%sc_get_layer_texture_mask_texture_sc_":"{switch (a_or_b) { case 0: {return textureLod(layer_%s_texture_mask_A, uv, layer_%s_lod_level);}default:{return textureLod(layer_%s_texture_mask_B, uv, layer_%s_lod_level);};}}","%sc_get_layer_uv_mask_color_ramp_value_sc_":"vec4 color_ramp_color;if (axis) {color_ramp_color = textureLod(layer_%s_UV_mask_X_color_ramp, vec2((factor * 0.98) + 0.01), 5);}else {color_ramp_color = textureLod(layer_%s_UV_mask_Y_color_ramp, vec2((factor * 0.98) + 0.01), 5);}return mix(factor, color_ramp_color.r, color_ramp_color.a);","%sc_get_layer_uv_offset_sc_":"{vec4 color;if (uv_map_index == 0) {color = texture(layer_%s_uv1_offset_map, uv * layer_%s_uv1_offset_map_scale) * layer_%s_uv1_offset_map_factor;}else {color = texture(layer_%s_uv2_offset_map, uv * layer_%s_uv2_offset_map_scale) * layer_%s_uv2_offset_map_factor;}return color.rg * color.a;}","%sc_get_layer_vertex_color_mask_color_ramp_value_sc_":"vec4 color_ramp_color = textureLod(layer_%s_vertex_color_mask_color_ramp, vec2((factor * 0.98) + 0.01, 0), 5);return mix(factor, color_ramp_color.r, color_ramp_color.a);","%sc_get_normal_map_slope_mask_for_layer_sc_":"vec4 normal_map_value = textureLod(layer_%s_normal, uv, layer_%s_lod_level);float mask_value = (abs(normal_map_value.r - 0.5) * float(abs(normal_map_value.r - 0.5) > abs(normal_map_value.g - 0.5)) + abs(normal_map_value.g - 0.5) * float(abs(normal_map_value.r - 0.5) < abs(normal_map_value.g - 0.5))) * float(get_layer_normal_map_slope_mask_mode(1) != 0);return get_layer_normal_map_slope_mask_color_ramp_value(1, mask_value);"}
 const cr_mappings : Dictionary[String, Dictionary] = {"%cr_get_layer_directional_mask_mode_cr_":{"is_boolean_operation":false,"string":"((layer_%s_directional_mask_mode) * int(layer == %s))"},"%cr_get_layer_directional_mask_space_cr_":{"is_boolean_operation":false,"string":"((layer_%s_directional_mask_space) * int(layer == %s))"},"%cr_get_layer_enabled_cr_":{"is_boolean_operation":true,"string":"(layer_%s_enabled && layer == %s)"},"%cr_get_layer_map_uv_index_cr_":{"is_boolean_operation":false,"string":"((layer_%s_normal_map_UV_assignment * int(map_index == 0) + layer_%s_albedo_map_UV_assignment * int(map_index == 1) + layer_%s_occlusion_map_UV_assignment * int(map_index == 2) + layer_%s_roughness_map_UV_assignment * int(map_index == 3) + layer_%s_metallic_map_UV_assignment * int(map_index == 4) + layer_%s_UV_offset_map_UV_assignment * int(map_index == 5) + layer_%s_texture_mask_A_UV_assignment * int(map_index == 6) + layer_%s_texture_mask_B_UV_assignment * int(map_index == 7) + layer_%s_UV_mask_UV_assignment * int(map_index == 8)) * int(layer == %s))"},"%cr_get_layer_mask_amplification_cr_":{"is_boolean_operation":false,"string":"((layer_%s_mask_amplification) * float(layer == %s))"},"%cr_get_layer_mask_mixing_step_cr_":{"is_boolean_operation":false,"string":"((layer_%s_texture_masks_mixing_step * int(mask == 1) + layer_%s_directional_mask_mixing_step * int(mask == 2) + layer_%s_positional_mask_mixing_step * int(mask == 3) + layer_%s_vertex_color_mask_mixing_step * int(mask == 4) + layer_%s_normal_map_slope_mask_mixing_step * int(mask == 5) + layer_%s_UV_mask_mixing_step * int(mask == 6)) * int(layer == %s))"},"%cr_get_layer_mixing_step_mask_cr_":{"is_boolean_operation":false,"string":"((layer_%s_texture_masks_mixing_step * int(_step == 1) + layer_%s_directional_mask_mixing_step * int(_step == 2) + layer_%s_positional_mask_mixing_step * int(_step == 3) + layer_%s_vertex_color_mask_mixing_step * int(_step == 4) + layer_%s_normal_map_slope_mask_mixing_step * int(_step == 5) + layer_%s_UV_mask_mixing_step * int(_step == 6)) * int(layer == %s))"},"%cr_get_layer_normal_map_slope_mask_mode_cr_":{"is_boolean_operation":false,"string":"((layer_%s_normal_map_slope_mask_mode) * int(layer == %s))"},"%cr_get_layer_positional_mask_axis_cr_":{"is_boolean_operation":false,"string":"((layer_%s_positional_mask_axis) * int(layer == %s))"},"%cr_get_layer_positional_mask_max_cr_":{"is_boolean_operation":false,"string":"((layer_%s_positional_mask_max) * float(layer == %s))"},"%cr_get_layer_positional_mask_min_cr_":{"is_boolean_operation":false,"string":"((layer_%s_positional_mask_min) * float(layer == %s))"},"%cr_get_layer_positional_mask_mode_cr_":{"is_boolean_operation":false,"string":"(layer_%s_positional_mask_mode * int(layer == %s))"},"%cr_get_layer_post_effect_cr_":{"is_boolean_operation":false,"string":"((layer_%s_post_effect) * int(layer == %s))"},"%cr_get_layer_post_effect_parameter_cr_":{"is_boolean_operation":false,"string":"((layer_%s_post_effect_parameter_1 * float(parameter_index == 1) + layer_%s_post_effect_parameter_2 * float(parameter_index == 2) + layer_%s_post_effect_parameter_3 * float(parameter_index == 3)) * float(layer == %s))"},"%cr_get_layer_step_mixing_operation_cr_":{"is_boolean_operation":false,"string":"(((layer_%s_step_2_mixing_operation * int(step == 2) + layer_%s_step_3_mixing_operation * int(step == 3) + layer_%s_step_4_mixing_operation * int(step == 4) + layer_%s_step_5_mixing_operation * int(step == 5))) * int(layer == %s))"},"%cr_get_layer_step_mixing_threshold_cr_":{"is_boolean_operation":false,"string":"(((layer_%s_step_2_mixing_threshold * float(step == 2) + layer_%s_step_3_mixing_threshold * float(step == 3) + layer_%s_step_4_mixing_threshold * float(step == 4) + layer_%s_step_5_mixing_threshold * float(step == 5))) * float(layer == %s))"},"%cr_get_layer_texture_mask_enabled_cr_":{"is_boolean_operation":true,"string":"((layer_%s_texture_mask_A_enabled && (bool(a_or_b) == false) || layer_%s_texture_mask_B_enabled && (bool(a_or_b) == true)) && layer == %s)"},"%cr_get_layer_texture_mask_mix_operation_cr_":{"is_boolean_operation":false,"string":"((layer_%s_texture_masks_mix_operation) * int(layer == %s))"},"%cr_get_layer_texture_masks_subtraction_order_cr_":{"is_boolean_operation":false,"string":"((layer_%s_texture_masks_subtraction_order) * int(layer == %s))"},"%cr_get_layer_uv_cr_":{"is_boolean_operation":false,"string":"(((uv + get_layer_uv_offset(1, uv_map_index, uv)) * layer_%s_uv1_scale * float(uv_map_index == 0) + (uv + get_layer_uv_offset(1, 1, uv) + layer_%s_uv2_offset) * layer_%s_uv2_scale * float(uv_map_index == 1)) * float(layer == %s))"},"%cr_get_layer_uv_mask_enabled_cr_":{"is_boolean_operation":true,"string":"((layer_%s_UV_mask_enabled) && layer == %s)"},"%cr_get_layer_uv_mask_max_cr_":{"is_boolean_operation":false,"string":"((layer_%s_UV_mask_X_max * float(int(axis) == 0) + layer_%s_UV_mask_Y_max * float(int(axis) == 1)) * float(layer == %s))"},"%cr_get_layer_uv_mask_min_cr_":{"is_boolean_operation":false,"string":"((layer_%s_UV_mask_X_min * float(int(axis) == 0) + layer_%s_UV_mask_Y_min * float(int(axis) == 1)) * float(layer == %s))"},"%cr_get_layer_uv_mask_mixing_operation_cr_":{"is_boolean_operation":false,"string":"((layer_%s_UV_mask_XY_mixing_operation) * int(layer == %s))"},"%cr_get_layer_uv_mask_mixing_order_cr_":{"is_boolean_operation":false,"string":"((layer_%s_UV_mask_XY_mixing_order) * int(layer == %s))"},"%cr_get_layer_uv_mode_cr_":{"is_boolean_operation":false,"string":"(layer_%s_uv1_mode * int(uv_map_index == 0) + layer_%s_uv2_mode * int(uv_map_index == 1))"},"%cr_get_layer_uv_scale_cr_":{"is_boolean_operation":false,"string":"(layer_%s_uv1_scale * float(uv_map_index == 0) + layer_%s_uv2_scale * float(uv_map_index == 1))"},"%cr_get_layer_uv_triplanar_mode_cr_":{"is_boolean_operation":false,"string":"((layer_%s_uv1_triplanar_mode * int(uv_map_index == 0) + layer_%s_uv2_triplanar_mode * int(uv_map_index == 1)) * int(layer == %s))"},"%cr_get_layer_vertex_color_mask_mode_cr_":{"is_boolean_operation":false,"string":"((layer_%s_vertex_color_mask_mode) * int(layer == %s))"}}
 
 
@@ -613,8 +617,12 @@ static func compose_shader_code(layer_num : int, shaded : bool = true) -> String
 	var compose_sc = func compose_simple_sc(line_base : String, sc_size : int) -> String:
 		var result : String
 		for i in sc_size:
+			
 			var layer_idx = i + 1
-			result += "case " + str(layer_idx) + ": " + line_base.replace("%s", str(layer_idx)) + " \n"
+			result += " \ncase " + str(layer_idx) + ": " + line_base.replace("%s", str(layer_idx))
+		
+		result += ";"
+		result += "\n"
 				
 		return result
 	
@@ -634,8 +642,6 @@ static func compose_shader_code(layer_num : int, shaded : bool = true) -> String
 			result = result.trim_suffix(" + ")
 		
 		result += ";"
-		
-		print("result: ", result)
 				
 		return result
 	

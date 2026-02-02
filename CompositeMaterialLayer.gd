@@ -16,6 +16,8 @@ signal parameter_changed
 		enabled = x
 		emit_changed()
 
+@export_range(0.0, 1.0, 0.01, "or_greater", "hide_control") var lod_level : float = 0.0
+
 @export var albedo : Texture2D:
 	set(x):
 		albedo = x
