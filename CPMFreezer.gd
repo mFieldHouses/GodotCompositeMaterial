@@ -10,8 +10,27 @@ var feature_functions = {
 	"uv_mask": "float get_uv_mask_for_layer"
 }
 
+enum FunctionType {FIRST_ORDER, SECOND_ORDER, TEXTURE_FETCH}
+
+class FunctionIndexEntry:
+	var full_signature : String
+	var type : FunctionType
+	var index : int
+	var line : int
+	
+	func _init(full_signature : String, type : FunctionType, index : int, line : int) -> void:
+		self.full_signature = full_signature
+		self.type = type
+		self.index = index
+		self.line = line
+
 func freeze_cpm(material : CompositeMaterial) -> void:
-	var first_order_functions : Array[String]
+	
+	print("Freezing CompositeMaterial resource...")
+	
+	var function_index : Dictionary[String, FunctionIndexEntry]
+	var uniform_index : Dictionary[String, Variant]
+	
 	var used_features : Array[String]
 	var add_used_feature : Callable = func add_used_feature(feature_name : String) -> void:
 		if !used_features.has(feature_name):
@@ -64,9 +83,11 @@ func freeze_cpm(material : CompositeMaterial) -> void:
 		_shader_code = _shader_code.insert(_idx_in_code, _full_function_signature + " {return 0.0;}")
 	
 	material.unfrozen_shader = material.shader
-	var _sh := Shader.new()
-	_sh.code = _shader_code
-	material.shader = _sh
+	var frozen_shader := Shader.new()
+	frozen_shader.code = _shader_code
+	material.shader = frozen_shader
+	
+	print("Freezing complete!")
 	
 func unfreeze_material(material : FrozenCompositeMaterial) -> void:
 	_set_currently_selected_node_material(material.source_composite_material)
