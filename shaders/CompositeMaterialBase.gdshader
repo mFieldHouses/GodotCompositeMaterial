@@ -646,7 +646,8 @@ float get_fragment_distance_to_camera() {
 }
 
 float get_mip_modifier() {
-	return get_fragment_distance_to_camera() / 20.0;
+	float x = get_fragment_distance_to_camera();
+	return (3.0 / (1.0 + pow(10.0, -(x - 8.0)))) + sqrt(x) - 3.0;
 }
 //end include
 
