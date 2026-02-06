@@ -16,6 +16,7 @@ var _current_processing_state : String = "none":
 
 var _awaiting_switch_statement : bool = false
 var _create_sc_from_next_line : bool = false
+var _create_sc_from_next_lines : bool = false #this is scuffed sorry
 var _ignore_new_cases : bool = false #used when the cursor is still in a function that we have already generated an sc for
 var _temp_func_name : String = ""
 var _base_string_buffer : String = ""
@@ -116,6 +117,7 @@ func run() -> void:
 			elif _include_lines:
 				print("including ", _line.trim_prefix("//"))
 				_base_string_buffer += "\n" + _line.trim_prefix("//")
+				
 			
 			elif _line.begins_with("//"): continue
 			
@@ -156,16 +158,18 @@ func run() -> void:
 			elif _awaiting_switch_statement:
 				if _line.begins_with("switch (layer)"):
 					print("function needs an sc")
-					_base_string_buffer += "\n" + _line + "%sc_" + _temp_func_name + "_sc_" #weird pattern stuff to prevent the String.replace() function from matching the wrong patterns
+					_base_string_buffer += "\n" + _line + "%sc_" + _temp_func_name + "_sc_}" #weird pattern stuff to prevent the String.replace() function from matching the wrong patterns
 					_create_sc_from_next_line = true
+					_create_sc_from_next_lines = true
 				else:
 					_base_string_buffer += _line
 				
 				_awaiting_switch_statement = false
 			
 			elif _create_sc_from_next_line:
-				if _line.begins_with("case 1:"):
+				if _line.begins_with("case 1:") and _create_sc_from_next_lines:
 					print("found case 1")
+					_create_sc_from_next_lines = false
 					continue
 				else:
 					print("generating sc line, adding to _sc_mappings")

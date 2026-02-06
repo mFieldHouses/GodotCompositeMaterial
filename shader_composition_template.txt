@@ -6,7 +6,7 @@ static func compose_shader_code(layer_num : int, shaded : bool = true) -> String
 			var layer_idx = i + 1
 			result += " \ncase " + str(layer_idx) + ": " + line_base.replace("%s", str(layer_idx))
 		
-		result += ";"
+		#result += ";"
 		result += "\n"
 				
 		return result

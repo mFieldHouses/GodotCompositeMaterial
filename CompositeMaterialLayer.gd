@@ -69,7 +69,7 @@ signal parameter_changed
 @export_enum("UV1", "UV2") var UV_mask_UV_assignment := 0;
 
 @export_group("ORM")
-@export_enum("Single map", "Seperate maps") var orm_mode := 0;
+@export_enum("Single map", "Seperate maps", "Values") var orm_mode := 0;
 @export var orm_map : Texture2D:
 	set(x):
 		orm_map = x
@@ -85,6 +85,18 @@ signal parameter_changed
 @export var metallic_map : Texture2D:
 	set(x):
 		metallic_map = x
+		emit_changed()
+@export_range(0.0, 1.0, 0.001) var occlusion_value : float = 0.5:
+	set(x):
+		occlusion_value = x
+		emit_changed()
+@export_range(0.0, 1.0, 0.001) var roughness_value : float = 0.5:
+	set(x):
+		roughness_value = x
+		emit_changed()
+@export_range(0.0, 1.0, 0.001) var metallic_value : float = 0.5:
+	set(x):
+		metallic_value = x
 		emit_changed()
 
 @export_group("Masking")

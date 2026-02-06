@@ -103,11 +103,14 @@ uniform int layer_C_texture_mask_B_UV_assignment : hint_enum("UV1", "UV2") = 1;
 uniform int layer_C_UV_mask_UV_assignment : hint_enum("UV1", "UV2") = 0;
 
 group_uniforms layer_C.ORM;
-uniform int layer_C_orm_mode : hint_enum("Single map", "Seperate maps") = 0;
+uniform int layer_C_orm_mode : hint_enum("Single map", "Seperate maps", "Values") = 0;
 uniform sampler2D layer_C_orm_map : hint_default_transparent;
 uniform sampler2D layer_C_occlusion_map : hint_default_transparent;
 uniform sampler2D layer_C_roughness_map : hint_default_transparent;
 uniform sampler2D layer_C_metallic_map : hint_default_transparent;
+uniform lowp float layer_C_occlusion_value : hint_range(0.0, 1.0, 0.001) = 0.5;
+uniform lowp float layer_C_roughness_value : hint_range(0.0, 1.0, 0.001) = 0.5;
+uniform lowp float layer_C_metallic_value : hint_range(0.0, 1.0, 0.001) = 0.5;
 /**
  * Whether this layer should use the same ORM texture as the underlying layer.
  */
@@ -296,11 +299,14 @@ uniform int layer_B_texture_mask_B_UV_assignment : hint_enum("UV1", "UV2") = 1;
 uniform int layer_B_UV_mask_UV_assignment : hint_enum("UV1", "UV2") = 0;
 
 group_uniforms layer_B.ORM;
-uniform int layer_B_orm_mode : hint_enum("Single map", "Seperate maps") = 0;
+uniform int layer_B_orm_mode : hint_enum("Single map", "Seperate maps", "Values") = 0;
 uniform sampler2D layer_B_orm_map : hint_default_transparent;
 uniform sampler2D layer_B_occlusion_map : hint_default_transparent;
 uniform sampler2D layer_B_roughness_map : hint_default_transparent;
 uniform sampler2D layer_B_metallic_map : hint_default_transparent;
+uniform lowp float layer_B_occlusion_value : hint_range(0.0, 1.0, 0.001) = 0.5;
+uniform lowp float layer_B_roughness_value : hint_range(0.0, 1.0, 0.001) = 0.5;
+uniform lowp float layer_B_metallic_value : hint_range(0.0, 1.0, 0.001) = 0.5;
 /**
  * Whether this layer should use the same ORM texture as the underlying layer.
  */
@@ -486,11 +492,14 @@ uniform int layer_A_texture_mask_B_UV_assignment : hint_enum("UV1", "UV2") = 1;
 uniform int layer_A_UV_mask_UV_assignment : hint_enum("UV1", "UV2") = 0;
 
 group_uniforms layer_A.ORM;
-uniform int layer_A_orm_mode : hint_enum("Single map", "Seperate maps") = 0;
+uniform int layer_A_orm_mode : hint_enum("Single map", "Seperate maps", "Values") = 0;
 uniform sampler2D layer_A_orm_map : hint_default_transparent;
 uniform sampler2D layer_A_occlusion_map : hint_default_transparent;
 uniform sampler2D layer_A_roughness_map : hint_default_transparent;
 uniform sampler2D layer_A_metallic_map : hint_default_transparent;
+uniform lowp float layer_A_occlusion_value : hint_range(0.0, 1.0, 0.001) = 0.5;
+uniform lowp float layer_A_roughness_value : hint_range(0.0, 1.0, 0.001) = 0.5;
+uniform lowp float layer_A_metallic_value : hint_range(0.0, 1.0, 0.001) = 0.5;
 /**
  * Whether this layer should use the same ORM texture as the underlying layer.
  */
@@ -622,11 +631,28 @@ varying vec3 global_vertex_normal;
 varying vec3 global_vertex_pos;
 varying vec3 local_vertex_pos;
 varying vec3 vertex_color;
+varying vec3 global_camera_pos;
 
 //==========================================================================
 
 
 //==========================================================================
+
+
+// VVV     prevents these functions from getting interpreted as anything else
+//include
+float get_fragment_distance_to_camera() {
+	return distance(global_vertex_pos, global_camera_pos);
+}
+
+float get_mip_modifier() {
+	return get_fragment_distance_to_camera() / 20.0;
+}
+//end include
+
+
+
+
 
 //ignore
 int get_processing_layer_assigned_layer(int layer_processing_index) {
@@ -658,7 +684,7 @@ bool get_layer_enabled(int layer) {
 
 int get_layer_uv_mode(int layer, int uv_map_index) {
 	
-	return (layer_A_uv1_mode * int(uv_map_index == 0) + layer_A_uv2_mode * int(uv_map_index == 1)) * int(layer == 1) + (layer_A_uv1_mode * int(uv_map_index == 0) + layer_A_uv2_mode * int(uv_map_index == 1)) * int(layer == 2) + (layer_A_uv1_mode * int(uv_map_index == 0) + layer_A_uv2_mode * int(uv_map_index == 1)) * int(layer == 3);
+	return ((layer_A_uv1_mode * int(uv_map_index == 0) + layer_A_uv2_mode * int(uv_map_index == 1)) * int(layer == 1)) + ((layer_B_uv1_mode * int(uv_map_index == 0) + layer_B_uv2_mode * int(uv_map_index == 1)) * int(layer == 2)) + ((layer_C_uv1_mode * int(uv_map_index == 0) + layer_C_uv2_mode * int(uv_map_index == 1)) * int(layer == 3));
 	
 	//switch (layer) {
 		//case 1:
@@ -695,10 +721,10 @@ vec2 get_layer_uv_offset(int layer, int uv_map_index, vec2 uv) {
 		case 3:
 			vec4 color;
 			if (uv_map_index == 0) {
-				color = texture(layer_B_uv1_offset_map, uv * layer_B_uv1_offset_map_scale) * layer_B_uv1_offset_map_factor;
+				color = texture(layer_C_uv1_offset_map, uv * layer_C_uv1_offset_map_scale) * layer_C_uv1_offset_map_factor;
 			}
 			else {
-				color = texture(layer_B_uv2_offset_map, uv * layer_B_uv2_offset_map_scale) * layer_B_uv2_offset_map_factor;
+				color = texture(layer_C_uv2_offset_map, uv * layer_C_uv2_offset_map_scale) * layer_C_uv2_offset_map_factor;
 			}
 			return color.rg * color.a;
 			}
@@ -707,7 +733,7 @@ vec2 get_layer_uv_offset(int layer, int uv_map_index, vec2 uv) {
 
 vec2 get_layer_uv_scale(int layer, int uv_map_index) {
 	
-	return (layer_A_uv1_scale * float(uv_map_index == 0) + layer_A_uv2_scale * float(uv_map_index == 1)) * float(layer == 1) + (layer_B_uv1_scale * float(uv_map_index == 0) + layer_B_uv2_scale * float(uv_map_index == 1)) * float(layer == 2) + (layer_C_uv1_scale * float(uv_map_index == 0) + layer_C_uv2_scale * float(uv_map_index == 1)) * float(layer == 2);
+	return ((layer_A_uv1_scale * float(uv_map_index == 0) + layer_A_uv2_scale * float(uv_map_index == 1)) * float(layer == 1)) + ((layer_B_uv1_scale * float(uv_map_index == 0) + layer_B_uv2_scale * float(uv_map_index == 1)) * float(layer == 2)) + ((layer_C_uv1_scale * float(uv_map_index == 0) + layer_C_uv2_scale * float(uv_map_index == 1)) * float(layer == 2));
 	
 	//switch (layer) {
 		//case 1:
@@ -924,31 +950,31 @@ vec4 get_layer_texture_mask_texture(int layer, int a_or_b, vec2 uv) {
 			{
 			switch (a_or_b) {
  				case 0: 
-					{return textureLod(layer_A_texture_mask_A, uv, layer_A_lod_level);}
+					{return textureLod(layer_A_texture_mask_A, uv, layer_A_lod_level + get_mip_modifier());}
 				default:
-					{return textureLod(layer_A_texture_mask_B, uv, layer_A_lod_level);};
+					{return textureLod(layer_A_texture_mask_B, uv, layer_A_lod_level + get_mip_modifier());};
 				}
 			}
 		case 2:
 			switch (a_or_b) {
  				case 0: 
-					return textureLod(layer_B_texture_mask_A, uv, layer_B_lod_level);
+					return textureLod(layer_B_texture_mask_A, uv, layer_B_lod_level + get_mip_modifier());
 				default:
-					return textureLod(layer_B_texture_mask_B, uv, layer_B_lod_level);
+					return textureLod(layer_B_texture_mask_B, uv, layer_B_lod_level + get_mip_modifier());
 			}
 		case 3:
 			switch (a_or_b) { 
  				case 0: 
-					return textureLod(layer_C_texture_mask_A, uv, layer_C_lod_level);
+					return textureLod(layer_C_texture_mask_A, uv, layer_C_lod_level + get_mip_modifier());
 				default:
-					return textureLod(layer_C_texture_mask_B, uv, layer_C_lod_level);
+					return textureLod(layer_C_texture_mask_B, uv, layer_C_lod_level + get_mip_modifier());
 			}
 	};
 	//end ignore_sc
 }
 
 bool get_layer_texture_mask_enabled(int layer, int a_or_b) {
-	
+
 	return ((layer_A_texture_mask_A_enabled && (bool(a_or_b) == false) || layer_A_texture_mask_B_enabled && (bool(a_or_b) == true)) && layer == 1) || ((layer_B_texture_mask_A_enabled && (bool(a_or_b) == false) || layer_B_texture_mask_B_enabled && (bool(a_or_b) == true)) && layer == 2) || ((layer_C_texture_mask_A_enabled && (bool(a_or_b) == false) || layer_C_texture_mask_B_enabled && (bool(a_or_b) == true)) && layer == 3);
 	
 	//switch (layer) {
@@ -997,7 +1023,8 @@ float get_layer_texture_mask_color_ramp_value(int layer, float factor, int a_or_
 			switch (a_or_b) {
  				case 0: 
 					color_ramp_factor = textureLod(layer_A_texture_mask_A_color_ramp, vec2((factor * 0.98) + 0.01), 5).ra;
-				default:
+					break;	
+				case 1:
 					color_ramp_factor = textureLod(layer_A_texture_mask_B_color_ramp, vec2((factor * 0.98) + 0.01), 5).ra;
 			};
 			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
@@ -1007,7 +1034,8 @@ float get_layer_texture_mask_color_ramp_value(int layer, float factor, int a_or_
 			switch (a_or_b) {
  				case 0: 
 					color_ramp_factor = textureLod(layer_B_texture_mask_A_color_ramp, vec2((factor * 0.98) + 0.01), 5).ra;
-				default:
+					break;
+				case 1:
 					color_ramp_factor = textureLod(layer_B_texture_mask_B_color_ramp, vec2((factor * 0.98) + 0.01), 5).ra;
 			};
 			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
@@ -1017,7 +1045,8 @@ float get_layer_texture_mask_color_ramp_value(int layer, float factor, int a_or_
 			switch (a_or_b) {
  				case 0: 
 					color_ramp_factor = textureLod(layer_C_texture_mask_A_color_ramp, vec2((factor * 0.98) + 0.01), 5).ra;
-				default:
+					break;
+				case 1:
 					color_ramp_factor = textureLod(layer_C_texture_mask_B_color_ramp, vec2((factor * 0.98) + 0.01), 5).ra;
 			};
 			return mix(factor, color_ramp_factor.x, color_ramp_factor.y);
@@ -1403,9 +1432,11 @@ float get_vertex_color_mask_for_layer(int layer) {
 float get_normal_map_slope_mask_for_layer(int layer, vec2 uv) {
 	switch (layer) {
 		case 1:
+			{
 			vec4 normal_map_value = textureLod(layer_A_normal, uv, layer_A_lod_level);
 			float mask_value = (abs(normal_map_value.r - 0.5) * float(abs(normal_map_value.r - 0.5) > abs(normal_map_value.g - 0.5)) + abs(normal_map_value.g - 0.5) * float(abs(normal_map_value.r - 0.5) < abs(normal_map_value.g - 0.5))) * float(get_layer_normal_map_slope_mask_mode(1) != 0);
 			return get_layer_normal_map_slope_mask_color_ramp_value(1, mask_value);
+			}
 		case 2:
 			return 0.0;
 		case 3:
@@ -1430,25 +1461,29 @@ float get_uv_mask_for_layer(int layer, vec2 uv) {
 	switch (get_layer_uv_mask_mixing_operation(layer)) {
 		case 0:
 			result = y_value + x_value;
+			break;
 		case 1:
 			switch (get_layer_uv_mask_mixing_order(layer)) {
 				case 0:
 					result = x_value - y_value;
+					break;
 				case 1:
 					result = y_value - x_value;
 			};
+			break;
 		case 2:
 			result = y_value * x_value;
+			break;
 	};
 
 	return result * float(get_layer_uv_mask_enabled(layer));
 }
 
 float get_layer_mask_step_mix(int layer, int step, vec2 uv1, vec2 uv2, vec3 local_surface_normal, vec3 global_surface_normal, vec3 local_vertex_position, vec3 global_vertex_position) {
-	vec2 mask_a_uv = (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(1, 5) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(layer, 5) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(layer, 5) == 1)) * float(layer == 3);
-	vec2 mask_b_uv = (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(1, 6) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(layer, 6) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(layer, 6) == 1)) * float(layer == 3);
+	vec2 mask_a_uv = (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(layer, 5) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(layer, 5) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(layer, 5) == 0) + uv2 * float(get_layer_map_uv_index(layer, 5) == 1)) * float(layer == 3);
+	vec2 mask_b_uv = (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(layer, 6) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(layer, 6) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(layer, 6) == 0) + uv2 * float(get_layer_map_uv_index(layer, 6) == 1)) * float(layer == 3);
 
-	vec2 uv_mask_uv = (uv1 * float(get_layer_map_uv_index(1, 7) == 0) + uv2 * float(get_layer_map_uv_index(1, 7) == 1)) * float(layer == 1) + (uv1 * float(get_layer_map_uv_index(2, 7) == 0) + uv2 * float(get_layer_map_uv_index(2, 7) == 1)) * float(layer == 2) + (uv1 * float(get_layer_map_uv_index(3, 7) == 0) + uv2 * float(get_layer_map_uv_index(3, 7) == 1)) * float(layer == 3);
+	vec2 uv_mask_uv = (uv1 * float(get_layer_map_uv_index(layer, 7) == 0) + uv2 * float(get_layer_map_uv_index(layer, 7) == 1));
 
 	vec2 normal_map_uv = uv1 * float(get_layer_map_uv_index(layer, 0) == 0) + uv2 * float(get_layer_map_uv_index(layer, 0) == 1);
 
@@ -1551,8 +1586,10 @@ float get_resulting_mask_for_layer(int layer, vec2 uv1, vec2 uv2, vec3 local_sur
 	switch (get_layer_post_effect(layer)) {
 		case 1:
 			step_6_mix = step_6_mix + 0.1;
+			break;
 		case 2:
 			step_6_mix = 0.0;
+			break;
 	};
 
 	//return step_3_mix;
@@ -1575,10 +1612,14 @@ void vertex() {
 	global_vertex_normal = local_vertex_normal * MODEL_NORMAL_MATRIX;
 	local_vertex_pos = VERTEX.xyz;
 	global_vertex_pos = (vec4(local_vertex_pos, 1.0) * MODEL_MATRIX).xyz;
+	global_camera_pos = CAMERA_POSITION_WORLD;
 }
 
 void fragment() {
 	vertex_color = COLOR.rgb;
+	
+	float mip_modifier = get_mip_modifier();
+	
 //ignore
 	vec4 layer_base_albedo_texture = texture(layer_base_albedo, (UV + layer_base_uv_offset) * layer_base_uv_scale);
 	float layer_base_occlusion_factor = texture(layer_base_occlusion_map, (UV + layer_base_uv_offset) * layer_base_uv_scale).r;
@@ -1647,25 +1688,31 @@ void fragment() {
 		int layer_A_occlusion_uv_map_index = get_layer_map_uv_index(1,2);
 		int layer_A_roughness_uv_map_index = get_layer_map_uv_index(1,3);
 		int layer_A_metallic_uv_map_index = get_layer_map_uv_index(1,4);
-
-		vec4 layer_A_albedo_texture = textureLod(layer_A_albedo, uv1 * float(layer_A_albedo_uv_map_index == 0) + uv2 * float(layer_A_albedo_uv_map_index == 1), layer_A_lod_level);
+		
+		vec4 layer_A_albedo_texture = textureLod(layer_A_albedo, uv1 * float(layer_A_albedo_uv_map_index == 0) + uv2 * float(layer_A_albedo_uv_map_index == 1), layer_A_lod_level + mip_modifier);
 		vec2 layer_A_occlusion_factor;
 		vec2 layer_A_roughness_factor;
 		vec2 layer_A_metallic_factor;
 		
 		switch (layer_A_orm_mode) {
 			case 0:
-				vec4 orm_color = textureLod(layer_A_orm_map, uv1 * float(layer_A_occlusion_uv_map_index == 0) + uv2 * float(layer_A_occlusion_uv_map_index == 1), layer_A_lod_level);
+				vec4 orm_color = textureLod(layer_A_orm_map, uv1 * float(layer_A_occlusion_uv_map_index == 0) + uv2 * float(layer_A_occlusion_uv_map_index == 1), layer_A_lod_level + mip_modifier);
 				layer_A_occlusion_factor = orm_color.ra;
 				layer_A_roughness_factor = orm_color.ga;
 				layer_A_metallic_factor = orm_color.ba;
+				break;
+			case 1:
+				layer_A_occlusion_factor = textureLod(layer_A_occlusion_map, uv1 * float(layer_A_occlusion_uv_map_index == 0) + uv2 * float(layer_A_occlusion_uv_map_index == 1), layer_A_lod_level + mip_modifier).ra;
+				layer_A_roughness_factor = textureLod(layer_A_roughness_map, uv1 * float(layer_A_roughness_uv_map_index == 0) + uv2 * float(layer_A_roughness_uv_map_index == 1), layer_A_lod_level + mip_modifier).ra;
+				layer_A_metallic_factor = textureLod(layer_A_metallic_map, uv1 * float(layer_A_metallic_uv_map_index == 0) + uv2 * float(layer_A_metallic_uv_map_index == 1), layer_A_lod_level + mip_modifier).ra;
+				break;
 			default:
-				layer_A_occlusion_factor = textureLod(layer_A_occlusion_map, uv1 * float(layer_A_occlusion_uv_map_index == 0) + uv2 * float(layer_A_occlusion_uv_map_index == 1), layer_A_lod_level).ra;
-				layer_A_roughness_factor = textureLod(layer_A_roughness_map, uv1 * float(layer_A_roughness_uv_map_index == 0) + uv2 * float(layer_A_roughness_uv_map_index == 1), layer_A_lod_level).ra;
-				layer_A_metallic_factor = textureLod(layer_A_metallic_map, uv1 * float(layer_A_metallic_uv_map_index == 0) + uv2 * float(layer_A_metallic_uv_map_index == 1), layer_A_lod_level).ra;
+				layer_A_occlusion_factor = vec2(layer_A_occlusion_value, 1.0);
+				layer_A_roughness_factor = vec2(layer_A_roughness_value, 1.0);
+				layer_A_metallic_factor = vec2(layer_A_metallic_value, 1.0);
 		};
 		
-		vec3 layer_A_normal_map = textureLod(layer_A_normal, uv1 * float(layer_A_normal_uv_map_index == 0) + uv2 * float(layer_A_normal_uv_map_index == 1), layer_A_lod_level).rgb;
+		vec3 layer_A_normal_map = textureLod(layer_A_normal, uv1 * float(layer_A_normal_uv_map_index == 0) + uv2 * float(layer_A_normal_uv_map_index == 1), layer_A_lod_level + mip_modifier).rgb;
 
 		int mask_A_uv_map_index = get_layer_map_uv_index(1, 5);
 		int mask_B_uv_map_index = get_layer_map_uv_index(1, 6);
@@ -1698,17 +1745,23 @@ void fragment() {
 		
 		switch (layer_B_orm_mode) {
 			case 0:
-				vec4 orm_color = textureLod(layer_B_orm_map, uv1 * float(layer_B_occlusion_uv_map_index == 0) + uv2 * float(layer_B_occlusion_uv_map_index == 1), layer_B_lod_level);
+				vec4 orm_color = textureLod(layer_B_orm_map, uv1 * float(layer_B_occlusion_uv_map_index == 0) + uv2 * float(layer_B_occlusion_uv_map_index == 1), layer_B_lod_level + mip_modifier);
 				layer_B_occlusion_factor = orm_color.ra;
 				layer_B_roughness_factor = orm_color.ga;
 				layer_B_metallic_factor = orm_color.ba;
+				break;
+			case 1:
+				layer_B_occlusion_factor = textureLod(layer_B_occlusion_map, uv1 * float(layer_B_occlusion_uv_map_index == 0) + uv2 * float(layer_B_occlusion_uv_map_index == 1), layer_B_lod_level + mip_modifier).ra;
+				layer_B_roughness_factor = textureLod(layer_B_roughness_map, uv1 * float(layer_B_roughness_uv_map_index == 0) + uv2 * float(layer_B_roughness_uv_map_index == 1), layer_B_lod_level + mip_modifier).ra;
+				layer_B_metallic_factor = textureLod(layer_B_metallic_map, uv1 * float(layer_B_metallic_uv_map_index == 0) + uv2 * float(layer_B_metallic_uv_map_index == 1), layer_B_lod_level + mip_modifier).ra;
+				break;
 			default:
-				layer_B_occlusion_factor = textureLod(layer_B_occlusion_map, uv1 * float(layer_B_occlusion_uv_map_index == 0) + uv2 * float(layer_B_occlusion_uv_map_index == 1), layer_B_lod_level).ra;
-				layer_B_roughness_factor = textureLod(layer_B_roughness_map, uv1 * float(layer_B_roughness_uv_map_index == 0) + uv2 * float(layer_B_roughness_uv_map_index == 1), layer_B_lod_level).ra;
-				layer_B_metallic_factor = textureLod(layer_B_metallic_map, uv1 * float(layer_B_metallic_uv_map_index == 0) + uv2 * float(layer_B_metallic_uv_map_index == 1), layer_B_lod_level).ra;
+				layer_B_occlusion_factor = vec2(layer_B_occlusion_value, 1.0);
+				layer_B_roughness_factor = vec2(layer_B_roughness_value, 1.0);
+				layer_B_metallic_factor = vec2(layer_B_metallic_value, 1.0);
 		};
 		
-		vec3 layer_B_normal_map = textureLod(layer_B_normal, uv1 * float(layer_B_normal_uv_map_index == 0) + uv2 * float(layer_B_normal_uv_map_index == 1), layer_B_lod_level).rgb;
+		vec3 layer_B_normal_map = textureLod(layer_B_normal, uv1 * float(layer_B_normal_uv_map_index == 0) + uv2 * float(layer_B_normal_uv_map_index == 1), layer_B_lod_level + mip_modifier).rgb;
 
 		int mask_A_uv_map_index = get_layer_map_uv_index(2, 5);
 		int mask_B_uv_map_index = get_layer_map_uv_index(2, 6);
@@ -1740,17 +1793,23 @@ void fragment() {
 		
 		switch (layer_C_orm_mode) {
 			case 0:
-				vec4 orm_color = textureLod(layer_C_orm_map, uv1 * float(layer_C_occlusion_uv_map_index == 0) + uv2 * float(layer_C_occlusion_uv_map_index == 1), layer_C_lod_level);
+				vec4 orm_color = textureLod(layer_C_orm_map, uv1 * float(layer_C_occlusion_uv_map_index == 0) + uv2 * float(layer_C_occlusion_uv_map_index == 1), layer_C_lod_level + mip_modifier);
 				layer_C_occlusion_factor = orm_color.ra;
 				layer_C_roughness_factor = orm_color.ga;
 				layer_C_metallic_factor = orm_color.ba;
+				break;
+			case 1:
+				layer_C_occlusion_factor = textureLod(layer_C_occlusion_map, uv1 * float(layer_C_occlusion_uv_map_index == 0) + uv2 * float(layer_C_occlusion_uv_map_index == 1), layer_C_lod_level + mip_modifier).ra;
+				layer_C_roughness_factor = textureLod(layer_C_roughness_map, uv1 * float(layer_C_roughness_uv_map_index == 0) + uv2 * float(layer_C_roughness_uv_map_index == 1), layer_C_lod_level + mip_modifier).ra;
+				layer_C_metallic_factor = textureLod(layer_C_metallic_map, uv1 * float(layer_C_metallic_uv_map_index == 0) + uv2 * float(layer_C_metallic_uv_map_index == 1), layer_C_lod_level + mip_modifier).ra;
+				break;
 			default:
-				layer_C_occlusion_factor = textureLod(layer_C_occlusion_map, uv1 * float(layer_C_occlusion_uv_map_index == 0) + uv2 * float(layer_C_occlusion_uv_map_index == 1), layer_C_lod_level).ra;
-				layer_C_roughness_factor = textureLod(layer_C_roughness_map, uv1 * float(layer_C_roughness_uv_map_index == 0) + uv2 * float(layer_C_roughness_uv_map_index == 1), layer_C_lod_level).ra;
-				layer_C_metallic_factor = textureLod(layer_C_metallic_map, uv1 * float(layer_C_metallic_uv_map_index == 0) + uv2 * float(layer_C_metallic_uv_map_index == 1), layer_C_lod_level).ra;
+				layer_C_occlusion_factor = vec2(layer_C_occlusion_value, 1.0);
+				layer_C_roughness_factor = vec2(layer_C_roughness_value, 1.0);
+				layer_C_metallic_factor = vec2(layer_C_metallic_value, 1.0);
 		};
 		
-		vec3 layer_C_normal_map = textureLod(layer_C_normal, uv1 * float(layer_C_normal_uv_map_index == 0) + uv2 * float(layer_C_normal_uv_map_index == 1), layer_C_lod_level).rgb;
+		vec3 layer_C_normal_map = textureLod(layer_C_normal, uv1 * float(layer_C_normal_uv_map_index == 0) + uv2 * float(layer_C_normal_uv_map_index == 1), layer_C_lod_level + mip_modifier).rgb;
 
 		int mask_A_uv_map_index = get_layer_map_uv_index(3, 5);
 		int mask_B_uv_map_index = get_layer_map_uv_index(3, 6);
