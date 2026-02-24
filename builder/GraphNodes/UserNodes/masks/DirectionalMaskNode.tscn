@@ -1,0 +1,174 @@
+[gd_scene format=3 uid="uid://be6rkp1tftxhb"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_qfdwb"]
+[ext_resource type="Script" uid="uid://cgw1h73vllbqm" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/masks/directional_mask_node.gd" id="2_h30bl"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_h30bl"]
+size = Vector3(0.2, 1, 0.2)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h30bl"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_rp0oj"]
+sky_material = SubResource("ProceduralSkyMaterial_h30bl")
+
+[sub_resource type="Environment" id="Environment_y36sx"]
+background_mode = 2
+sky = SubResource("Sky_rp0oj")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="DirectionalMask" type="GraphNode" unique_id=1174472716]
+offset_right = 213.0
+offset_bottom = 132.0
+theme = ExtResource("1_qfdwb")
+title = "Directional Mask"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 1
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 1
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+slot/5/left_enabled = false
+slot/5/left_type = 0
+slot/5/left_color = Color(1, 1, 1, 1)
+slot/5/left_icon = null
+slot/5/right_enabled = false
+slot/5/right_type = 0
+slot/5/right_color = Color(1, 1, 1, 1)
+slot/5/right_icon = null
+slot/5/draw_stylebox = true
+slot/6/left_enabled = false
+slot/6/left_type = 0
+slot/6/left_color = Color(1, 1, 1, 1)
+slot/6/left_icon = null
+slot/6/right_enabled = true
+slot/6/right_type = 1
+slot/6/right_color = Color(1, 1, 1, 1)
+slot/6/right_icon = null
+slot/6/draw_stylebox = true
+script = ExtResource("2_h30bl")
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+metadata/renamable = false
+
+[node name="Label" type="Label" parent="." unique_id=919799892]
+layout_mode = 2
+text = "Direction"
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=260113447]
+custom_minimum_size = Vector2(130, 130)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=742973846]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(130, 130)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport" unique_id=1841615968]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+projection = 1
+size = 2.0
+
+[node name="pointer_origin" type="Node3D" parent="SubViewportContainer/SubViewport" unique_id=922530882]
+
+[node name="pointer" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/pointer_origin" unique_id=128223563]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+mesh = SubResource("BoxMesh_h30bl")
+
+[node name="normal_point" type="Marker3D" parent="SubViewportContainer/SubViewport/pointer_origin" unique_id=1932655761]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport" unique_id=61345575]
+environment = SubResource("Environment_y36sx")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport" unique_id=911643297]
+transform = Transform3D(-0.68895054, 0.4407643, -0.5753901, -0.6302178, 0.027831929, 0.7759194, 0.3580119, 0.8971913, 0.25860283, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Label3" type="Label" parent="." unique_id=1882406646]
+layout_mode = 2
+text = "Standard directions"
+
+[node name="template_directions" type="HBoxContainer" parent="." unique_id=899014741]
+layout_mode = 2
+
+[node name="x" type="Button" parent="template_directions" unique_id=1028438701]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "X"
+
+[node name="y" type="Button" parent="template_directions" unique_id=1039187594]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Y"
+
+[node name="z" type="Button" parent="template_directions" unique_id=1823375013]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Z"
+
+[node name="Label2" type="Label" parent="." unique_id=25225455]
+layout_mode = 2
+text = "Polarity"
+
+[node name="polarity" type="OptionButton" parent="." unique_id=1973843221]
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "Bipolar"
+popup/item_0/id = 0
+popup/item_1/text = "Monopolar +"
+popup/item_1/id = 1
+popup/item_2/text = "Monopolar -"
+popup/item_2/id = 2
+
+[node name="output" type="Label" parent="." unique_id=2128989400]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Mask out"
+horizontal_alignment = 2

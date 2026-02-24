@@ -1,0 +1,105 @@
+[gd_resource type="Theme" format=3 uid="uid://b8si47itvd186"]
+
+[sub_resource type="DPITexture" id="DPITexture_dwvsf"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\"><circle cx=\"5\" cy=\"5\" r=\"5\" fill=\"#fff\"/><circle cx=\"5\" cy=\"5\" r=\"3.667\" fill=\"#b2b2b2\" fill-opacity=\".65\"/></svg>
+"
+
+[sub_resource type="DPITexture" id="DPITexture_ism2q"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"none\" stroke=\"#fefffe\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\".65\" stroke-width=\"2\" d=\"M11 4v7H4\"/><circle cx=\"7.5\" cy=\"7.5\" r=\"1.5\" fill=\"#b2b2b2\" fill-opacity=\".65\"/></svg>
+"
+
+[sub_resource type="Gradient" id="Gradient_dwvsf"]
+offsets = PackedFloat32Array(0, 0.18660288)
+colors = PackedColorArray(0.08468998, 0.08468991, 0.08468992, 1, 0.10980392, 0.10980392, 0.10980392, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ism2q"]
+gradient = SubResource("Gradient_dwvsf")
+fill_to = Vector2(0, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_nweyk"]
+content_margin_left = 15.0
+content_margin_top = 7.0
+content_margin_right = 15.0
+content_margin_bottom = 7.0
+texture = SubResource("GradientTexture2D_ism2q")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rnt7r"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 0.75)
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qvgtc"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+border_color = Color(0.625, 0.625, 0.625, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_unlrk"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+
+[sub_resource type="Gradient" id="Gradient_ism2q"]
+colors = PackedColorArray(0.3217278, 0.321728, 0.32172793, 1, 0.44291076, 0.44291076, 0.44291073, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_nweyk"]
+gradient = SubResource("Gradient_ism2q")
+fill_from = Vector2(1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rnt7r"]
+content_margin_left = 3.0
+content_margin_top = 3.0
+content_margin_right = 3.0
+content_margin_bottom = 3.0
+texture = SubResource("GradientTexture2D_nweyk")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wohhh"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(1, 0.625, 0.625, 0.6)
+border_color = Color(0.325, 0.325, 0.325, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[resource]
+GraphNode/colors/resizer_color = Color(0.875, 0.875, 0.875, 1)
+GraphNode/constants/port_h_offset = 0
+GraphNode/constants/separation = 2
+GraphNode/icons/port = SubResource("DPITexture_dwvsf")
+GraphNode/icons/resizer = SubResource("DPITexture_ism2q")
+GraphNode/styles/panel = SubResource("StyleBoxTexture_nweyk")
+GraphNode/styles/panel_focus = SubResource("StyleBoxFlat_rnt7r")
+GraphNode/styles/panel_selected = SubResource("StyleBoxFlat_qvgtc")
+GraphNode/styles/slot = SubResource("StyleBoxEmpty_unlrk")
+GraphNode/styles/slot_selected = SubResource("StyleBoxFlat_rnt7r")
+GraphNode/styles/titlebar = SubResource("StyleBoxTexture_rnt7r")
+GraphNode/styles/titlebar_selected = SubResource("StyleBoxFlat_wohhh")

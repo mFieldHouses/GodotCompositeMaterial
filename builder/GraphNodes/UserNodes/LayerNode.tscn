@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://w1md5ln48nqs"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_kvf3k"]
+[ext_resource type="Script" uid="uid://dnk4eti4ndffp" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/layer_node.gd" id="2_j8qlm"]
+
+[node name="LayerNode" type="GraphNode" unique_id=1293774481]
+offset_right = 206.0
+offset_bottom = 206.0
+tooltip_text = "Defines a CompositeMaterialLayer. Can only be plugged into the output node."
+mouse_filter = 1
+theme = ExtResource("1_kvf3k")
+position_offset = Vector2(640, 180)
+title = "Layer"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(0.6651851, 1, 0.9063318, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(0.6651851, 1, 0.9063318, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = true
+slot/1/left_type = 2
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = true
+slot/2/left_type = 3
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = true
+slot/3/left_type = 5
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = true
+slot/4/left_type = 5
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 0
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+slot/5/left_enabled = true
+slot/5/left_type = 1
+slot/5/left_color = Color(1, 1, 1, 1)
+slot/5/left_icon = null
+slot/5/right_enabled = false
+slot/5/right_type = 0
+slot/5/right_color = Color(1, 1, 1, 1)
+slot/5/right_icon = null
+slot/5/draw_stylebox = true
+slot/6/left_enabled = true
+slot/6/left_type = 6
+slot/6/left_color = Color(1, 1, 1, 1)
+slot/6/left_icon = null
+slot/6/right_enabled = false
+slot/6/right_type = 0
+slot/6/right_color = Color(1, 1, 1, 1)
+slot/6/right_icon = null
+slot/6/draw_stylebox = true
+script = ExtResource("2_j8qlm")
+metadata/_custom_type_script = "uid://d0h74nt1hl8ms"
+metadata/renamable = false
+
+[node name="output" type="Label" parent="." unique_id=1745939763]
+layout_mode = 2
+text = "Layer output"
+horizontal_alignment = 2
+
+[node name="albedo_in" type="Label" parent="." unique_id=884196675]
+layout_mode = 2
+text = "Albedo"
+
+[node name="normal_in" type="Label" parent="." unique_id=2141362739]
+layout_mode = 2
+text = "Normal"
+
+[node name="roughness_in" type="Label" parent="." unique_id=386215069]
+layout_mode = 2
+text = "Roughness"
+
+[node name="metallic_in" type="Label" parent="." unique_id=1539409855]
+layout_mode = 2
+text = "Metallic"
+
+[node name="mask_in" type="Label" parent="." unique_id=1397243595]
+layout_mode = 2
+text = "Mask"
+
+[node name="distance_fade_in" type="Label" parent="." unique_id=1240259462]
+layout_mode = 2
+text = "Distance Fade"

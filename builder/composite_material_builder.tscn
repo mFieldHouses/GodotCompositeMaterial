@@ -1,0 +1,98 @@
+[gd_scene format=3 uid="uid://b57vhh3dn8q5g"]
+
+[ext_resource type="Script" uid="uid://dx7me4n8nqi37" path="res://addons/CompositeMaterial/builder/composite_material_builder.gd" id="1_t3pmd"]
+[ext_resource type="Script" uid="uid://x7d5dxocptmm" path="res://addons/CompositeMaterial/builder/context_menu.gd" id="2_byhuo"]
+[ext_resource type="PackedScene" uid="uid://ckhleqaee8e7k" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/OutputNode.tscn" id="3_xl7ga"]
+
+[node name="CompositeMaterial Builder" type="GraphEdit" unique_id=339063044]
+custom_minimum_size = Vector2(0, 200)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+grid_pattern = 1
+snapping_enabled = false
+right_disconnects = true
+type_names = {
+0: "layer",
+1: "mask",
+2: "vec4",
+3: "vec3",
+4: "vec2",
+5: "number",
+6: "distance_fade",
+7: "test",
+8: "boolean"
+}
+connection_lines_thickness = 2.0
+minimap_enabled = false
+show_zoom_buttons = false
+show_grid_buttons = false
+script = ExtResource("1_t3pmd")
+
+[node name="context_menu" type="PopupMenu" parent="." unique_id=1147366422]
+item_count = 1
+item_0/text = "Add Node..."
+item_0/id = 0
+script = ExtResource("2_byhuo")
+
+[node name="add_node" type="PopupMenu" parent="context_menu" unique_id=1302850455]
+item_count = 8
+item_0/text = "Variable"
+item_0/id = 0
+item_1/text = "Layer"
+item_1/id = 1
+item_2/text = "Texture"
+item_2/id = 2
+item_3/text = "Color Ramp"
+item_3/id = 3
+item_4/text = "UV"
+item_4/id = 4
+item_5/text = "Masks"
+item_5/id = 5
+item_6/text = "Utility"
+item_6/id = 6
+item_7/text = "Distance Fade"
+item_7/id = 7
+
+[node name="uv" type="PopupMenu" parent="context_menu/add_node" unique_id=535191034]
+item_count = 3
+item_0/text = "UV Transform"
+item_0/id = 0
+item_1/text = "UV Map"
+item_1/id = 1
+item_2/text = "Triplanar Mapping"
+item_2/id = 2
+
+[node name="masks" type="PopupMenu" parent="context_menu/add_node" unique_id=504652469]
+item_count = 6
+item_0/text = "Compile Masks"
+item_0/id = 0
+item_1/text = "Directional Mask"
+item_1/id = 1
+item_2/text = "Positional Mask"
+item_2/id = 2
+item_3/text = "UV Mask"
+item_3/id = 3
+item_4/text = "Vertex Color Mask"
+item_4/id = 4
+item_5/text = "Normal Map Slope Mask"
+item_5/id = 5
+
+[node name="utility" type="PopupMenu" parent="context_menu/add_node" unique_id=1030848227]
+item_count = 3
+item_0/text = "Math"
+item_0/id = 0
+item_1/text = "Decompose albedo"
+item_1/id = 1
+item_2/text = "Compose albedo"
+item_2/id = 2
+
+[node name="CompositeMaterialBaseNode" parent="." unique_id=1293774481 instance=ExtResource("3_xl7ga")]
+layout_mode = 0
+offset_left = 718.0
+offset_top = 214.0
+offset_right = 932.0
+offset_bottom = 420.0
+position_offset = Vector2(718, 214)

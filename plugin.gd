@@ -11,6 +11,9 @@ var bake_popup_dialogue : Window
 var studio_main_scene = load("res://addons/CompositeMaterial/studio/main_scene.tscn")
 var studio_main_scene_instance
 
+var builder_scene = preload("res://addons/CompositeMaterial/builder/composite_material_builder.tscn")
+var builder_scene_dock_instance : EditorDock
+
 func _enter_tree() -> void:
 	#Add custom material types so that they show up in Godots list of classes
 	add_custom_type("CompositeMaterial", "ShaderMaterial", preload("res://addons/CompositeMaterial/CompositeMaterial.gd"), preload("res://addons/CompositeMaterial/CompositeMaterial.svg"))
@@ -35,6 +38,11 @@ func _enter_tree() -> void:
 	#Add ShaderFreezer autoload
 	add_autoload_singleton("CPMFreezer", "res://addons/CompositeMaterial/CPMFreezer.gd")
 	
+	builder_scene_dock_instance = EditorDock.new()
+	builder_scene_dock_instance.add_child(builder_scene.instantiate())
+	builder_scene_dock_instance.default_slot = EditorDock.DOCK_SLOT_BOTTOM
+	add_dock(builder_scene_dock_instance)
+	
 func _exit_tree() -> void:
 	#Undo everything done in _enter_tree()
 	remove_custom_type("CompositeMaterial")
@@ -48,6 +56,9 @@ func _exit_tree() -> void:
 		studio_main_scene_instance.queue_free()
 	
 	remove_autoload_singleton("CPMFreezer")
+	
+	remove_dock(builder_scene_dock_instance)
+	builder_scene_dock_instance.queue_free()
 
 func _has_main_screen():
 	return true

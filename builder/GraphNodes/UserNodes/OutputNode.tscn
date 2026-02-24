@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://ckhleqaee8e7k"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_2krc8"]
+[ext_resource type="Script" uid="uid://d0h74nt1hl8ms" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/output_node.gd" id="2_noejs"]
+
+[node name="OutputNode" type="GraphNode" unique_id=1293774481]
+offset_right = 206.0
+offset_bottom = 206.0
+tooltip_text = "The output for this material. Anything plugged in here will show up on meshes using this CompositeMaterial."
+mouse_filter = 1
+theme = ExtResource("1_2krc8")
+position_offset = Vector2(640, 180)
+title = "CompositeMaterial Output"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(0.4, 1, 0.8, 0.2)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("2_noejs")
+metadata/_custom_type_script = "uid://d0h74nt1hl8ms"
+
+[node name="new_layer" type="Label" parent="." unique_id=1999499533]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.36862746)
+text = "New layer..."

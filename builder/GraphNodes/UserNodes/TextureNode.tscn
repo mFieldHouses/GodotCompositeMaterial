@@ -1,0 +1,115 @@
+[gd_scene format=3 uid="uid://bjf5nk1ipb353"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_dmtf5"]
+[ext_resource type="Script" uid="uid://th3iwfgyvayb" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/texture_node.gd" id="2_suxfi"]
+
+[node name="TextureNode" type="GraphNode" unique_id=962352097]
+offset_right = 239.0
+offset_bottom = 126.0
+tooltip_text = "Loads in a texture and samples it according to the input UV."
+theme = ExtResource("1_dmtf5")
+title = "Texture"
+slot/0/left_enabled = true
+slot/0/left_type = 4
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 4
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 4
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 2
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+slot/5/left_enabled = false
+slot/5/left_type = 4
+slot/5/left_color = Color(1, 1, 1, 1)
+slot/5/left_icon = null
+slot/5/right_enabled = false
+slot/5/right_type = 0
+slot/5/right_color = Color(1, 1, 1, 1)
+slot/5/right_icon = null
+slot/5/draw_stylebox = true
+slot/6/left_enabled = false
+slot/6/left_type = 0
+slot/6/left_color = Color(1, 1, 1, 1)
+slot/6/left_icon = null
+slot/6/right_enabled = true
+slot/6/right_type = 2
+slot/6/right_color = Color(1, 1, 1, 1)
+slot/6/right_icon = null
+slot/6/draw_stylebox = true
+script = ExtResource("2_suxfi")
+metadata/_custom_type_script = "uid://th3iwfgyvayb"
+
+[node name="uv_in" type="Label" parent="." unique_id=408030845]
+layout_mode = 2
+text = "UV"
+
+[node name="load_texture" type="Button" parent="." unique_id=1704525423]
+layout_mode = 2
+text = "Load texture"
+
+[node name="Control" type="Control" parent="." unique_id=425155154]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="texture_view" type="TextureRect" parent="." unique_id=1004159057]
+layout_mode = 2
+expand_mode = 5
+stretch_mode = 4
+
+[node name="Control2" type="Control" parent="." unique_id=540154600]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="filter" type="OptionButton" parent="." unique_id=567650387]
+layout_mode = 2
+selected = 1
+item_count = 4
+popup/item_0/text = "Linear"
+popup/item_0/id = 0
+popup/item_1/text = "Linear Mipmap"
+popup/item_1/id = 1
+popup/item_2/text = "Nearest Neighbor"
+popup/item_2/id = 2
+popup/item_3/text = "Nearest Neighbor Mipmap"
+popup/item_3/id = 3
+
+[node name="albedo_out" type="Label" parent="." unique_id=1737254237]
+layout_mode = 2
+text = "Albedo"
+horizontal_alignment = 2

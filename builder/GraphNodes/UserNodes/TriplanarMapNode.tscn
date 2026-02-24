@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://ec83o0vm1ntw"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_ouvsg"]
+[ext_resource type="Script" uid="uid://s0jc3oianx85" path="res://addons/CompositeMaterial/builder/GraphNodes/CompositeMaterialBuilderGraphNode.gd" id="2_ouvsg"]
+
+[node name="TriplanarMapNode" type="GraphNode" unique_id=1174472716]
+offset_right = 220.0
+offset_bottom = 99.0
+tooltip_text = "Generates a UV map based on the XYZ coordinates and normals of vertices."
+theme = ExtResource("1_ouvsg")
+title = "Triplanar Map"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = true
+slot/1/right_type = 4
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+script = ExtResource("2_ouvsg")
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+metadata/renamable = false
+
+[node name="mode" type="OptionButton" parent="." unique_id=450175118]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Local"
+popup/item_0/id = 0
+popup/item_1/text = "Global"
+popup/item_1/id = 1
+
+[node name="output" type="Label" parent="." unique_id=2060507470]
+layout_mode = 2
+text = "UV"
+horizontal_alignment = 2
