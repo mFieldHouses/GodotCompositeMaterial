@@ -1,0 +1,119 @@
+[gd_scene format=3 uid="uid://dnyxicakpm54r"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_7bi60"]
+[ext_resource type="Script" uid="uid://cl78v5qw11dhx" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/masks/vertex_color_mask_node.gd" id="2_7bi60"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_7bi60"]
+
+[node name="PositionalMask" type="GraphNode" unique_id=1174472716]
+offset_right = 213.0
+offset_bottom = 132.0
+theme = ExtResource("1_7bi60")
+title = "Positional Mask"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 1
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 5
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = true
+slot/3/right_type = 5
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+script = ExtResource("2_7bi60")
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+metadata/renamable = false
+
+[node name="Label" type="Label" parent="." unique_id=1159346266]
+layout_mode = 2
+text = "Color"
+
+[node name="channel" type="VBoxContainer" parent="." unique_id=1156114569]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="channel" unique_id=661010133]
+layout_mode = 2
+
+[node name="r" type="Button" parent="channel/HBoxContainer" unique_id=726433268]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_7bi60")
+text = "R"
+
+[node name="g" type="Button" parent="channel/HBoxContainer" unique_id=1391390990]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7bi60")
+text = "G"
+
+[node name="b" type="Button" parent="channel/HBoxContainer" unique_id=1899536002]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7bi60")
+text = "B"
+
+[node name="custom" type="Button" parent="channel" unique_id=1241492321]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_7bi60")
+text = "Custom"
+
+[node name="custom_color_config" type="VBoxContainer" parent="." unique_id=824981658]
+modulate = Color(1, 1, 1, 0.5)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="custom_color_config" unique_id=154872135]
+layout_mode = 2
+text = "Custom Color"
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="custom_color_config" unique_id=263683015]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+edit_alpha = false
+edit_intensity = false
+
+[node name="Label2" type="Label" parent="custom_color_config" unique_id=18051742]
+layout_mode = 2
+text = "Margin"
+
+[node name="margin" type="SpinBox" parent="custom_color_config" unique_id=910457816]
+layout_mode = 2
+max_value = 1.0
+step = 0.001
+value = 0.005
+
+[node name="output" type="Label" parent="." unique_id=2128989400]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Mask out"
+horizontal_alignment = 2

@@ -89,7 +89,7 @@ item_1/id = 1
 item_2/text = "Compose albedo"
 item_2/id = 2
 
-[node name="CompositeMaterialBaseNode" parent="." unique_id=1293774481 instance=ExtResource("3_xl7ga")]
+[node name="output" parent="." unique_id=1293774481 instance=ExtResource("3_xl7ga")]
 layout_mode = 0
 offset_left = 718.0
 offset_top = 214.0

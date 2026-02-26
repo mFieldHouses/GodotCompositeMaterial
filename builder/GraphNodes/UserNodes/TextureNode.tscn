@@ -2,6 +2,10 @@
 
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_dmtf5"]
 [ext_resource type="Script" uid="uid://th3iwfgyvayb" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/texture_node.gd" id="2_suxfi"]
+[ext_resource type="Script" uid="uid://b5gr64jphjmpw" path="res://addons/CompositeMaterial/resources/TextureConfiguration.gd" id="3_suxfi"]
+
+[sub_resource type="Resource" id="Resource_lckmy"]
+script = ExtResource("3_suxfi")
 
 [node name="TextureNode" type="GraphNode" unique_id=962352097]
 offset_right = 239.0
@@ -67,12 +71,22 @@ slot/6/left_enabled = false
 slot/6/left_type = 0
 slot/6/left_color = Color(1, 1, 1, 1)
 slot/6/left_icon = null
-slot/6/right_enabled = true
+slot/6/right_enabled = false
 slot/6/right_type = 2
 slot/6/right_color = Color(1, 1, 1, 1)
 slot/6/right_icon = null
 slot/6/draw_stylebox = true
+slot/7/left_enabled = false
+slot/7/left_type = 0
+slot/7/left_color = Color(1, 1, 1, 1)
+slot/7/left_icon = null
+slot/7/right_enabled = true
+slot/7/right_type = 2
+slot/7/right_color = Color(1, 1, 1, 1)
+slot/7/right_icon = null
+slot/7/draw_stylebox = true
 script = ExtResource("2_suxfi")
+respresented_texture_config = SubResource("Resource_lckmy")
 metadata/_custom_type_script = "uid://th3iwfgyvayb"
 
 [node name="uv_in" type="Label" parent="." unique_id=408030845]
@@ -108,6 +122,10 @@ popup/item_2/text = "Nearest Neighbor"
 popup/item_2/id = 2
 popup/item_3/text = "Nearest Neighbor Mipmap"
 popup/item_3/id = 3
+
+[node name="export" type="CheckButton" parent="." unique_id=1791086357]
+layout_mode = 2
+text = "As export variable"
 
 [node name="albedo_out" type="Label" parent="." unique_id=1737254237]
 layout_mode = 2

@@ -1,0 +1,3 @@
+@tool
+extends CompositeMaterialBuilderGraphNode
+class_name MaskNode

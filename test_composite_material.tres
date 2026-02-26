@@ -1,6 +1,6 @@
-[gd_resource type="ShaderMaterial" script_class="CompositeMaterial" load_steps=4 format=3 uid="uid://v7aj55pxf3mh"]
+[gd_resource type="ShaderMaterial" script_class="CompositeMaterial" format=3 uid="uid://v7aj55pxf3mh"]
 
-[ext_resource type="Script" uid="uid://o6isbs5x1fjr" path="res://addons/CompositeMaterial/CompositeMaterialLayer.gd" id="1_gid6c"]
+[ext_resource type="Script" uid="uid://o6isbs5x1fjr" path="res://addons/CompositeMaterial/CompositeMaterialLayerOld.gd" id="1_gid6c"]
 [ext_resource type="Script" uid="uid://bigyrf2di3p4k" path="res://addons/CompositeMaterial/CompositeMaterial.gd" id="2_j4vb6"]
 [ext_resource type="Shader" uid="uid://dfhr3sh4jywy6" path="res://addons/CompositeMaterial/shaders/empty.gdshader" id="3_wp7p3"]
 

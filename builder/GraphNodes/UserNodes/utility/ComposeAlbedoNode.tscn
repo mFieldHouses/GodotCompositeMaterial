@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cavmyhw2bh4oi"]
 
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_x6ktw"]
-[ext_resource type="Script" uid="uid://s0jc3oianx85" path="res://addons/CompositeMaterial/builder/GraphNodes/CompositeMaterialBuilderGraphNode.gd" id="2_xab7w"]
+[ext_resource type="Script" uid="uid://e4iprfvfxukn" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/utility/compose_albedo_node.gd" id="2_x6ktw"]
 
 [node name="ComposeAlbedo" type="GraphNode" unique_id=1174472716]
 offset_right = 207.0
@@ -55,7 +55,7 @@ slot/4/right_type = 5
 slot/4/right_color = Color(1, 1, 1, 1)
 slot/4/right_icon = null
 slot/4/draw_stylebox = true
-script = ExtResource("2_xab7w")
+script = ExtResource("2_x6ktw")
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 
 [node name="r_in" type="Label" parent="." unique_id=290204102]

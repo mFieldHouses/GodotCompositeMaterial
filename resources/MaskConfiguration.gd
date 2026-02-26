@@ -1,0 +1,2 @@
+extends CPMB_FloatValue
+class_name CPMB_MaskConfiguration

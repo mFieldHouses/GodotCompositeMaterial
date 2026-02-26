@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://olwwyr4rm2q8"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_kjasx"]
+[ext_resource type="Script" uid="uid://d4f70ijkhy68k" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/compile_masks_sub_node.gd" id="2_xbnda"]
+
+[node name="OutputSubNode" type="GraphNode" unique_id=931551961]
+z_index = 10
+custom_minimum_size = Vector2(220, 0)
+offset_right = 101.0
+offset_bottom = 43.0
+theme = ExtResource("1_kjasx")
+title = "Layer"
+slot/0/left_enabled = true
+slot/0/left_type = 1
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("2_xbnda")
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+
+[node name="Control" type="Control" parent="." unique_id=261078374]
+layout_mode = 2

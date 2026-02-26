@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://be6rkp1tftxhb"]
+[gd_scene format=3 uid="uid://nfpwdx3gp2f6"]
 
-[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_qfdwb"]
-[ext_resource type="Script" uid="uid://cgw1h73vllbqm" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/masks/directional_mask_node.gd" id="2_h30bl"]
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_ndef3"]
+[ext_resource type="Script" uid="uid://b2oawe07gqwma" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/masks/positional_mask_node.gd" id="2_ndef3"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_h30bl"]
 size = Vector3(0.2, 1, 0.2)
@@ -19,11 +19,11 @@ sky = SubResource("Sky_rp0oj")
 tonemap_mode = 2
 glow_enabled = true
 
-[node name="DirectionalMask" type="GraphNode" unique_id=1174472716]
+[node name="PositionalMask" type="GraphNode" unique_id=1174472716]
 offset_right = 213.0
 offset_bottom = 132.0
-theme = ExtResource("1_qfdwb")
-title = "Directional Mask"
+theme = ExtResource("1_ndef3")
+title = "Positional Mask"
 slot/0/left_enabled = false
 slot/0/left_type = 0
 slot/0/left_color = Color(1, 1, 1, 1)
@@ -82,18 +82,36 @@ slot/6/left_enabled = false
 slot/6/left_type = 0
 slot/6/left_color = Color(1, 1, 1, 1)
 slot/6/left_icon = null
-slot/6/right_enabled = true
-slot/6/right_type = 5
+slot/6/right_enabled = false
+slot/6/right_type = 1
 slot/6/right_color = Color(1, 1, 1, 1)
 slot/6/right_icon = null
 slot/6/draw_stylebox = true
-script = ExtResource("2_h30bl")
+slot/7/left_enabled = false
+slot/7/left_type = 0
+slot/7/left_color = Color(1, 1, 1, 1)
+slot/7/left_icon = null
+slot/7/right_enabled = false
+slot/7/right_type = 0
+slot/7/right_color = Color(1, 1, 1, 1)
+slot/7/right_icon = null
+slot/7/draw_stylebox = true
+slot/8/left_enabled = false
+slot/8/left_type = 0
+slot/8/left_color = Color(1, 1, 1, 1)
+slot/8/left_icon = null
+slot/8/right_enabled = true
+slot/8/right_type = 5
+slot/8/right_color = Color(1, 1, 1, 1)
+slot/8/right_icon = null
+slot/8/draw_stylebox = true
+script = ExtResource("2_ndef3")
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 metadata/renamable = false
 
 [node name="Label" type="Label" parent="." unique_id=919799892]
 layout_mode = 2
-text = "Direction"
+text = "Axis"
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=260113447]
 custom_minimum_size = Vector2(130, 130)
@@ -152,20 +170,27 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Z"
 
-[node name="Label2" type="Label" parent="." unique_id=25225455]
+[node name="Label2" type="Label" parent="." unique_id=130189798]
 layout_mode = 2
-text = "Polarity"
+text = "Min"
 
-[node name="polarity" type="OptionButton" parent="." unique_id=1973843221]
+[node name="min" type="SpinBox" parent="." unique_id=1199384109]
 layout_mode = 2
-selected = 0
-item_count = 3
-popup/item_0/text = "Bipolar"
-popup/item_0/id = 0
-popup/item_1/text = "Monopolar +"
-popup/item_1/id = 1
-popup/item_2/text = "Monopolar -"
-popup/item_2/id = 2
+step = 0.01
+value = -1.0
+allow_greater = true
+allow_lesser = true
+
+[node name="Label4" type="Label" parent="." unique_id=80699580]
+layout_mode = 2
+text = "Max"
+
+[node name="max" type="SpinBox" parent="." unique_id=1597099994]
+layout_mode = 2
+step = 0.01
+value = 1.0
+allow_greater = true
+allow_lesser = true
 
 [node name="output" type="Label" parent="." unique_id=2128989400]
 layout_mode = 2

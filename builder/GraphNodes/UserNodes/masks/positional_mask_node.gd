@@ -1,7 +1,7 @@
 @tool
 extends MaskNode
 
-var represented_configuration : CPMB_DirectionalMaskConfiguration = CPMB_DirectionalMaskConfiguration.new()
+var represented_configuration : CPMB_PositionalMaskConfiguration = CPMB_PositionalMaskConfiguration.new()
 
 var _dragging_viewport : bool = false
 var _drag_direction : int = 1

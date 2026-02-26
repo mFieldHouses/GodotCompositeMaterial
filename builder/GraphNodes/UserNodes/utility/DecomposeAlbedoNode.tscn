@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cqtjihtaellaw"]
 
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_cy681"]
-[ext_resource type="Script" uid="uid://s0jc3oianx85" path="res://addons/CompositeMaterial/builder/GraphNodes/CompositeMaterialBuilderGraphNode.gd" id="2_t6mqs"]
+[ext_resource type="Script" uid="uid://bk8oxytrc88w" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/utility/decompose_albedo_node.gd" id="2_t6mqs"]
 
 [node name="DecomposeAlbedo" type="GraphNode" unique_id=1174472716]
 offset_right = 207.0
@@ -55,6 +55,15 @@ slot/4/right_type = 5
 slot/4/right_color = Color(1, 1, 1, 1)
 slot/4/right_icon = null
 slot/4/draw_stylebox = true
+slot/5/left_enabled = false
+slot/5/left_type = 0
+slot/5/left_color = Color(1, 1, 1, 1)
+slot/5/left_icon = null
+slot/5/right_enabled = true
+slot/5/right_type = 5
+slot/5/right_color = Color(1, 1, 1, 1)
+slot/5/right_icon = null
+slot/5/draw_stylebox = true
 script = ExtResource("2_t6mqs")
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 
@@ -80,4 +89,9 @@ horizontal_alignment = 2
 [node name="a_out" type="Label" parent="." unique_id=976204003]
 layout_mode = 2
 text = "Alpha"
+horizontal_alignment = 2
+
+[node name="v_out" type="Label" parent="." unique_id=335251119]
+layout_mode = 2
+text = "Value"
 horizontal_alignment = 2

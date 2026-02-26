@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="CompositeMaterialLayer" load_steps=9 format=3 uid="uid://bvgrschuumsf0"]
+[gd_resource type="Resource" script_class="CompositeMaterialLayer" format=3 uid="uid://bvgrschuumsf0"]
 
 [ext_resource type="Texture2D" uid="uid://bjiq1wig4sqy3" path="res://assets/textures/albedo/yellow_black_stripes.png" id="1_vnjo4"]
-[ext_resource type="Script" uid="uid://o6isbs5x1fjr" path="res://addons/CompositeMaterial/CompositeMaterialLayer.gd" id="2_sfs8r"]
+[ext_resource type="Script" uid="uid://o6isbs5x1fjr" path="res://addons/CompositeMaterial/CompositeMaterialLayerOld.gd" id="2_sfs8r"]
 
 [sub_resource type="Gradient" id="Gradient_6q3jr"]
 offsets = PackedFloat32Array(1)

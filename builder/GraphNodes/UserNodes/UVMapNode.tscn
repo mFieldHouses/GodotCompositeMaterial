@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://clvn2uhrkdrjw"]
 
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_ynfvp"]
-[ext_resource type="Script" uid="uid://s0jc3oianx85" path="res://addons/CompositeMaterial/builder/GraphNodes/CompositeMaterialBuilderGraphNode.gd" id="2_ynfvp"]
+[ext_resource type="Script" uid="uid://dfpyv48pp125d" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/uv_map_node.gd" id="2_ynfvp"]
 
 [node name="UVMapNode" type="GraphNode" unique_id=1174472716]
 offset_right = 147.0

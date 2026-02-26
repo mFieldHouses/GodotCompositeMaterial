@@ -1,8 +1,9 @@
 @tool
 extends CompositeMaterialBuilderGraphNode
-class_name CompileMasksSubNode
+class_name SubNode
 
 var linked_container : Control
+var linked_node : GraphNode
 
 signal node_wants_to_be_rearranged
 
@@ -37,6 +38,8 @@ func _process(delta: float) -> void:
 	if linked_container == null:
 		#print("no linked container")
 		return
+	else:
+		title = linked_node.title
 	
 	position_offset = linked_container.position + linked_container.get_parent().position_offset - Vector2(40.0, 0.0)
 

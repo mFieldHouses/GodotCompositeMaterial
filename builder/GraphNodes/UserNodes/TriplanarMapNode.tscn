@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ec83o0vm1ntw"]
 
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_ouvsg"]
-[ext_resource type="Script" uid="uid://s0jc3oianx85" path="res://addons/CompositeMaterial/builder/GraphNodes/CompositeMaterialBuilderGraphNode.gd" id="2_ouvsg"]
+[ext_resource type="Script" uid="uid://b4afb66lmnxic" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/triplanar_map_node.gd" id="2_ouvsg"]
 
 [node name="TriplanarMapNode" type="GraphNode" unique_id=1174472716]
 offset_right = 220.0
@@ -27,9 +27,22 @@ slot/1/right_type = 4
 slot/1/right_color = Color(1, 1, 1, 1)
 slot/1/right_icon = null
 slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
 script = ExtResource("2_ouvsg")
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 metadata/renamable = false
+
+[node name="Label" type="Label" parent="." unique_id=2137410645]
+layout_mode = 2
+text = "Space"
 
 [node name="mode" type="OptionButton" parent="." unique_id=450175118]
 layout_mode = 2

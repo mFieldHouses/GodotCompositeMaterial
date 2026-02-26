@@ -1,6 +1,6 @@
-[gd_resource type="ShaderMaterial" script_class="CompositeMaterial" load_steps=12 format=3 uid="uid://os36e1lghflm"]
+[gd_resource type="ShaderMaterial" script_class="CompositeMaterial" format=3 uid="uid://os36e1lghflm"]
 
-[ext_resource type="Script" uid="uid://o6isbs5x1fjr" path="res://addons/CompositeMaterial/CompositeMaterialLayer.gd" id="1_eglnm"]
+[ext_resource type="Script" uid="uid://o6isbs5x1fjr" path="res://addons/CompositeMaterial/CompositeMaterialLayerOld.gd" id="1_eglnm"]
 [ext_resource type="Resource" uid="uid://bvgrschuumsf0" path="res://addons/CompositeMaterial/test_layer.tres" id="2_mis4l"]
 [ext_resource type="Texture2D" uid="uid://bjiq1wig4sqy3" path="res://assets/textures/albedo/yellow_black_stripes.png" id="4_eglnm"]
 [ext_resource type="Script" uid="uid://bigyrf2di3p4k" path="res://addons/CompositeMaterial/CompositeMaterial.gd" id="5_wckt6"]
