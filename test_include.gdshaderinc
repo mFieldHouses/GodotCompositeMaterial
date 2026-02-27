@@ -1,0 +1,1 @@
+uniform sampler2D[10] test_texture_array;

@@ -38,7 +38,7 @@ func _process(delta: float) -> void:
 	if linked_container == null:
 		#print("no linked container")
 		return
-	else:
+	elif linked_node:
 		title = linked_node.title
 	
 	position_offset = linked_container.position + linked_container.get_parent().position_offset - Vector2(40.0, 0.0)

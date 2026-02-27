@@ -20,7 +20,7 @@ theme_override_constants/separation = 10
 title = "Compile Masks"
 slot/0/left_enabled = true
 slot/0/left_type = 5
-slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_color = Color(1, 1, 1, 0.2)
 slot/0/left_icon = null
 slot/0/right_enabled = false
 slot/0/right_type = 5
@@ -32,7 +32,7 @@ slot/1/left_type = 5
 slot/1/left_color = Color(1, 1, 1, 1)
 slot/1/left_icon = null
 slot/1/right_enabled = true
-slot/1/right_type = 0
+slot/1/right_type = 5
 slot/1/right_color = Color(1, 1, 1, 1)
 slot/1/right_icon = null
 slot/1/draw_stylebox = true
@@ -76,6 +76,7 @@ popup/item_3/text = "/"
 popup/item_3/id = 3
 
 [node name="new_mask" type="Label" parent="." unique_id=907351050]
+modulate = Color(1, 1, 1, 0.3)
 layout_mode = 2
 text = "Add mask..."
 

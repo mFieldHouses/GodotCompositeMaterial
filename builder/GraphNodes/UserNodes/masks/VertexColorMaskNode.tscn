@@ -5,11 +5,11 @@
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_7bi60"]
 
-[node name="PositionalMask" type="GraphNode" unique_id=1174472716]
+[node name="VertexColorMask" type="GraphNode" unique_id=1174472716]
 offset_right = 213.0
 offset_bottom = 132.0
 theme = ExtResource("1_7bi60")
-title = "Positional Mask"
+title = "Vertex Color Mask"
 slot/0/left_enabled = false
 slot/0/left_type = 0
 slot/0/left_color = Color(1, 1, 1, 1)

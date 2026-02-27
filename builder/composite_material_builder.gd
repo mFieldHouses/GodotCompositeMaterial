@@ -41,11 +41,12 @@ func _ready() -> void:
 	
 
 func _process(delta: float) -> void:
-	
-	for layer_node : LayerNode in node_groups.layers:
-		for connection in get_connection_list_from_node(layer_node.name):
-			if connection.to_node == layer_node.name:
-				pass
+	pass
+	#
+	#for layer_node : LayerNode in node_groups.layers:
+		#for connection in get_connection_list_from_node(layer_node.name):
+			#if connection.to_node == layer_node.name:
+				#pass
 				#print(connection.to_port)
 	
 	#if output_node:
@@ -78,14 +79,17 @@ func _connection_requested(from_node: StringName, from_port: int, to_node: Strin
 		return
 	
 	if _to_node is CompileMasksNode:
-		var _new_node = get_node(String(to_node)).add_slot()
+		var _new_node = _to_node.add_slot()
+		_new_node.linked_node = _from_node
 		connect_node(from_node, from_port, _new_node.name, 0)
+		_to_node.connect_and_pass_object(to_port, _from_node.get_represented_object(from_port))
 		build_material()
 		return
 	elif _to_node is CompositeMaterialOutputNode:
 		var _new_node = get_node(String(to_node)).add_slot()
 		_new_node.linked_node = get_node(String(from_node))
 		connect_node(from_node, from_port, _new_node.name, 0)
+		_to_node.connect_and_pass_object(to_port, _from_node.get_represented_object(from_port))
 		build_material()
 		return
 	elif _to_node is LayerNode:
@@ -169,13 +173,111 @@ func deregister_dynamic_node(node : GraphNode) -> void:
 
 func build_material() -> void:
 	
+	
+	#Build base material
 	var material : CompositeMaterial = CompositeMaterial.new()
 	$output.represented_composite_material = material
 	
+	
+	#Map out all used resources
+	var endpoint_resources : Dictionary[String, Array] = { #Resources that do not have any inputs. They are the "starting points" of paths.
+		"DirectionalMaskConfiguration": [],
+		"PositionalMaskConfiguration": [],
+		"VertexColorMaskConfiguration": [],
+		
+		"UVMapConfiguration": [],
+		"TriplanarUVConfiguration": [],
+		
+		"Texture": [],
+		
+		"IntValue": [],
+		"FloatValue": [],
+		"Vector2Value": [],
+		"Vector3Value": [],
+		"Vector4Value": []
+	}
+	
+	var resources_to_check : Array[Resource] = []
+	
+	
+	#Initialize resources_to_check with resources in all layers
 	for subnode : SubNode in $output.get_connected_layers():
 		var represented_layer : CompositeMaterialLayer = subnode.linked_node.represented_layer
 		material.layers.append(represented_layer)
+		
+		if represented_layer.albedo:
+			resources_to_check.append(represented_layer.albedo)
+		if represented_layer.normal:
+			resources_to_check.append(represented_layer.normal)
+		if represented_layer.roughness_value:
+			resources_to_check.append(represented_layer.roughness_value)
+		if represented_layer.metallic_value:
+			resources_to_check.append(represented_layer.metallic_value)
+		if represented_layer.mask:
+			resources_to_check.append(represented_layer.mask)
 	
-	#for connection in connections:
-		#if connection.to_node == "output":
-			#print(connection)
+	
+	#Go through resources_to_check and expand where neccesary until all resources have been checked and/or mapped.
+	while resources_to_check.size() > 0:
+		var resource_to_check : Resource = resources_to_check.pop_front()
+		
+		#Endpoint resources. These will not contain any other resources.
+		if resource_to_check is CPMB_DirectionalMaskConfiguration:
+			endpoint_resources.DirectionalMaskConfiguration.append(resource_to_check)
+		elif resource_to_check is CPMB_PositionalMaskConfiguration:
+			endpoint_resources.PositionalMaskConfiguration.append(resource_to_check)
+		elif resource_to_check is CPMB_VertexColorMaskConfiguration:
+			endpoint_resources.VertexColorMaskConfiguration.append(resource_to_check)
+		elif resource_to_check is CPMB_UVMapConfiguration:
+			endpoint_resources.UVMapConfiguration.append(resource_to_check)
+		
+		#Left over resource types that may contain other resources
+		elif resource_to_check is CPMB_TextureConfiguration:
+			endpoint_resources.Texture.append(resource_to_check.texture)
+			resources_to_check.append(resource_to_check.uv)
+		elif resource_to_check is CPMB_ColorRampConfiguration:
+			endpoint_resources.Texture.append(resource_to_check.gradient)
+			resources_to_check.append(resource_to_check.fac)
+		elif resource_to_check is CPMB_CompileMasksConfiguration:
+			resources_to_check.append_array(resource_to_check.masks)
+		elif resource_to_check is CPMB_UVTransformConfiguration:
+			resources_to_check.append(resource_to_check.base_uv)
+			resources_to_check.append(resource_to_check.offset_x)
+			resources_to_check.append(resource_to_check.offset_y)
+			resources_to_check.append(resource_to_check.scale_x)
+			resources_to_check.append(resource_to_check.scale_y)
+		
+		#these are base classes, classes that extend these should be checked for first
+		elif resource_to_check is CPMB_IntValue:
+			endpoint_resources.IntValue.append(resource_to_check)
+		elif resource_to_check is CPMB_FloatValue:
+			endpoint_resources.FloatValue.append(resource_to_check)
+		elif resource_to_check is CPMB_Vector2Value:
+			endpoint_resources.Vector2Value.append(resource_to_check)
+		elif resource_to_check is CPMB_Vector3Value:
+			endpoint_resources.Vector3Value.append(resource_to_check)
+		elif resource_to_check is CPMB_Vector4Value:
+			endpoint_resources.Vector4Value.append(resource_to_check)
+	
+	material.shader = Shader.new()
+	material.shader.code = preload("res://addons/CompositeMaterial/shaders/CompositeMaterialBase.gdshader").code
+	
+	material.shader.code = material.shader.code.replace("NUM_DIRECTIONAL_MASKS 0", "NUM_DIRECTIONAL_MASKS " + str(endpoint_resources.DirectionalMaskConfiguration.size()))
+	material.shader.code = material.shader.code.replace("NUM_TEXTURES 0", "NUM_TEXTURES " + str(endpoint_resources.Texture.size()))
+	
+	print(endpoint_resources.Texture)
+	
+	for key in endpoint_resources.keys():
+		var _idx : int = 0
+		for resource : Resource in endpoint_resources[key]:
+			if resource.has_signal("value_changed"):
+				if !resource.has_connections("value_changed"):
+					resource.value_changed.connect(set_shader_property.bind(_idx))
+			_idx += 1
+	
+	$output.represented_composite_material = material
+
+func set_shader_property(value : Variant, shader_property_name : String, id : int) -> void:
+	var _current_value : Array = $output.represented_composite_material.get_shader_parameter(shader_property_name)
+	_current_value[id] = value
+	$output.represented_composite_material.set_shader_parameter(shader_property_name, _current_value)

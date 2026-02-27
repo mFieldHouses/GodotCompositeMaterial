@@ -18,11 +18,12 @@ func _process(delta: float) -> void:
 		if i == get_child_count() - 3:
 			set_slot_enabled_left(i, true)
 			set_slot_enabled_right(i, false)
+			set_slot_color_left(i, Color(1.0, 1.0, 1.0, 0.2))
 			set_slot_type_left(i, 5)
 		elif i == get_child_count() - 2:
 			set_slot_enabled_right(i, true)
 			set_slot_enabled_left(i, false)
-			set_slot_type_left(i, 5)
+			set_slot_type_right(i, 5)
 		else:
 			set_slot_enabled_left(i, false)
 			set_slot_enabled_right(i, false)
@@ -49,10 +50,33 @@ func request_move_slot(slot : Control, delta : int) -> void:
 	if slot.get_index() + delta > 0 and slot.get_index() + delta < get_child_count() - 2:
 		move_child(slot, slot.get_index() + delta)
 
+func get_slots() -> Array[SubNodeSlot]:
+	var result : Array[SubNodeSlot]
+	for child in get_children():
+		if child is SubNodeSlot and child.name != "template_slot":
+			result.append(child)
+	
+	return result
+
+func get_masks() -> Array[CPMB_MaskConfiguration]:
+	var result : Array = []
+	for slot : SubNodeSlot in get_slots():
+		result.append(slot.linked_subnode.linked_node.get_represented_object())
+	
+	return result
+
+func _update_represented_object() -> void:
+	print("update")
+	represented_configuration.masks = []
+	represented_configuration.operations = []
+	for slot : SubNodeSlot in get_slots():
+		represented_configuration.masks.append(slot.linked_subnode.linked_node.get_represented_object(0))
+		if slot.get_node("operation").visible:
+			represented_configuration.operations.append(slot.get_node("operation").selected)
+
 func get_represented_object(port_idx : int) -> Object:
+	_update_represented_object()
 	return represented_configuration
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
-	represented_configuration.masks.append(object)
-	if represented_configuration.operations.size() > 1:
-		represented_configuration.operations.append(0)
+	_update_represented_object()
