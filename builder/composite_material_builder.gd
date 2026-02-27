@@ -7,7 +7,8 @@ var node_mappings : Array = [
 	["VariableNode", "LayerNode", "TextureNode", "ColorRampNode", "", "", "", "DistanceFadeNode"],
 	["UVTransformNode","UVMapNode","TriplanarMapNode"],
 	["masks/CompileMasksNode", "masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/UVMaskNode", "masks/VertexColorMaskNode", "masks/NormalMapMaskNode"],
-	["utility/MathNode", "utility/DecomposeAlbedoNode", "utility/ComposeAlbedoNode"]
+	["vector/VectorMathNode", "vector/ComposeVector2Node", "vector/DecomposeVector2Node", "vector/ComposeVector3Node", "vector/DecomposeVector3Node", "vector/ComposeVector4Node", "vector/DecomposeVector4Node"],
+	["utility/MathNode", "utility/ComposeAlbedoNode"]
 ]
 
 var dynamic_nodes : Array[GraphNode] = []
@@ -94,7 +95,7 @@ func _connection_requested(from_node: StringName, from_port: int, to_node: Strin
 			_to_node.enable_value(1, false)
 	
 	connect_node(from_node, from_port, to_node, to_port)
-	_to_node.connect_and_pass_object(to_port, _from_node.get_represented_object())
+	_to_node.connect_and_pass_object(to_port, _from_node.get_represented_object(from_port))
 	
 	build_material()
 

@@ -1,17 +1,17 @@
-[gd_scene format=3 uid="uid://cqtjihtaellaw"]
+[gd_scene format=3 uid="uid://q2upn515axxy"]
 
-[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_cy681"]
-[ext_resource type="Script" uid="uid://bk8oxytrc88w" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/utility/decompose_albedo_node.gd" id="2_t6mqs"]
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_bjc7n"]
+[ext_resource type="Script" uid="uid://dfksld7qs5eo8" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/vector/decompose_vector_2_node.gd" id="2_bjc7n"]
 
-[node name="DecomposeAlbedo" type="GraphNode" unique_id=1174472716]
+[node name="DecomposeVector2" type="GraphNode" unique_id=1174472716]
 offset_right = 207.0
 offset_bottom = 223.0
 tooltip_text = "Takes a number as an input and outputs a color based on where the input number lies between 0 and 1 on the gradient."
-theme = ExtResource("1_cy681")
+theme = ExtResource("1_bjc7n")
 theme_override_constants/separation = 10
-title = "Decompose Albedo"
+title = "Decompose Vector2"
 slot/0/left_enabled = true
-slot/0/left_type = 2
+slot/0/left_type = 4
 slot/0/left_color = Color(1, 1, 1, 1)
 slot/0/left_icon = null
 slot/0/right_enabled = false
@@ -46,52 +46,24 @@ slot/3/right_type = 5
 slot/3/right_color = Color(1, 1, 1, 1)
 slot/3/right_icon = null
 slot/3/draw_stylebox = true
-slot/4/left_enabled = false
-slot/4/left_type = 0
-slot/4/left_color = Color(1, 1, 1, 1)
-slot/4/left_icon = null
-slot/4/right_enabled = true
-slot/4/right_type = 5
-slot/4/right_color = Color(1, 1, 1, 1)
-slot/4/right_icon = null
-slot/4/draw_stylebox = true
-slot/5/left_enabled = false
-slot/5/left_type = 0
-slot/5/left_color = Color(1, 1, 1, 1)
-slot/5/left_icon = null
-slot/5/right_enabled = true
-slot/5/right_type = 5
-slot/5/right_color = Color(1, 1, 1, 1)
-slot/5/right_icon = null
-slot/5/draw_stylebox = true
-script = ExtResource("2_t6mqs")
+script = ExtResource("2_bjc7n")
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 
 [node name="Label" type="Label" parent="." unique_id=1654079793]
 layout_mode = 2
-text = "Albedo"
+text = "Vector2"
 
 [node name="r_out" type="Label" parent="." unique_id=290204102]
 layout_mode = 2
-text = "Red"
+text = "(Red) X"
 horizontal_alignment = 2
 
 [node name="g_out" type="Label" parent="." unique_id=114428910]
 layout_mode = 2
-text = "Green"
-horizontal_alignment = 2
-
-[node name="b_out" type="Label" parent="." unique_id=936777653]
-layout_mode = 2
-text = "Blue"
-horizontal_alignment = 2
-
-[node name="a_out" type="Label" parent="." unique_id=976204003]
-layout_mode = 2
-text = "Alpha"
+text = "(Green) Y"
 horizontal_alignment = 2
 
 [node name="v_out" type="Label" parent="." unique_id=335251119]
 layout_mode = 2
-text = "Value"
+text = "(Value) Length"
 horizontal_alignment = 2

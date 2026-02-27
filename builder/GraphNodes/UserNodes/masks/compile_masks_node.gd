@@ -49,7 +49,7 @@ func request_move_slot(slot : Control, delta : int) -> void:
 	if slot.get_index() + delta > 0 and slot.get_index() + delta < get_child_count() - 2:
 		move_child(slot, slot.get_index() + delta)
 
-func get_represented_object() -> Object:
+func get_represented_object(port_idx : int) -> Object:
 	return represented_configuration
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:

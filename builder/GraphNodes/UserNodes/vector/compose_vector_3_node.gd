@@ -1,8 +1,9 @@
+@tool
 extends CompositeMaterialBuilderGraphNode
 
-var represented_value : CPMB_ComposeVec4 = CPMB_ComposeVec4.new()
+var represented_value : CPMB_ComposeVec3 = CPMB_ComposeVec3.new()
 
-func get_represented_object() -> Object:
+func get_represented_object(port_idx : int) -> Object:
 	return represented_value
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
@@ -13,5 +14,3 @@ func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 			represented_value.y = object
 		2:
 			represented_value.z = object
-		3:
-			represented_value.w = object

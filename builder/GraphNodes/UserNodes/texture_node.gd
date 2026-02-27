@@ -25,7 +25,7 @@ func _load_texture() -> void:
 	respresented_texture_config.texture = load(path)
 	$texture_view.texture = respresented_texture_config.texture
 
-func get_represented_object() -> Object:
+func get_represented_object(port_idx : int) -> Object:
 	return respresented_texture_config
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:

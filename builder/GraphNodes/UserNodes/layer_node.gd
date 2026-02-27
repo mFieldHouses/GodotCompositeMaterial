@@ -91,5 +91,5 @@ func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 		4:
 			represented_layer.mask = object
 
-func get_represented_object() -> Object:
+func get_represented_object(port_idx : int) -> Object:
 	return represented_layer

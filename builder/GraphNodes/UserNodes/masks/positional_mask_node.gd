@@ -32,5 +32,5 @@ func _viewport_input(event : InputEvent) -> void:
 			$SubViewportContainer/SubViewport/pointer_origin.rotation.x += event.relative.y / 100
 			$SubViewportContainer/SubViewport/pointer_origin.rotation.y += event.relative.x / 100 * _drag_direction
 
-func get_represented_object() -> Object:
+func get_represented_object(port_idx : int) -> Object:
 	return represented_configuration

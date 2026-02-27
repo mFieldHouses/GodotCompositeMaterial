@@ -38,7 +38,7 @@ item_0/id = 0
 script = ExtResource("2_byhuo")
 
 [node name="add_node" type="PopupMenu" parent="context_menu" unique_id=1302850455]
-item_count = 8
+item_count = 9
 item_0/text = "Variable"
 item_0/id = 0
 item_1/text = "Layer"
@@ -51,10 +51,12 @@ item_4/text = "UV"
 item_4/id = 4
 item_5/text = "Masks"
 item_5/id = 5
-item_6/text = "Utility"
+item_6/text = "Vector"
 item_6/id = 6
-item_7/text = "Distance Fade"
+item_7/text = "Utility"
 item_7/id = 7
+item_8/text = "Distance Fade"
+item_8/id = 8
 
 [node name="uv" type="PopupMenu" parent="context_menu/add_node" unique_id=535191034]
 item_count = 3
@@ -79,6 +81,23 @@ item_4/text = "Vertex Color Mask"
 item_4/id = 4
 item_5/text = "Normal Map Slope Mask"
 item_5/id = 5
+
+[node name="vector" type="PopupMenu" parent="context_menu/add_node" unique_id=1126265487]
+item_count = 7
+item_0/text = "Vector Math"
+item_0/id = 0
+item_1/text = "Compose Vector2"
+item_1/id = 1
+item_2/text = "Decompose Vector2"
+item_2/id = 2
+item_3/text = "Compose Vector3"
+item_3/id = 3
+item_4/text = "Decompose Vector3"
+item_4/id = 4
+item_5/text = "Compose Vector4"
+item_5/id = 5
+item_6/text = "Decompose Vector4"
+item_6/id = 6
 
 [node name="utility" type="PopupMenu" parent="context_menu/add_node" unique_id=1030848227]
 item_count = 3

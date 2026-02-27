@@ -1,15 +1,15 @@
 [gd_scene format=3 uid="uid://cavmyhw2bh4oi"]
 
-[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_x6ktw"]
-[ext_resource type="Script" uid="uid://e4iprfvfxukn" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/utility/compose_albedo_node.gd" id="2_x6ktw"]
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_6cwa0"]
+[ext_resource type="Script" uid="uid://e4iprfvfxukn" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/vector/compose_vector_4_node.gd" id="2_b1fx7"]
 
-[node name="ComposeAlbedo" type="GraphNode" unique_id=1174472716]
+[node name="ComposeVector4" type="GraphNode" unique_id=1174472716]
 offset_right = 207.0
 offset_bottom = 223.0
 tooltip_text = "Takes a number as an input and outputs a color based on where the input number lies between 0 and 1 on the gradient."
-theme = ExtResource("1_x6ktw")
+theme = ExtResource("1_6cwa0")
 theme_override_constants/separation = 10
-title = "Compose Albedo"
+title = "Compose Vector4"
 slot/0/left_enabled = true
 slot/0/left_type = 5
 slot/0/left_color = Color(1, 1, 1, 1)
@@ -55,26 +55,26 @@ slot/4/right_type = 5
 slot/4/right_color = Color(1, 1, 1, 1)
 slot/4/right_icon = null
 slot/4/draw_stylebox = true
-script = ExtResource("2_x6ktw")
+script = ExtResource("2_b1fx7")
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 
 [node name="r_in" type="Label" parent="." unique_id=290204102]
 layout_mode = 2
-text = "Red"
+text = "X (Red)"
 
 [node name="g_in" type="Label" parent="." unique_id=114428910]
 layout_mode = 2
-text = "Green"
+text = "Y (Green)"
 
 [node name="b_in" type="Label" parent="." unique_id=936777653]
 layout_mode = 2
-text = "Blue"
+text = "Z (Blue)"
 
 [node name="a_in" type="Label" parent="." unique_id=976204003]
 layout_mode = 2
-text = "Alpha"
+text = "W (Alpha)"
 
 [node name="Label" type="Label" parent="." unique_id=1654079793]
 layout_mode = 2
-text = "Albedo"
+text = "Vector4"
 horizontal_alignment = 2

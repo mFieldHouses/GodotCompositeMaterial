@@ -13,5 +13,5 @@ func _node_ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
-func get_represented_object() -> Object:
+func get_represented_object(port_idx : int) -> Object:
 	return represented_configuration

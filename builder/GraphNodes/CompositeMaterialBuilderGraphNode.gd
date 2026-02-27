@@ -18,5 +18,5 @@ func _ready() -> void:
 func connect_and_pass_object(input_port_id : int, object : Object) -> void: ##Override this method to be able to process connections.
 	pass
 
-func get_represented_object() -> Object: ##This method must be overridden to provide values in the case of connections.
+func get_represented_object(port_idx : int) -> Object: ##This method must be overridden to provide values in the case of connections.
 	return null

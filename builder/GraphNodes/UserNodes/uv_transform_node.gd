@@ -9,7 +9,7 @@ func _node_ready() -> void:
 	$offset_x/value.changed.connect(func(x): represented_uv_config.offset.x = x)
 	$offset_y/value.changed.connect(func(x): represented_uv_config.offset.y = x)
 
-func get_represented_object() -> Object:
+func get_represented_object(port_idx : int) -> Object:
 	return represented_uv_config
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:

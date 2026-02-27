@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://xror1bv7oqj8"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_o7bm3"]
+[ext_resource type="Script" uid="uid://dmrm8qw53uh4v" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/vector/decompose_vector_3_node.gd" id="2_o7bm3"]
+
+[node name="DecomposeVector3" type="GraphNode" unique_id=1174472716]
+offset_right = 207.0
+offset_bottom = 223.0
+tooltip_text = "Takes a number as an input and outputs a color based on where the input number lies between 0 and 1 on the gradient."
+theme = ExtResource("1_o7bm3")
+theme_override_constants/separation = 10
+title = "Decompose Vector3"
+slot/0/left_enabled = true
+slot/0/left_type = 3
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 5
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = false
+slot/1/left_enabled = false
+slot/1/left_type = 1
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = true
+slot/1/right_type = 5
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = false
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = true
+slot/2/right_type = 5
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = true
+slot/3/right_type = 5
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = true
+slot/4/right_type = 5
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+script = ExtResource("2_o7bm3")
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+
+[node name="Label" type="Label" parent="." unique_id=1654079793]
+layout_mode = 2
+text = "Vector3"
+
+[node name="r_out" type="Label" parent="." unique_id=290204102]
+layout_mode = 2
+text = "(Red) X"
+horizontal_alignment = 2
+
+[node name="g_out" type="Label" parent="." unique_id=114428910]
+layout_mode = 2
+text = "(Green) Y"
+horizontal_alignment = 2
+
+[node name="b_out" type="Label" parent="." unique_id=936777653]
+layout_mode = 2
+text = "(Blue) Z"
+horizontal_alignment = 2
+
+[node name="v_out" type="Label" parent="." unique_id=335251119]
+layout_mode = 2
+text = "(Value) Length"
+horizontal_alignment = 2

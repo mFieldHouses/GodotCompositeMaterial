@@ -15,5 +15,5 @@ func _process(delta: float) -> void:
 	else:
 		$custom_color_config.modulate.a = 0.5
 		
-func get_represented_object() -> Object:
+func get_represented_object(port_idx : int) -> Object:
 	return represented_config
