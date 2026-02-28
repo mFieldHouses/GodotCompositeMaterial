@@ -8,3 +8,6 @@ class_name CPMB_ComposeVec4
 
 func get_value() -> Vector4:
 	return Vector4(x.value, y.value, z.value, w.value)
+
+func get_expression() -> String:
+	return "vec4(%s, %s, %s, %s)" % [x.get_expression(), y.get_expression(), z.get_expression(), w.get_expression()]

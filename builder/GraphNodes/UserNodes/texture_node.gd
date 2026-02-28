@@ -22,8 +22,9 @@ func _load_texture() -> void:
 	_file_dialog.close_requested.connect(_file_dialog.queue_free)
 	
 	var path : String = await _file_dialog.file_selected
-	respresented_texture_config.texture = load(path)
-	$texture_view.texture = respresented_texture_config.texture
+	var tex = load(path)
+	respresented_texture_config.texture = tex
+	$texture_view.texture = tex
 
 func get_represented_object(port_idx : int) -> Object:
 	return respresented_texture_config

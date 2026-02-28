@@ -164,7 +164,7 @@ layout_mode = 2
 [node name="color" type="ColorPickerButton" parent="color_field" unique_id=311995830]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-tooltip_text = "Exposes an endpoint where the user can manually change a value. When 'Export Variable' is enabled, this variable will also show up and be editable in CompositeMaterialVariants."
+tooltip_text = "Exposes an mapped where the user can manually change a value. When 'Export Variable' is enabled, this variable will also show up and be editable in CompositeMaterialVariants."
 color = Color(1, 0, 0, 1)
 
 [node name="Control" type="Control" parent="color_field" unique_id=196050419]

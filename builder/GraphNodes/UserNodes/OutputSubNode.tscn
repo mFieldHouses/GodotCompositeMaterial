@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://olwwyr4rm2q8"]
 
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_kjasx"]
-[ext_resource type="Script" uid="uid://d4f70ijkhy68k" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/compile_masks_sub_node.gd" id="2_xbnda"]
+[ext_resource type="Script" uid="uid://d4f70ijkhy68k" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/subnode.gd" id="2_xbnda"]
 
 [node name="OutputSubNode" type="GraphNode" unique_id=931551961]
 z_index = 10

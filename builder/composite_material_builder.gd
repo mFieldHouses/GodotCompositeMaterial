@@ -180,14 +180,16 @@ func build_material() -> void:
 	
 	
 	#Map out all used resources
-	var endpoint_resources : Dictionary[String, Array] = { #Resources that do not have any inputs. They are the "starting points" of paths.
+	var mapped_resources : Dictionary[String, Array] = { #Resources that do not have any inputs. They are the "starting points" of paths.
 		"DirectionalMaskConfiguration": [],
 		"PositionalMaskConfiguration": [],
 		"VertexColorMaskConfiguration": [],
 		
+		"UVTransformConfiguration": [],
 		"UVMapConfiguration": [],
 		"TriplanarUVConfiguration": [],
 		
+		"TextureConfiguration": [],
 		"Texture": [],
 		
 		"IntValue": [],
@@ -199,6 +201,9 @@ func build_material() -> void:
 	
 	var resources_to_check : Array[Resource] = []
 	
+	var append_resource_to_mapped_resources : Callable = func(resource : CPMB_Base, array_name : String) -> void:
+		resource.index = mapped_resources[array_name].size()
+		mapped_resources[array_name].append(resource)
 	
 	#Initialize resources_to_check with resources in all layers
 	for subnode : SubNode in $output.get_connected_layers():
@@ -221,22 +226,22 @@ func build_material() -> void:
 	while resources_to_check.size() > 0:
 		var resource_to_check : Resource = resources_to_check.pop_front()
 		
-		#Endpoint resources. These will not contain any other resources.
 		if resource_to_check is CPMB_DirectionalMaskConfiguration:
-			endpoint_resources.DirectionalMaskConfiguration.append(resource_to_check)
+			append_resource_to_mapped_resources.call(resource_to_check, "DirectionalMaskConfiguration")
 		elif resource_to_check is CPMB_PositionalMaskConfiguration:
-			endpoint_resources.PositionalMaskConfiguration.append(resource_to_check)
+			append_resource_to_mapped_resources.call(resource_to_check, "PositionalMaskConfiguration")
 		elif resource_to_check is CPMB_VertexColorMaskConfiguration:
-			endpoint_resources.VertexColorMaskConfiguration.append(resource_to_check)
+			append_resource_to_mapped_resources.call(resource_to_check, "VertexColorMaskConfiguration")
 		elif resource_to_check is CPMB_UVMapConfiguration:
-			endpoint_resources.UVMapConfiguration.append(resource_to_check)
-		
-		#Left over resource types that may contain other resources
+			append_resource_to_mapped_resources.call(resource_to_check, "UVMapConfiguration")
+		elif resource_to_check is CPMB_UVTransformConfiguration:
+			append_resource_to_mapped_resources.call(resource_to_check, "UVTransformConfiguration")
 		elif resource_to_check is CPMB_TextureConfiguration:
-			endpoint_resources.Texture.append(resource_to_check.texture)
+			append_resource_to_mapped_resources.call(resource_to_check, "TextureConfiguration")
+			mapped_resources.Texture.append(resource_to_check.texture)
 			resources_to_check.append(resource_to_check.uv)
 		elif resource_to_check is CPMB_ColorRampConfiguration:
-			endpoint_resources.Texture.append(resource_to_check.gradient)
+			mapped_resources.Texture.append(resource_to_check.gradient)
 			resources_to_check.append(resource_to_check.fac)
 		elif resource_to_check is CPMB_CompileMasksConfiguration:
 			resources_to_check.append_array(resource_to_check.masks)
@@ -248,36 +253,61 @@ func build_material() -> void:
 			resources_to_check.append(resource_to_check.scale_y)
 		
 		#these are base classes, classes that extend these should be checked for first
-		elif resource_to_check is CPMB_IntValue:
-			endpoint_resources.IntValue.append(resource_to_check)
-		elif resource_to_check is CPMB_FloatValue:
-			endpoint_resources.FloatValue.append(resource_to_check)
 		elif resource_to_check is CPMB_Vector2Value:
-			endpoint_resources.Vector2Value.append(resource_to_check)
+			append_resource_to_mapped_resources.call(resource_to_check, "Vector2Value")
 		elif resource_to_check is CPMB_Vector3Value:
-			endpoint_resources.Vector3Value.append(resource_to_check)
+			append_resource_to_mapped_resources.call(resource_to_check, "Vector3Value")
 		elif resource_to_check is CPMB_Vector4Value:
-			endpoint_resources.Vector4Value.append(resource_to_check)
+			append_resource_to_mapped_resources.call(resource_to_check, "Vector4Value")
+		elif resource_to_check is CPMB_IntValue:
+			append_resource_to_mapped_resources.call(resource_to_check, "IntValue")
+		elif resource_to_check is CPMB_FloatValue:
+			append_resource_to_mapped_resources.call(resource_to_check, "FloatValue")
 	
 	material.shader = Shader.new()
 	material.shader.code = preload("res://addons/CompositeMaterial/shaders/CompositeMaterialBase.gdshader").code
 	
-	material.shader.code = material.shader.code.replace("NUM_DIRECTIONAL_MASKS 0", "NUM_DIRECTIONAL_MASKS " + str(endpoint_resources.DirectionalMaskConfiguration.size()))
-	material.shader.code = material.shader.code.replace("NUM_TEXTURES 0", "NUM_TEXTURES " + str(endpoint_resources.Texture.size()))
+	var definition_map : Dictionary[String, String] = {
+		"DirectionalMaskConfiguration" : "NUM_DIRECTIONAL_MASKS",
+		"PositionalMaskConfiguration" : "NUM_POSITIONAL_MASKS",
+		"VertexColorMaskConfiguration" : "NUM_VERTEX_COLOR_MASKS",
+		"UVMapConfiguration" : "NUM_UV_MAPS",
+		"TriplanarUVConfiguration" : "NUM_TRIPLANAR_MAPS",
+		"Texture" : "NUM_TEXTURES"
+	}
 	
-	print(endpoint_resources.Texture)
-	
-	for key in endpoint_resources.keys():
-		var _idx : int = 0
-		for resource : Resource in endpoint_resources[key]:
-			if resource.has_signal("value_changed"):
-				if !resource.has_connections("value_changed"):
-					resource.value_changed.connect(set_shader_property.bind(_idx))
-			_idx += 1
+	for key in definition_map.keys():
+		material.shader.code = material.shader.code.replace(definition_map[key] + " 0", definition_map[key] + " " + str(mapped_resources[key].size()))
 	
 	$output.represented_composite_material = material
+	
+	if mapped_resources.Texture.size() > 0:
+		var _arr = []
+		_arr.resize(mapped_resources.Texture.size())
+		_arr.fill(null)
+		$output.represented_composite_material.set_shader_parameter("textures", _arr)
+	
+	for key in mapped_resources.keys():
+		var _idx : int = 0
+		for resource : Resource in mapped_resources[key]:
+			if resource.has_signal("value_changed"):
+				if !resource.has_connections("value_changed"):
+					resource.connect("value_changed", set_shader_property.bind(_idx))
+				
+			#initialize export values
+			for property in resource.get_property_list():
+				#print(property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE or (property.hint & PROPERTY_HINT_RESOURCE_TYPE and property.hint_string == "Texture2D"))
+				if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE or (property.hint & PROPERTY_HINT_RESOURCE_TYPE and property.hint_string == "Texture2D"):
+					#call setter on value so that set_shader_property automatically gets called correctly
+					print("setting ", property.name, " to ", resource.get(property.name))
+					resource.set(property.name, resource.get(property.name))
+				
+			_idx += 1
+
 
 func set_shader_property(value : Variant, shader_property_name : String, id : int) -> void:
+	$output.represented_composite_material.get_property_list() #????? This line needs to be present or get_shader_parameter will return Nil
+	
 	var _current_value : Array = $output.represented_composite_material.get_shader_parameter(shader_property_name)
 	_current_value[id] = value
 	$output.represented_composite_material.set_shader_parameter(shader_property_name, _current_value)

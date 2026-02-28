@@ -29,19 +29,14 @@ var export_path_dialog : EditorFileDialog
 	
 func build_material(shaded : bool = true) -> void:
 	if !Engine.is_editor_hint() and autolock_material:
-		#print("skipping building material ", self)
 		return
-	
-	#print("rebuilding material ", self)
-	
+
 	if previous_layers_size != layers.size():
 		var new_shader = Shader.new()
 		new_shader.set_code(compose_shader_code(layers.size(), shaded))
 		shader = new_shader
 		
 	clear_all_shader_parameters()
-	
-	#EditorInterface.get_editor_toaster().push_toast("Building material...")
 	
 	var layer_idx : int = 0
 	for layer_config in layers:
@@ -57,9 +52,7 @@ func build_material(shaded : bool = true) -> void:
 		layer_idx += 1
 			
 	emit_changed()
-	#print("Done building")
 	finish_building.emit()
-	#EditorInterface.get_editor_toaster().push_toast("Done building material!")
 
 func freeze() -> void:
 	frozen = true
