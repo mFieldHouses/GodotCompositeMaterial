@@ -8,6 +8,9 @@ func _node_ready() -> void:
 	$load_texture.button_down.connect(_load_texture)
 	respresented_texture_config = CPMB_TextureConfiguration.new()
 	
+	if Engine.is_editor_hint():
+		node_selected.connect(EditorInterface.edit_resource.bind(respresented_texture_config))
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
@@ -29,6 +32,9 @@ func _load_texture() -> void:
 
 func get_represented_object(port_idx : int) -> Object:
 	return respresented_texture_config
+
+func set_represented_object(object : Object) -> void:
+	respresented_texture_config = object
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 	match input_port_id:

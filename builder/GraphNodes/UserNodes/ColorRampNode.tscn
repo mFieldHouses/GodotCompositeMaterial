@@ -3,10 +3,7 @@
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_bul4y"]
 [ext_resource type="Script" uid="uid://bt8u8gtit7bxa" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/color_ramp_node.gd" id="2_bul4y"]
 
-[sub_resource type="Gradient" id="Gradient_rdmv2"]
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_1dhvv"]
-gradient = SubResource("Gradient_rdmv2")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_rdmv2"]
 
 [node name="ColorRampNode" type="GraphNode" unique_id=1174472716]
 offset_right = 7.0
@@ -47,7 +44,7 @@ metadata/_custom_type_script = "uid://s0jc3oianx85"
 [node name="color_ramp_preview" type="TextureRect" parent="." unique_id=664028114]
 custom_minimum_size = Vector2(250, 30)
 layout_mode = 2
-texture = SubResource("GradientTexture1D_1dhvv")
+texture = SubResource("GradientTexture1D_rdmv2")
 expand_mode = 1
 
 [node name="factor_in" type="Label" parent="." unique_id=1008759771]

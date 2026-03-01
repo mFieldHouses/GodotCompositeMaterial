@@ -1,7 +1,7 @@
 @tool
 extends MaskNode
 
-var represented_configuration : CPMB_PositionalMaskConfiguration = CPMB_PositionalMaskConfiguration.new()
+var represented_configuration : CPMB_PositionalMaskConfiguration
 
 var _dragging_viewport : bool = false
 var _drag_direction : int = 1
@@ -12,6 +12,8 @@ func _node_ready() -> void:
 	$template_directions/x.button_down.connect(func(): $SubViewportContainer/SubViewport/pointer_origin.rotation_degrees = Vector3(-90.0, -90.0, 0.0))
 	$template_directions/y.button_down.connect(func(): $SubViewportContainer/SubViewport/pointer_origin.rotation_degrees = Vector3(0.0, 0.0, 0.0))
 	$template_directions/z.button_down.connect(func(): $SubViewportContainer/SubViewport/pointer_origin.rotation_degrees = Vector3(90.0, 0.0, 0.0))
+	
+	represented_configuration = CPMB_PositionalMaskConfiguration.new()
 	
 	
 func _process(delta: float) -> void:
@@ -34,3 +36,6 @@ func _viewport_input(event : InputEvent) -> void:
 
 func get_represented_object(port_idx : int) -> Object:
 	return represented_configuration
+
+func set_represented_object(object : Object) -> void:
+	represented_configuration = object

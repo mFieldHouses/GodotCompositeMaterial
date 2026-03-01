@@ -1,3 +1,4 @@
+@tool
 extends CPMB_Base
 class_name CPMB_NumericValue
 

@@ -2,7 +2,7 @@
 extends CompositeMaterialBuilderGraphNode
 class_name LayerNode
 
-var represented_layer : CompositeMaterialLayer = CompositeMaterialLayer.new()
+var represented_layer : CompositeMaterialLayer
 
 var capturing_keyboard : bool = false
 
@@ -10,6 +10,9 @@ var _rename_button : Button
 var _confirm_button : Button
 
 func _node_ready() -> void:
+	
+	represented_layer = CompositeMaterialLayer.new()
+	
 	if Engine.is_editor_hint():
 		node_selected.connect(EditorInterface.edit_resource.bind(represented_layer))
 	
@@ -93,3 +96,6 @@ func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 
 func get_represented_object(port_idx : int) -> Object:
 	return represented_layer
+
+func set_represented_object(object : Object) -> void:
+	represented_layer = object

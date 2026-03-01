@@ -1,3 +1,4 @@
+@tool
 extends CPMB_NumericValue
 class_name CPMB_Math
 

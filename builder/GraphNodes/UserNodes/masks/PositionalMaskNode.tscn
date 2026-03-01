@@ -177,7 +177,6 @@ text = "Min"
 [node name="min" type="SpinBox" parent="." unique_id=1199384109]
 layout_mode = 2
 step = 0.01
-value = -1.0
 allow_greater = true
 allow_lesser = true
 

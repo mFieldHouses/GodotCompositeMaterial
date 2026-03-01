@@ -1,7 +1,11 @@
+@tool
 extends CPMB_NumericValue
 class_name CPMB_IntValue
 
-@export var value : int = 0
+@export var value : int = 0:
+	set(x):
+		value = x
+		value_changed.emit(x, "int_values")
 
 func _init(value : int = 0) -> void:
 	self.value = value

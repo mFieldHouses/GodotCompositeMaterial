@@ -42,6 +42,9 @@ func _enter_tree() -> void:
 	builder_scene_dock_instance.add_child(builder_scene.instantiate())
 	builder_scene_dock_instance.default_slot = EditorDock.DOCK_SLOT_BOTTOM
 	add_dock(builder_scene_dock_instance)
+	builder_scene_dock_instance.name = "CompositeMaterial"
+	
+	name = "CompositeMaterialPlugin"
 	
 func _exit_tree() -> void:
 	#Undo everything done in _enter_tree()
@@ -156,3 +159,7 @@ func bake_popup():
 	
 	bake_popup_dialogue.popup_centered(Vector2i(800,600))
 	bake_scene.setup("")
+
+func edit_material(material : CompositeMaterial) -> void:
+	make_bottom_panel_item_visible(builder_scene_dock_instance.get_child(0))
+	builder_scene_dock_instance.get_child(0).edit_material(material)

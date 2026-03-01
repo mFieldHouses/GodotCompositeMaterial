@@ -1,3 +1,4 @@
+@tool
 extends CPMB_MaskConfiguration
 class_name CPMB_VertexColorMaskConfiguration
 

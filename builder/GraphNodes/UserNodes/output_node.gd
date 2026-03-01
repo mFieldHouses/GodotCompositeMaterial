@@ -2,13 +2,15 @@
 extends CompositeMaterialBuilderGraphNode
 class_name CompositeMaterialOutputNode
 
-var represented_composite_material : CompositeMaterial = CompositeMaterial.new():
+var represented_composite_material : CompositeMaterial:
 	set(x):
 		#print("represented compositematerial changed from ", represented_composite_material, " to ", x)
 		represented_composite_material = x
 
 func _node_ready() -> void:
 	get_parent().output_node = self
+	
+	represented_composite_material = CompositeMaterial.new()
 	
 	if Engine.is_editor_hint():
 		node_selected.connect(edit_material)

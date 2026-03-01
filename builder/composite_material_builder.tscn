@@ -2,15 +2,70 @@
 
 [ext_resource type="Script" uid="uid://dx7me4n8nqi37" path="res://addons/CompositeMaterial/builder/composite_material_builder.gd" id="1_t3pmd"]
 [ext_resource type="Script" uid="uid://x7d5dxocptmm" path="res://addons/CompositeMaterial/builder/context_menu.gd" id="2_byhuo"]
+[ext_resource type="Script" uid="uid://dci5qetctlnmr" path="res://addons/CompositeMaterial/builder/composite_material_builder_page.gd" id="2_xl7ga"]
 [ext_resource type="PackedScene" uid="uid://ckhleqaee8e7k" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/OutputNode.tscn" id="3_xl7ga"]
 
-[node name="CompositeMaterial Builder" type="GraphEdit" unique_id=339063044]
-custom_minimum_size = Vector2(0, 200)
+[node name="HSplitContainer" type="HSplitContainer" unique_id=643108616]
+custom_minimum_size = Vector2(0, 210)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+split_offsets = PackedInt32Array(738)
+split_offset = 738
+script = ExtResource("1_t3pmd")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1031821344]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1372889373]
+layout_mode = 2
+
+[node name="new_material" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=1094077838]
+layout_mode = 2
+text = "New"
+flat = true
+
+[node name="Panel" type="Panel" parent="VBoxContainer" unique_id=1804332720]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="page_buttons" type="VBoxContainer" parent="VBoxContainer/Panel" unique_id=41538834]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="template_button" type="Button" parent="VBoxContainer/Panel/page_buttons" unique_id=644464768]
+visible = false
+layout_mode = 2
+text = "<page name>"
+flat = true
+alignment = 0
+text_overrun_behavior = 1
+
+[node name="pages" type="Control" parent="." unique_id=1752508766]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="template_page" type="GraphEdit" parent="pages" unique_id=339063044]
+visible = false
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+scroll_offset = Vector2(0, -228)
 grid_pattern = 1
 snapping_enabled = false
 right_disconnects = true
@@ -29,15 +84,15 @@ connection_lines_thickness = 2.0
 minimap_enabled = false
 show_zoom_buttons = false
 show_grid_buttons = false
-script = ExtResource("1_t3pmd")
+script = ExtResource("2_xl7ga")
 
-[node name="context_menu" type="PopupMenu" parent="." unique_id=1147366422]
+[node name="context_menu" type="PopupMenu" parent="pages/template_page" unique_id=1147366422]
 item_count = 1
 item_0/text = "Add Node..."
 item_0/id = 0
 script = ExtResource("2_byhuo")
 
-[node name="add_node" type="PopupMenu" parent="context_menu" unique_id=1302850455]
+[node name="add_node" type="PopupMenu" parent="pages/template_page/context_menu" unique_id=1302850455]
 item_count = 9
 item_0/text = "Variable"
 item_0/id = 0
@@ -58,7 +113,7 @@ item_7/id = 7
 item_8/text = "Distance Fade"
 item_8/id = 8
 
-[node name="uv" type="PopupMenu" parent="context_menu/add_node" unique_id=535191034]
+[node name="uv" type="PopupMenu" parent="pages/template_page/context_menu/add_node" unique_id=535191034]
 item_count = 3
 item_0/text = "UV Transform"
 item_0/id = 0
@@ -67,7 +122,7 @@ item_1/id = 1
 item_2/text = "Triplanar Mapping"
 item_2/id = 2
 
-[node name="masks" type="PopupMenu" parent="context_menu/add_node" unique_id=504652469]
+[node name="masks" type="PopupMenu" parent="pages/template_page/context_menu/add_node" unique_id=504652469]
 item_count = 6
 item_0/text = "Compile Masks"
 item_0/id = 0
@@ -82,7 +137,7 @@ item_4/id = 4
 item_5/text = "Normal Map Slope Mask"
 item_5/id = 5
 
-[node name="vector" type="PopupMenu" parent="context_menu/add_node" unique_id=1126265487]
+[node name="vector" type="PopupMenu" parent="pages/template_page/context_menu/add_node" unique_id=1126265487]
 item_count = 7
 item_0/text = "Vector Math"
 item_0/id = 0
@@ -99,7 +154,7 @@ item_5/id = 5
 item_6/text = "Decompose Vector4"
 item_6/id = 6
 
-[node name="utility" type="PopupMenu" parent="context_menu/add_node" unique_id=1030848227]
+[node name="utility" type="PopupMenu" parent="pages/template_page/context_menu/add_node" unique_id=1030848227]
 item_count = 3
 item_0/text = "Math"
 item_0/id = 0
@@ -108,10 +163,10 @@ item_1/id = 1
 item_2/text = "Compose albedo"
 item_2/id = 2
 
-[node name="output" parent="." unique_id=1293774481 instance=ExtResource("3_xl7ga")]
+[node name="output" parent="pages/template_page" unique_id=1293774481 instance=ExtResource("3_xl7ga")]
 layout_mode = 0
 offset_left = 718.0
-offset_top = 214.0
+offset_top = 442.0
 offset_right = 932.0
-offset_bottom = 420.0
+offset_bottom = 648.0
 position_offset = Vector2(718, 214)

@@ -1,3 +1,4 @@
+@tool
 extends CPMB_Vector3Value
 class_name CPMB_NormalMapConfiguration
 

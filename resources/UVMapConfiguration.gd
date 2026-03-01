@@ -1,3 +1,4 @@
+@tool
 extends CPMB_UVConfiguration
 class_name CPMB_UVMapConfiguration
 

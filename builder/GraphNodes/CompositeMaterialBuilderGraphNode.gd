@@ -20,3 +20,6 @@ func connect_and_pass_object(input_port_id : int, object : Object) -> void: ##Ov
 
 func get_represented_object(port_idx : int) -> Object: ##This method must be overridden to provide values in the case of connections.
 	return null
+
+func set_represented_object(object : Object) -> void:
+	pass

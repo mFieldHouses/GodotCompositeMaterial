@@ -1,11 +1,11 @@
 @tool
 extends MaskNode
 
-var represented_config : CPMB_VertexColorMaskConfiguration = CPMB_VertexColorMaskConfiguration.new()
+var represented_config : CPMB_VertexColorMaskConfiguration
 
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
+func _node_ready() -> void:
+	represented_config = CPMB_VertexColorMaskConfiguration.new()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -17,3 +17,6 @@ func _process(delta: float) -> void:
 		
 func get_represented_object(port_idx : int) -> Object:
 	return represented_config
+
+func set_represented_object(object : Object) -> void:
+	represented_config = object

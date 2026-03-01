@@ -1,3 +1,4 @@
+@tool
 extends CPMB_Vector4Value
 class_name CPMB_ComposeVec4
 
@@ -5,6 +6,12 @@ class_name CPMB_ComposeVec4
 @export var y : CPMB_NumericValue
 @export var z : CPMB_NumericValue
 @export var w : CPMB_NumericValue
+
+func _init() -> void:
+	x = CPMB_FloatValue.new()
+	y = CPMB_FloatValue.new()
+	z = CPMB_FloatValue.new()
+	w = CPMB_FloatValue.new()
 
 func get_value() -> Vector4:
 	return Vector4(x.value, y.value, z.value, w.value)
