@@ -399,20 +399,27 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			add_child(_new_node)
 			
 			#fix connections with output node
-			print(_new_node.name)
 			var _new_subnode = _to_node.add_slot()
 			_new_subnode.linked_node = _new_node
 			connect_node(_new_node.name, 0, _new_subnode.name, 0)
 			_do_not_connect_automatically = true
 			
-			
-			#nodes_to_add[_resource.albedo] = {"to_node": _new_node.name, "to_port": 0, "from_port": _resource.albedo.get_output_port_for_state()}
+			nodes_to_add[_resource.albedo] = {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.albedo.get_output_port_for_state()}
+			#nodes_to_add[_resource.normal] = {"to_node": _new_node.name, "to_port": 1, "from_port": _resource.albedo.get_output_port_for_state()}
+		
+		if _resource is CPMB_TextureConfiguration:
+			_new_node = preload("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/TextureNode.tscn").instantiate()
+			add_child(_new_node)
+		
 		
 		if _new_node:
+			_new_node.position_offset = Vector2(0, 0)
 			_new_node.set_represented_object(_resource)
 			if !_do_not_connect_automatically:
 				connect_node(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
 		
 		nodes_to_add.erase(_resource)
 	
+	output_node.large_offset = true
 	arrange_nodes()
+	output_node.set_deferred("large_offset", false)

@@ -7,6 +7,16 @@ var represented_composite_material : CompositeMaterial:
 		#print("represented compositematerial changed from ", represented_composite_material, " to ", x)
 		represented_composite_material = x
 
+var large_offset : bool = false:
+	set(x):
+		large_offset = x
+		
+		if x:
+			add_theme_constant_override("separation", 300)
+		else:
+			remove_theme_constant_override("separation")
+			size.y = 0
+
 func _node_ready() -> void:
 	get_parent().output_node = self
 	

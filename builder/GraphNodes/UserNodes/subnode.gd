@@ -41,8 +41,13 @@ func _process(delta: float) -> void:
 	elif linked_node:
 		title = linked_node.title
 	
-	position_offset = linked_container.position + linked_container.get_parent().position_offset - Vector2(40.0, 0.0)
-
+	if linked_container.get_parent().large_offset:
+		position_offset = linked_container.position + linked_container.get_parent().position_offset - Vector2(300.0, 0.0)
+		custom_minimum_size.y = 300
+	else:
+		position_offset = linked_container.position + linked_container.get_parent().position_offset - Vector2(40.0, 0.0)
+		custom_minimum_size.y = 0
+		size.y = 0
 
 func _exit_tree() -> void:
 	if linked_container:
