@@ -2,10 +2,11 @@
 extends CompositeMaterialBuilderGraphNode
 class_name TextureNode
 
-@export var respresented_texture_config : CPMB_TextureConfiguration = CPMB_TextureConfiguration.new()
+@export var respresented_texture_config : CPMB_TextureConfiguration
 
 func _node_ready() -> void:
 	$load_texture.button_down.connect(_load_texture)
+	respresented_texture_config = CPMB_TextureConfiguration.new()
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

@@ -2,7 +2,7 @@
 extends CPMB_Vector4Value
 class_name CPMB_TextureConfiguration
 
-@export var uv : CPMB_Vector2Value
+@export var uv : CPMB_Vector2Value = CPMB_UVMapConfiguration.new()
 @export var texture : Texture2D:
 	set(x):
 		texture = x

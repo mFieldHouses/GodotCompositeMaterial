@@ -1,5 +1,9 @@
 shader_type spatial;
 
+render_mode unshaded;
+
+#define NUM_LAYERS 1
+
 #define NUM_DIRECTIONAL_MASKS 0
 #define NUM_POSITIONAL_MASKS 0
 #define NUM_VERTEX_COLOR_MASKS 0
@@ -29,7 +33,10 @@ uniform vec3[NUM_DIRECTIONAL_MASKS] directional_mask_directions;
 uniform int[NUM_DIRECTIONAL_MASKS] directional_mask_polarities;
 uniform int[NUM_DIRECTIONAL_MASKS] directional_mask_spaces;
 
-float get_directional_mask(int mask_id, vec3 normal) {
+float get_directional_mask(int mask_id, vec3 local_normal, vec3 global_normal) {
+	
+	vec3 normal = local_normal * float(directional_mask_spaces[mask_id] == 0) + global_normal * float(directional_mask_spaces[mask_id] == 1);
+	
 	switch (directional_mask_polarities[mask_id]) {
 		case 0:
 			return clamp(abs(dot(directional_mask_directions[mask_id], normal)), 0.0, 1.0);
@@ -182,6 +189,28 @@ varying vec3 local_vertex_pos;
 varying vec3 vertex_color;
 varying vec3 global_camera_pos;
 
+
+vec4 get_layer_albedo(int layer_index, vec2 uv, vec2 uv2) {
+	//get_albedo
+	return vec4(0.0);
+}
+
+vec3 get_layer_normal(int layer_index) {
+	//get_normal
+	return vec3(0.0);
+}
+
+float get_layer_roughness(int layer_index) {
+	//get_roughness
+	return 0.0;
+}
+
+float get_layer_metallic(int layer_index) {
+	//get_metallic
+	return 0.0;
+}
+
+
 void vertex() {
 	local_vertex_normal = NORMAL.rgb;
 	global_vertex_normal = local_vertex_normal * MODEL_NORMAL_MATRIX;
@@ -191,5 +220,41 @@ void vertex() {
 }
 
 void fragment() {
+	
+	vec3 albedo_mix;
+	vec3 normal_mix;
+	float roughness_mix;
+	float metallic_mix;
+	
+	int starting_index = 0;
+	int process_index = 0;
+	
+	float[NUM_LAYERS] layer_masks;
+	
 	//fragment
+	
+	for (int i = starting_index; i < NUM_LAYERS; i++) {
+		if (process_index == 0) {
+			albedo_mix = get_layer_albedo(i, UV, UV2).rgb;
+			normal_mix = get_layer_normal(i);
+			roughness_mix = get_layer_roughness(i);
+			metallic_mix = get_layer_metallic(i);
+		}
+		else {
+			vec4 albedo = get_layer_albedo(i, UV, UV2);
+			albedo_mix = mix(albedo_mix, albedo.rgb, layer_masks[i] * albedo.a);
+			
+			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i]);
+			roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i]);
+			metallic_mix = mix(metallic_mix, get_layer_metallic(i), layer_masks[i]);
+		}
+		
+		process_index += 1;
+	}
+	
+	ALBEDO = albedo_mix;
+	//NORMAL = normal_mix;
+	ROUGHNESS = roughness_mix;
+	METALLIC = metallic_mix;
+	
 }

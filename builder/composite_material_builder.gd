@@ -78,13 +78,13 @@ func _connection_requested(from_node: StringName, from_port: int, to_node: Strin
 		print("connecting to itself")
 		return
 	
-	if _to_node is CompileMasksNode:
-		var _new_node = _to_node.add_slot()
-		_new_node.linked_node = _from_node
-		connect_node(from_node, from_port, _new_node.name, 0)
-		_to_node.connect_and_pass_object(to_port, _from_node.get_represented_object(from_port))
-		build_material()
-		return
+	#if _to_node is CompileMasksNode:
+		#var _new_node = _to_node.add_slot()
+		#_new_node.linked_node = _from_node
+		#connect_node(from_node, from_port, _new_node.name, 0)
+		#_to_node.connect_and_pass_object(to_port, _from_node.get_represented_object(from_port))
+		#build_material()
+		#return
 	elif _to_node is CompositeMaterialOutputNode:
 		var _new_node = get_node(String(to_node)).add_slot()
 		_new_node.linked_node = get_node(String(from_node))
@@ -144,8 +144,6 @@ func instantiate_node_at_mouse(node_name : String) -> void:
 	if _node is LayerNode:
 		_node.name = "layer" + str(node_groups.layers.size())
 		add_node_to_group(_node, "layers")
-	elif _node is CompileMasksNode:
-		add_node_to_group(_node, "mask_compilers")
 	elif _node is TextureNode:
 		albedo_decompose_nodes[_node] = {}
 	elif _node is MaskNode:
@@ -175,12 +173,12 @@ func build_material() -> void:
 	
 	
 	#Build base material
-	var material : CompositeMaterial = CompositeMaterial.new()
-	$output.represented_composite_material = material
+	var material : CompositeMaterial = $output.represented_composite_material
+	material.layers = [] as Array[CompositeMaterialLayer]
 	
 	
 	#Map out all used resources
-	var mapped_resources : Dictionary[String, Array] = { #Resources that do not have any inputs. They are the "starting points" of paths.
+	var mapped_resources : Dictionary[String, Array] = {
 		"DirectionalMaskConfiguration": [],
 		"PositionalMaskConfiguration": [],
 		"VertexColorMaskConfiguration": [],
@@ -243,8 +241,6 @@ func build_material() -> void:
 		elif resource_to_check is CPMB_ColorRampConfiguration:
 			mapped_resources.Texture.append(resource_to_check.gradient)
 			resources_to_check.append(resource_to_check.fac)
-		elif resource_to_check is CPMB_CompileMasksConfiguration:
-			resources_to_check.append_array(resource_to_check.masks)
 		elif resource_to_check is CPMB_UVTransformConfiguration:
 			resources_to_check.append(resource_to_check.base_uv)
 			resources_to_check.append(resource_to_check.offset_x)
@@ -273,8 +269,17 @@ func build_material() -> void:
 		"VertexColorMaskConfiguration" : "NUM_VERTEX_COLOR_MASKS",
 		"UVMapConfiguration" : "NUM_UV_MAPS",
 		"TriplanarUVConfiguration" : "NUM_TRIPLANAR_MAPS",
-		"Texture" : "NUM_TEXTURES"
+		"Texture" : "NUM_TEXTURES",
+		"IntValue" : "NUM_INT_VALUES",
+		"FloatValue" : "NUM_FLOAT_VALUES",
+		"Vector2Value" : "NUM_VECTOR2_VALUES",
+		"Vector3Value" : "NUM_VECTOR3_VALUES",
+		"Vector4Value" : "NUM_VECTOR4_VALUES"
 	}
+	
+	print(mapped_resources)
+	
+	material.shader.code = material.shader.code.replace("NUM_LAYERS 1", "NUM_LAYERS " + str(material.layers.size()))
 	
 	for key in definition_map.keys():
 		material.shader.code = material.shader.code.replace(definition_map[key] + " 0", definition_map[key] + " " + str(mapped_resources[key].size()))
@@ -303,7 +308,55 @@ func build_material() -> void:
 					resource.set(property.name, resource.get(property.name))
 				
 			_idx += 1
-
+	
+	var fragment_code : String = ""
+	var get_layer_albedo_string : String = "switch (layer_index) {"
+	var get_layer_normal_string : String = "switch (layer_index) {"
+	var get_layer_roughness_string : String = "switch (layer_index) {"
+	var get_layer_metallic_string : String = "switch (layer_index) {"
+	
+	#Sorry for the very funky string formatting up ahead! It's all to have nicely formatted shader code
+	
+	var _idx : int = 0
+	for layer : CompositeMaterialLayer in material.layers:
+		fragment_code +=\
+	"layer_masks[%s] = %s;
+	if (layer_masks[%s] >= 0.995) starting_index = %s;\n" % [_idx, layer.mask.get_expression(), _idx, _idx]
+	
+		get_layer_albedo_string += "
+		case %s:
+			return %s;" % [_idx, layer.albedo.get_expression()]
+		
+		get_layer_normal_string += "
+		case %s:
+			return %s;" % [_idx, layer.normal.get_expression()]
+		
+		get_layer_roughness_string += "
+		case %s:
+			return %s;" % [_idx, layer.roughness_value.get_expression()]
+		
+		get_layer_metallic_string += "
+		case %s:
+			return %s;" % [_idx, layer.metallic_value.get_expression()]
+		
+		_idx += 1
+	
+	get_layer_albedo_string += "
+	}"
+	get_layer_normal_string += "
+	}"
+	get_layer_roughness_string += "
+	}"
+	get_layer_metallic_string += "
+	}"
+	
+	material.shader.code = material.shader.code.replace("//get_albedo", get_layer_albedo_string)
+	material.shader.code = material.shader.code.replace("//get_normal", get_layer_normal_string)
+	material.shader.code = material.shader.code.replace("//get_roughness", get_layer_roughness_string)
+	material.shader.code = material.shader.code.replace("//get_metallic", get_layer_metallic_string)
+	
+	material.shader.code = material.shader.code.replace("//fragment", fragment_code)
+	
 
 func set_shader_property(value : Variant, shader_property_name : String, id : int) -> void:
 	$output.represented_composite_material.get_property_list() #????? This line needs to be present or get_shader_parameter will return Nil

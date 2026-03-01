@@ -3,11 +3,16 @@
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_dmtf5"]
 [ext_resource type="Script" uid="uid://th3iwfgyvayb" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/texture_node.gd" id="2_suxfi"]
 [ext_resource type="Script" uid="uid://b5gr64jphjmpw" path="res://addons/CompositeMaterial/resources/TextureConfiguration.gd" id="3_suxfi"]
-[ext_resource type="Texture2D" uid="uid://skajos01q6v3" path="res://assets/textures/heightmap.png" id="4_lckmy"]
+[ext_resource type="Texture2D" uid="uid://b2i7m0uhyp3xt" path="res://assets/textures/albedo/treadplate_albedo.png" id="4_u7sga"]
+[ext_resource type="Script" uid="uid://ceepdgj2ci30a" path="res://addons/CompositeMaterial/resources/UVMapConfiguration.gd" id="5_wam4e"]
+
+[sub_resource type="Resource" id="Resource_nn087"]
+script = ExtResource("5_wam4e")
 
 [sub_resource type="Resource" id="Resource_lckmy"]
 script = ExtResource("3_suxfi")
-texture = ExtResource("4_lckmy")
+uv = SubResource("Resource_nn087")
+texture = ExtResource("4_u7sga")
 
 [node name="TextureNode" type="GraphNode" unique_id=962352097]
 offset_right = 239.0
