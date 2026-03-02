@@ -46,6 +46,8 @@ func _enter_tree() -> void:
 	
 	name = "CompositeMaterialPlugin"
 	
+	add_autoload_singleton("CPMEffectShapeManager", "res://addons/CompositeMaterial/autoloads/CPMEffectShapeManager.gd")
+	
 func _exit_tree() -> void:
 	#Undo everything done in _enter_tree()
 	remove_custom_type("CompositeMaterial")
@@ -59,6 +61,7 @@ func _exit_tree() -> void:
 		studio_main_scene_instance.queue_free()
 	
 	remove_autoload_singleton("CPMFreezer")
+	remove_autoload_singleton("CPMEffectShapeManager")
 	
 	remove_dock(builder_scene_dock_instance)
 	builder_scene_dock_instance.queue_free()
