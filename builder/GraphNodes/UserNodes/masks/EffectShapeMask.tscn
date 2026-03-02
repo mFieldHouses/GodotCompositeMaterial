@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://cuyuncf7vsstd"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_skmo8"]
+[ext_resource type="Script" uid="uid://bb53c4hnsiqgw" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/masks/effect_shape_mask_node.gd" id="2_skmo8"]
+
+[node name="EffectShapeMask" type="GraphNode" unique_id=1174472716]
+offset_right = 213.0
+offset_bottom = 132.0
+theme = ExtResource("1_skmo8")
+title = "Vertex Color Mask"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("2_skmo8")
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+metadata/renamable = false
+
+[node name="output" type="Label" parent="." unique_id=2128989400]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Mask out"
+horizontal_alignment = 2

@@ -10,6 +10,8 @@ class_name CPMB_TextureConfiguration
 
 func _init() -> void:
 	uv = CPMB_UVMapConfiguration.new()
+	uv.internal_to_node = true
+	
 	value = Vector4.INF
 
 func get_expression() -> String:

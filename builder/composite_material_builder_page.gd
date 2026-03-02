@@ -204,7 +204,7 @@ func build_material() -> void:
 	#Initialize resources_to_check with resources in all layers
 	for subnode : SubNode in $output.get_connected_layers():
 		var represented_layer : CompositeMaterialLayer = subnode.linked_node.represented_layer
-		material.layers.append(represented_layer)
+		edited_composite_material.layers.append(represented_layer)
 		
 		if represented_layer.albedo:
 			resources_to_check.append(represented_layer.albedo)
@@ -255,8 +255,9 @@ func build_material() -> void:
 		elif resource_to_check is CPMB_FloatValue:
 			append_resource_to_mapped_resources.call(resource_to_check, "FloatValue")
 	
-	edited_composite_material.shader = Shader.new()
-	edited_composite_material.shader.code = preload("res://addons/CompositeMaterial/shaders/CompositeMaterialBase.gdshader").code
+	var _shader : Shader = Shader.new()
+	edited_composite_material.shader = _shader
+	_shader.code = preload("res://addons/CompositeMaterial/shaders/CompositeMaterialBase.gdshader").code
 	
 	var definition_map : Dictionary[String, String] = {
 		"DirectionalMaskConfiguration" : "NUM_DIRECTIONAL_MASKS",
@@ -275,10 +276,10 @@ func build_material() -> void:
 	
 	print(mapped_resources)
 	
-	edited_composite_material.shader.code = material.shader.code.replace("NUM_LAYERS 1", "NUM_LAYERS " + str(material.layers.size()))
+	edited_composite_material.shader.code = edited_composite_material.shader.code.replace("NUM_LAYERS 1", "NUM_LAYERS " + str(edited_composite_material.layers.size()))
 	
 	for key in definition_map.keys():
-		material.shader.code = material.shader.code.replace(definition_map[key] + " 0", definition_map[key] + " " + str(mapped_resources[key].size()))
+		edited_composite_material.shader.code = edited_composite_material.shader.code.replace(definition_map[key] + " 0", definition_map[key] + " " + str(mapped_resources[key].size()))
 	
 	if mapped_resources.Texture.size() > 0:
 		var _arr = []
@@ -289,6 +290,9 @@ func build_material() -> void:
 	for key in mapped_resources.keys():
 		var _idx : int = 0
 		for resource : Resource in mapped_resources[key]:
+			if resource == null:
+				continue #
+			
 			if resource.has_signal("value_changed"):
 				if !resource.has_connections("value_changed"):
 					resource.connect("value_changed", set_shader_property.bind(_idx))
@@ -312,7 +316,7 @@ func build_material() -> void:
 	#Sorry for the very funky string formatting up ahead! It's all to have nicely formatted shader code
 	
 	var _idx : int = 0
-	for layer : CompositeMaterialLayer in material.layers:
+	for layer : CompositeMaterialLayer in edited_composite_material.layers:
 		fragment_code +=\
 	"layer_masks[%s] = %s;
 	if (layer_masks[%s] >= 0.995) starting_index = %s;\n" % [_idx, layer.mask.get_expression(), _idx, _idx]
@@ -344,12 +348,16 @@ func build_material() -> void:
 	get_layer_metallic_string += "
 	}"
 	
-	material.shader.code = material.shader.code.replace("//get_albedo", get_layer_albedo_string)
-	material.shader.code = material.shader.code.replace("//get_normal", get_layer_normal_string)
-	material.shader.code = material.shader.code.replace("//get_roughness", get_layer_roughness_string)
-	material.shader.code = material.shader.code.replace("//get_metallic", get_layer_metallic_string)
+	_shader.code = _shader.code.replace("//get_albedo", get_layer_albedo_string)
+	_shader.code = _shader.code.replace("//get_normal", get_layer_normal_string)
+	_shader.code = _shader.code.replace("//get_roughness", get_layer_roughness_string)
+	_shader.code = _shader.code.replace("//get_metallic", get_layer_metallic_string)
 	
-	material.shader.code = material.shader.code.replace("//fragment", fragment_code)
+	_shader.code = _shader.code.replace("//fragment", fragment_code)
+	
+	#make sure the editor notices the shader update
+	edited_composite_material.shader = null
+	edited_composite_material.shader = _shader
 	
 
 func set_shader_property(value : Variant, shader_property_name : String, id : int) -> void:
@@ -373,6 +381,9 @@ func clear_graph() -> void:
 		
 		child.queue_free()
 
+func instantiate_node(node_id : String) -> GraphNode:
+	return load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_id + ".tscn").instantiate()
+
 func reconstruct_material_graph(material : CompositeMaterial) -> void:
 	
 	print("reconstructing material ", material.layers)
@@ -383,8 +394,10 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 	var existing_resources : Dictionary[CPMB_Base, CompositeMaterialBuilderGraphNode] = {} #Map of which resources have already been manifested as nodes
 	var decomposition_nodes : Dictionary[CPMB_Base, CompositeMaterialBuilderGraphNode] = {} #Map of decomposition nodes keyed by their source value resource
 	
+	var layer_nodes : Array[LayerNode] = []
+	
 	for layer in material.layers:
-		print("layer")
+		#print("layer")
 		nodes_to_add[layer] = {"from_port": 0, "to_node": "output", "to_port": 0}
 	
 	while nodes_to_add.keys().size() > 0:
@@ -393,9 +406,18 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 		var _instructions : Dictionary = nodes_to_add[_resource]
 		var _to_node = get_node(_instructions.to_node)
 		
+		#print("resource ", _resource)
+		
+		nodes_to_add.erase(_resource)
+		
+		if _resource is CPMB_Base:
+			if _resource.internal_to_node:
+				continue
+		
 		var _new_node : CompositeMaterialBuilderGraphNode
+		#print("checking resource type")
 		if _resource is CompositeMaterialLayer:
-			_new_node = preload("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/LayerNode.tscn").instantiate()
+			_new_node = instantiate_node("LayerNode")
 			add_child(_new_node)
 			
 			#fix connections with output node
@@ -406,20 +428,32 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			
 			nodes_to_add[_resource.albedo] = {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.albedo.get_output_port_for_state()}
 			#nodes_to_add[_resource.normal] = {"to_node": _new_node.name, "to_port": 1, "from_port": _resource.albedo.get_output_port_for_state()}
+			nodes_to_add[_resource.mask] = {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.mask.get_output_port_for_state()}
+			
+			_new_node.set_represented_object(_resource)
+			layer_nodes.append(_new_node)
+			continue
+			#
+		elif _resource is CPMB_DirectionalMaskConfiguration:
+			_new_node = instantiate_node("masks/DirectionalMaskNode")
+		elif _resource is CPMB_TextureConfiguration:
+			_new_node = instantiate_node("TextureNode")
 		
-		if _resource is CPMB_TextureConfiguration:
-			_new_node = preload("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/TextureNode.tscn").instantiate()
-			add_child(_new_node)
 		
 		
 		if _new_node:
-			_new_node.position_offset = Vector2(0, 0)
+			add_child(_new_node)
 			_new_node.set_represented_object(_resource)
-			if !_do_not_connect_automatically:
-				connect_node(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
+			connect_node(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
+			(get_node(_instructions.to_node) as CompositeMaterialBuilderGraphNode).call_deferred("connect_and_pass_object", _instructions.to_port, _resource)
 		
-		nodes_to_add.erase(_resource)
 	
-	output_node.large_offset = true
+	await get_tree().create_timer(0.1).timeout
+	
 	arrange_nodes()
-	output_node.set_deferred("large_offset", false)
+	
+	#manual final arrangements, because arrange_nodes() tends to arrange nodes very vertically
+	output_node.position_offset.y = (layer_nodes[0].position_offset.y + layer_nodes.back().position_offset.y) / 2.0
+	output_node.position_offset.x = layer_nodes[0].position_offset.x + 350
+	
+	scroll_offset = (layer_nodes[0].position_offset + layer_nodes.back().position_offset) / 2.0
