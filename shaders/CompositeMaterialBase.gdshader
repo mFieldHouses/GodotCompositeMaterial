@@ -7,6 +7,7 @@ render_mode unshaded;
 #define NUM_DIRECTIONAL_MASKS 0
 #define NUM_POSITIONAL_MASKS 0
 #define NUM_VERTEX_COLOR_MASKS 0
+#define NUM_EFFECT_SHAPE_MASKS 0
 
 #define NUM_UV_TRANSFORMS 0
 #define NUM_UV_MAPS 0
@@ -84,6 +85,39 @@ float get_vertex_color_mask(int mask_id, vec3 vertex_color) {
 #endif
 
 
+#if NUM_EFFECT_SHAPE_MASKS > 0
+uniform float[NUM_EFFECT_SHAPE_MASKS] effect_shape_mask_falloff_distances;
+uniform int[NUM_EFFECT_SHAPE_MASKS] effect_shape_mask_layers;
+
+global uniform sampler2DArray cpm_effect_shape_textures : filter_nearest;
+global uniform int cpm_effect_shapes_num;
+
+float get_effect_shape_mask(int mask_id, vec3 global_position) {
+	
+	vec3 effect_shape_positions[100];
+	vec3 effect_shape_dimensions[100];
+	
+	for (int i = 0; i < 100; i++) {
+		vec3 pos = (texture(cpm_effect_shape_textures, vec3((1.0/16384.0 * float(i)) + 0.5/16384.0, 0.5, 0)).rgb * 150000.0) - 75000.0;
+		vec3 dimensions = (texture(cpm_effect_shape_textures, vec3((1.0/16384.0 * float(i)) + 0.5/16384.0, 0.5, 2)).rgb * 150000.0);
+		
+		effect_shape_positions[i] = pos;
+		effect_shape_dimensions[i] = dimensions;
+		
+		if (pos == vec3(0.0)) {
+			break;
+		}
+	}
+	
+	float distance_fac = 0.0;
+	
+	for (int i = 0; i < cpm_effect_shapes_num; i++) {
+		distance_fac += clamp(1.0 - (distance(global_position, effect_shape_positions[i]) - effect_shape_dimensions[i].x) / effect_shape_mask_falloff_distances[mask_id], 0.0, 1.0);
+	}
+	
+	return clamp(distance_fac, 0.0, 1.0);
+}
+#endif
 
 
 #if NUM_UV_TRANSFORMS > 0
@@ -215,7 +249,7 @@ void vertex() {
 	local_vertex_normal = NORMAL.rgb;
 	global_vertex_normal = local_vertex_normal * MODEL_NORMAL_MATRIX;
 	local_vertex_pos = VERTEX.xyz;
-	global_vertex_pos = (vec4(local_vertex_pos, 1.0) * MODEL_MATRIX).xyz;
+	global_vertex_pos = (MODEL_MATRIX * vec4(local_vertex_pos, 1.0)).xyz;
 	global_camera_pos = CAMERA_POSITION_WORLD;
 }
 

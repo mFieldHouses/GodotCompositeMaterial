@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://cuyuncf7vsstd"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_skmo8"]
+[ext_resource type="Script" uid="uid://bb53c4hnsiqgw" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/masks/effect_shape_mask_node.gd" id="2_skmo8"]
+
+[node name="EffectShapeMask" type="GraphNode" unique_id=1174472716]
+offset_right = 213.0
+offset_bottom = 132.0
+theme = ExtResource("1_skmo8")
+title = "Effect Shape Mask"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = true
+slot/4/right_type = 5
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+script = ExtResource("2_skmo8")
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+metadata/renamable = false
+
+[node name="Label" type="Label" parent="." unique_id=1427932026]
+layout_mode = 2
+text = "Layer"
+
+[node name="layer" type="SpinBox" parent="." unique_id=1866274215]
+layout_mode = 2
+allow_greater = true
+
+[node name="Label2" type="Label" parent="." unique_id=201082779]
+layout_mode = 2
+text = "Falloff distance"
+
+[node name="falloff_distance" type="SpinBox" parent="." unique_id=1715411087]
+layout_mode = 2
+step = 0.001
+value = 0.5
+allow_greater = true
+
+[node name="output" type="Label" parent="." unique_id=2128989400]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Mask out"
+horizontal_alignment = 2

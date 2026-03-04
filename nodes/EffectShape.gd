@@ -10,6 +10,7 @@ var _previous_pos : Vector3 = Vector3.ZERO
 func _enter_tree() -> void:
 	CPMEffectShapeManager.register_shape(self)
 	_forced_shape = SphereShape3D.new()
+	_forced_shape.changed.connect(CPMEffectShapeManager.notify_dimensions_changed.bind(self))
 	
 func _exit_tree() -> void:
 	CPMEffectShapeManager.deregister_shape(self)

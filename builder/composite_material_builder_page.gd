@@ -7,7 +7,7 @@ var output_node : CompositeMaterialOutputNode
 var node_mappings : Array = [
 	["VariableNode", "LayerNode", "TextureNode", "ColorRampNode", "", "", "", "DistanceFadeNode"],
 	["UVTransformNode","UVMapNode","TriplanarMapNode"],
-	["masks/CompileMasksNode", "masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/UVMaskNode", "masks/VertexColorMaskNode", "masks/NormalMapMaskNode"],
+	["masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/VertexColorMaskNode", "masks/EffectShapeMaskNode", "masks/UVMaskNode", "masks/NormalMapMaskNode"],
 	["vector/VectorMathNode", "vector/ComposeVector2Node", "vector/DecomposeVector2Node", "vector/ComposeVector3Node", "vector/DecomposeVector3Node", "vector/ComposeVector4Node", "vector/DecomposeVector4Node"],
 	["utility/MathNode", "utility/ComposeAlbedoNode"]
 ]
@@ -180,6 +180,7 @@ func build_material() -> void:
 		"DirectionalMaskConfiguration": [],
 		"PositionalMaskConfiguration": [],
 		"VertexColorMaskConfiguration": [],
+		"EffectShapeMaskConfiguration": [],
 		
 		"UVTransformConfiguration": [],
 		"UVMapConfiguration": [],
@@ -228,6 +229,8 @@ func build_material() -> void:
 			append_resource_to_mapped_resources.call(resource_to_check, "PositionalMaskConfiguration")
 		elif resource_to_check is CPMB_VertexColorMaskConfiguration:
 			append_resource_to_mapped_resources.call(resource_to_check, "VertexColorMaskConfiguration")
+		elif resource_to_check is CPMB_EffectShapeMaskConfiguration:
+			append_resource_to_mapped_resources.call(resource_to_check, "EffectShapeMaskConfiguration")
 		elif resource_to_check is CPMB_UVMapConfiguration:
 			append_resource_to_mapped_resources.call(resource_to_check, "UVMapConfiguration")
 		elif resource_to_check is CPMB_UVTransformConfiguration:
@@ -263,6 +266,7 @@ func build_material() -> void:
 		"DirectionalMaskConfiguration" : "NUM_DIRECTIONAL_MASKS",
 		"PositionalMaskConfiguration" : "NUM_POSITIONAL_MASKS",
 		"VertexColorMaskConfiguration" : "NUM_VERTEX_COLOR_MASKS",
+		"EffectShapeMaskConfiguration" : "NUM_EFFECT_SHAPE_MASKS",
 		"UVMapConfiguration" : "NUM_UV_MAPS",
 		"UVTransformConfiguration" : "NUM_UV_TRANSFORMS",
 		"TriplanarUVConfiguration" : "NUM_TRIPLANAR_MAPS",
