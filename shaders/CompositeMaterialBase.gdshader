@@ -11,6 +11,7 @@ shader_type spatial;
 #define NUM_UV_MAPS 0
 #define NUM_TRIPLANAR_MAPS 0
 
+#define NUM_COLOR_RAMPS 0
 #define NUM_TEXTURES 0
 
 #define NUM_VECTOR2_DECOMPOSITIONS 0
@@ -160,6 +161,7 @@ vec2 get_triplanar_uv(int uv_index, vec3 local_normal, vec3 global_normal, vec3 
 
 
 
+
 #if NUM_TEXTURES > 0
 uniform sampler2D[NUM_TEXTURES] textures : source_color;
 #endif
@@ -221,6 +223,12 @@ varying vec3 local_vertex_pos;
 varying vec3 vertex_color;
 varying vec3 global_camera_pos;
 
+#if NUM_COLOR_RAMPS > 0
+vec4 get_color_ramp(int color_ramp_id) {
+	//get_color_ramp
+	return vec4(0.0);
+}
+#endif
 
 vec4 get_layer_albedo(int layer_index, vec2 uv, vec2 uv2) {
 	//get_albedo

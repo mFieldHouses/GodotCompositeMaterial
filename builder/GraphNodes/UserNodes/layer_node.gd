@@ -32,6 +32,9 @@ func _node_ready() -> void:
 	_confirm_button.button_down.connect(stop_capturing_keyboard)
 	_confirm_button.visible = false
 	
+	$roughness_in/value.value_changed.connect(func(x): represented_layer.roughness_value.value = x)
+	$metallic_in/value.value_changed.connect(func(x): represented_layer.metallic_value.value = x)
+	
 
 func start_capturing_keyboard() -> void:
 	capturing_keyboard = true

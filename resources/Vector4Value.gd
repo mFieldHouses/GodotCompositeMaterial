@@ -17,5 +17,5 @@ func get_expression() -> String:
 func _to_string() -> String:
 	return "Vector4Value:" + resource_scene_unique_id
 
-func call_setters() -> void:
-	value = value
+#func call_setters() -> void:
+	#value = value

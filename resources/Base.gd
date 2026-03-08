@@ -13,5 +13,5 @@ func get_expression() -> String: ##Must be overridden. Returns an expression in 
 func get_output_port_for_state() -> int:
 	return 0
 
-func call_setters() -> void: ##Override this in extending classes
-	pass
+#func call_setters() -> void: ##Override this in extending classes
+	#pass

@@ -17,5 +17,5 @@ func _init() -> void:
 func get_expression() -> String:
 	return "texture(textures[%s], %s)" % [index, uv.get_expression()]
 
-func call_setters() -> void:
-	texture = texture
+#func call_setters() -> void:
+	#texture = texture

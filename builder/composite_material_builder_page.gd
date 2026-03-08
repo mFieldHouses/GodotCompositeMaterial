@@ -9,7 +9,7 @@ var node_mappings : Array = [
 	["UVTransformNode","UVMapNode","TriplanarMapNode"],
 	["masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/VertexColorMaskNode", "masks/EffectShapeMaskNode", "masks/UVMaskNode", "masks/NormalMapMaskNode"],
 	["vector/VectorMathNode", "vector/ComposeVector2Node", "vector/DecomposeVector2Node", "vector/ComposeVector3Node", "vector/DecomposeVector3Node", "vector/ComposeVector4Node", "vector/DecomposeVector4Node"],
-	["utility/TimeNode, utility/MathNode", "utility/VectorOperationNode"]
+	["utility/TimeNode", "utility/MathNode", "utility/VectorOperationNode"]
 ]
 
 var dynamic_nodes : Array[GraphNode] = []
@@ -165,6 +165,7 @@ func build_material() -> void:
 		"UVMapConfiguration": [],
 		"TriplanarUVConfiguration": [],
 		
+		"ColorRampConfiguration": [],
 		"TextureConfiguration": [],
 		"Texture": [],
 		
@@ -228,7 +229,8 @@ func build_material() -> void:
 			mapped_resources.Texture.append(resource_to_check.texture)
 			resources_to_check.append(resource_to_check.uv)
 		elif resource_to_check is CPMB_ColorRampConfiguration:
-			mapped_resources.Texture.append(resource_to_check.gradient)
+			mapped_resources.Texture.append(resource_to_check.gradient_texture)
+			append_resource_to_mapped_resources.call(resource_to_check, "ColorRampConfiguration")
 			resources_to_check.append(resource_to_check.fac)
 		
 		elif resource_to_check is CPMB_ComposeVec2:
@@ -272,6 +274,7 @@ func build_material() -> void:
 		"UVMapConfiguration" : "NUM_UV_MAPS",
 		"UVTransformConfiguration" : "NUM_UV_TRANSFORMS",
 		"TriplanarUVConfiguration" : "NUM_TRIPLANAR_MAPS",
+		"ColorRampConfiguration": "NUM_COLOR_RAMPS",
 		"Texture" : "NUM_TEXTURES",
 		"IntValue" : "NUM_INT_VALUES",
 		"FloatValue" : "NUM_FLOAT_VALUES",
@@ -370,20 +373,16 @@ func build_material() -> void:
 				resource.connect("value_changed", set_shader_property.bind(_idx))
 				
 			#initialize export values
-			if resource is CPMB_Base:
-				#print("call_setters()")
-				resource.call_setters()
+			#if resource is CPMB_Base:
+				##print("call_setters()")
+				#resource.call_setters()
 			
-			#for property in resource.get_property_list():
-				#if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE or (property.hint & PROPERTY_HINT_RESOURCE_TYPE and property.hint_string == "Texture2D"):
-					##just set the value to what it was so that value_changed gets called on that resource
-					#
-					#if property.name == "value":
-						#if resource is not CPMB_FloatValue:
-							#continue
-					#
+			for property in resource.get_property_list():
+				if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE or (property.hint & PROPERTY_HINT_RESOURCE_TYPE and property.hint_string == "Texture2D"):
+					#just set the value to what it was so that value_changed gets called on that resource
+					
 					#print("updating ", property.name, " on ", resource)
-					#resource.set(property.name, resource.get(property.name))
+					resource.set(property.name, resource.get(property.name))
 				
 			_idx += 1
 	
@@ -428,10 +427,24 @@ func build_material() -> void:
 	get_layer_metallic_string += "
 	}"
 	
+	var get_color_ramp_string : String = "switch (color_ramp_id) {"
+	
+	_idx = 0
+	for color_ramp_config : CPMB_ColorRampConfiguration in mapped_resources.ColorRampConfiguration:
+		get_color_ramp_string += "
+		case %s:
+			return texture(textures[%s], vec2(%s, 0.0));" % [_idx, mapped_resources.Texture.find(color_ramp_config.gradient_texture), color_ramp_config.fac.get_expression()]
+		_idx += 1
+	
+	get_color_ramp_string += "
+	}"
+	
 	_shader.code = _shader.code.replace("//get_albedo", get_layer_albedo_string)
 	_shader.code = _shader.code.replace("//get_normal", get_layer_normal_string)
 	_shader.code = _shader.code.replace("//get_roughness", get_layer_roughness_string)
 	_shader.code = _shader.code.replace("//get_metallic", get_layer_metallic_string)
+	
+	_shader.code = _shader.code.replace("//get_color_ramp", get_color_ramp_string)
 	
 	_shader.code = _shader.code.replace("//fragment", fragment_code)
 	
@@ -444,7 +457,7 @@ func set_shader_property(value : Variant, shader_property_name : String, id : in
 	edited_composite_material.get_property_list() #????? This line needs to be present or get_shader_parameter will return Nil
 	
 	var _current_value : Array = edited_composite_material.get_shader_parameter(shader_property_name)
-	#print("setting ", shader_property_name, " for index ", id)
+	print("setting ", shader_property_name, " for index ", id)
 	#print("Current value: ", _current_value, " id: ", id)
 	_current_value[id] = value
 	edited_composite_material.set_shader_parameter(shader_property_name, _current_value)

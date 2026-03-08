@@ -21,7 +21,7 @@ enum OperationType {
 
 func _init() -> void:
 	x_in = CPMB_FloatValue.new()
-	y_in = CPMB_FloatValue.new(0.5)
+	y_in = CPMB_FloatValue.new(0.0)
 	z_in = CPMB_FloatValue.new()
 	w_in = CPMB_FloatValue.new(1.0)
 

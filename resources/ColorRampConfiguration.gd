@@ -1,10 +1,17 @@
 @tool
-extends CPMB_MaskConfiguration
+extends CPMB_Vector4Value
 class_name CPMB_ColorRampConfiguration
 
 @export var fac : CPMB_NumericValue
-@export var gradient : GradientTexture1D
+@export var gradient_texture : GradientTexture1D:
+	set(x):
+		gradient_texture = x
+		value_changed.emit(x, "textures")
 
 func _init() -> void:
 	fac = CPMB_FloatValue.new(0.5)
-	gradient = GradientTexture1D.new()
+	gradient_texture = GradientTexture1D.new()
+	gradient_texture.gradient = Gradient.new()
+
+func get_expression() -> String:
+	return "get_color_ramp(%s)" % [index]
