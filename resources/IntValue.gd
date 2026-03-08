@@ -12,3 +12,9 @@ func _init(value : int = 0) -> void:
 
 func get_expression() -> String:
 	return "int_values[%s]" % index
+
+func _to_string() -> String:
+	return "IntValue:" + resource_scene_unique_id
+
+func call_setters() -> void:
+	value = value

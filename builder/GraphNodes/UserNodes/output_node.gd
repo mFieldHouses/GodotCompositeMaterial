@@ -2,6 +2,8 @@
 extends CompositeMaterialBuilderGraphNode
 class_name CompositeMaterialOutputNode
 
+signal request_rebuild
+
 var represented_composite_material : CompositeMaterial:
 	set(x):
 		#print("represented compositematerial changed from ", represented_composite_material, " to ", x)
@@ -24,6 +26,12 @@ func _node_ready() -> void:
 	
 	if Engine.is_editor_hint():
 		node_selected.connect(edit_material)
+	
+	var _reload_button : Button = Button.new()
+	_reload_button.icon = EditorInterface.get_base_control().get_theme_icon("Reload", "EditorIcons")
+	_reload_button.flat = true
+	_reload_button.button_down.connect(request_rebuild.emit)
+	get_titlebar_hbox().add_child(_reload_button)
 
 
 func edit_material() -> void:

@@ -17,4 +17,8 @@ func get_value() -> Vector4:
 	return Vector4(x.value, y.value, z.value, w.value)
 
 func get_expression() -> String:
+	print("expression was requested from composevec4. Resources are", x, y, z, w)
 	return "vec4(%s, %s, %s, %s)" % [x.get_expression(), y.get_expression(), z.get_expression(), w.get_expression()]
+
+func _to_string() -> String:
+	return "ComposeVector4:" + resource_scene_unique_id

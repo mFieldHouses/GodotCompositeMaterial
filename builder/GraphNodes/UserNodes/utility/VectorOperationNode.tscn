@@ -1,0 +1,225 @@
+[gd_scene format=3 uid="uid://chvimolnqbtbm"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_fghty"]
+[ext_resource type="Script" uid="uid://bphjjo1h4o26e" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/utility/vector_operation_node.gd" id="2_bn3q7"]
+
+[node name="VectorOperation" type="GraphNode" unique_id=1174472716]
+offset_right = 207.0
+offset_bottom = 223.0
+tooltip_text = "Takes a number as an input and outputs a color based on where the input number lies between 0 and 1 on the gradient."
+theme = ExtResource("1_fghty")
+theme_override_constants/separation = 10
+title = "Vector Operation"
+slot/0/left_enabled = false
+slot/0/left_type = 5
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 5
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = false
+slot/1/left_enabled = false
+slot/1/left_type = 5
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = true
+slot/1/right_type = 3
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = false
+slot/2/left_enabled = false
+slot/2/left_type = 5
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 4
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 0
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+slot/5/left_enabled = false
+slot/5/left_type = 0
+slot/5/left_color = Color(1, 1, 1, 1)
+slot/5/left_icon = null
+slot/5/right_enabled = false
+slot/5/right_type = 0
+slot/5/right_color = Color(1, 1, 1, 1)
+slot/5/right_icon = null
+slot/5/draw_stylebox = true
+slot/6/left_enabled = false
+slot/6/left_type = 0
+slot/6/left_color = Color(1, 1, 1, 1)
+slot/6/left_icon = null
+slot/6/right_enabled = false
+slot/6/right_type = 0
+slot/6/right_color = Color(1, 1, 1, 1)
+slot/6/right_icon = null
+slot/6/draw_stylebox = true
+slot/7/left_enabled = false
+slot/7/left_type = 0
+slot/7/left_color = Color(1, 1, 1, 1)
+slot/7/left_icon = null
+slot/7/right_enabled = false
+slot/7/right_type = 0
+slot/7/right_color = Color(1, 1, 1, 1)
+slot/7/right_icon = null
+slot/7/draw_stylebox = true
+slot/8/left_enabled = false
+slot/8/left_type = 0
+slot/8/left_color = Color(1, 1, 1, 1)
+slot/8/left_icon = null
+slot/8/right_enabled = false
+slot/8/right_type = 0
+slot/8/right_color = Color(1, 1, 1, 1)
+slot/8/right_icon = null
+slot/8/draw_stylebox = true
+slot/9/left_enabled = false
+slot/9/left_type = 0
+slot/9/left_color = Color(1, 1, 1, 1)
+slot/9/left_icon = null
+slot/9/right_enabled = false
+slot/9/right_type = 0
+slot/9/right_color = Color(1, 1, 1, 1)
+slot/9/right_icon = null
+slot/9/draw_stylebox = true
+slot/10/left_enabled = false
+slot/10/left_type = 0
+slot/10/left_color = Color(1, 1, 1, 1)
+slot/10/left_icon = null
+slot/10/right_enabled = false
+slot/10/right_type = 0
+slot/10/right_color = Color(1, 1, 1, 1)
+slot/10/right_icon = null
+slot/10/draw_stylebox = true
+script = ExtResource("2_bn3q7")
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+
+[node name="configuration" type="VBoxContainer" parent="." unique_id=506031578]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="configuration" unique_id=631871325]
+layout_mode = 2
+text = "Vector type"
+
+[node name="type" type="OptionButton" parent="configuration" unique_id=663844570]
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "Vector2 (UV)"
+popup/item_0/id = 0
+popup/item_1/text = "Vector3 (RGB)"
+popup/item_1/id = 1
+popup/item_2/text = "Vector4 (RGBA)"
+popup/item_2/id = 2
+
+[node name="Label3" type="Label" parent="configuration" unique_id=1610432453]
+layout_mode = 2
+text = "Operation"
+
+[node name="operation" type="OptionButton" parent="configuration" unique_id=451423003]
+layout_mode = 2
+selected = 4
+item_count = 16
+popup/item_0/text = "Compose/Decompose"
+popup/item_0/id = 9
+popup/item_0/disabled = true
+popup/item_0/separator = true
+popup/item_1/text = "Compose Vector"
+popup/item_1/id = 0
+popup/item_2/text = "Decompose Vector"
+popup/item_2/id = 1
+popup/item_3/text = "Arithmetic"
+popup/item_3/id = 0
+popup/item_3/disabled = true
+popup/item_3/separator = true
+popup/item_4/text = "Add"
+popup/item_4/id = 2
+popup/item_5/text = "Subtract"
+popup/item_5/id = 2
+popup/item_6/text = "Multiply"
+popup/item_6/id = 3
+popup/item_7/text = "Divide"
+popup/item_7/id = 4
+popup/item_8/text = "Exponents"
+popup/item_8/id = 5
+popup/item_8/disabled = true
+popup/item_8/separator = true
+popup/item_9/text = "Power"
+popup/item_9/id = 6
+popup/item_10/text = "Root"
+popup/item_10/id = 6
+popup/item_11/text = "Logarithm"
+popup/item_11/id = 7
+popup/item_12/text = "Natural Logarithm"
+popup/item_12/id = 8
+popup/item_13/text = "Vector"
+popup/item_13/id = 13
+popup/item_13/disabled = true
+popup/item_13/separator = true
+popup/item_14/text = "Length"
+popup/item_14/id = 9
+popup/item_15/text = "Dot"
+popup/item_15/id = 10
+
+[node name="vector_out" type="Label" parent="." unique_id=1654079793]
+layout_mode = 2
+text = "Vector out"
+horizontal_alignment = 2
+
+[node name="vec_in" type="Label" parent="." unique_id=2008369543]
+layout_mode = 2
+text = "Vector2"
+
+[node name="x_in" type="Label" parent="." unique_id=359176011]
+layout_mode = 2
+text = "X"
+
+[node name="x_out" type="Label" parent="." unique_id=2028218977]
+layout_mode = 2
+text = "X"
+horizontal_alignment = 2
+
+[node name="y_in" type="Label" parent="." unique_id=219848325]
+layout_mode = 2
+text = "Y"
+
+[node name="y_out" type="Label" parent="." unique_id=19792127]
+layout_mode = 2
+text = "Y"
+horizontal_alignment = 2
+
+[node name="z_in" type="Label" parent="." unique_id=886500961]
+layout_mode = 2
+text = "Z"
+
+[node name="z_out" type="Label" parent="." unique_id=1265709679]
+layout_mode = 2
+text = "Z"
+horizontal_alignment = 2
+
+[node name="w_in" type="Label" parent="." unique_id=1247647582]
+layout_mode = 2
+text = "W"
+
+[node name="w_out" type="Label" parent="." unique_id=1533922310]
+layout_mode = 2
+text = "W"
+horizontal_alignment = 2

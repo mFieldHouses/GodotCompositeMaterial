@@ -1,7 +1,5 @@
 shader_type spatial;
 
-render_mode unshaded;
-
 #define NUM_LAYERS 1
 
 #define NUM_DIRECTIONAL_MASKS 0
@@ -172,7 +170,7 @@ uniform sampler2D[NUM_TEXTURES] textures : source_color;
 uniform int[NUM_VECTOR2_DECOMPOSITIONS] vector2_decomposition_output_channels;
 
 float decompose_vector2(int decomposition_id, vec2 value) {
-	return (value.x * float(vector2_decomposition_output_channels[decomposition_id] == 0) + value.y * float(vector2_decomposition_output_channels[decomposition_id] == 1) + length(value) * float(vector2_decomposition_output_channels[decomposition_id] == 2))
+	return (value.x * float(vector2_decomposition_output_channels[decomposition_id] == 0) + value.y * float(vector2_decomposition_output_channels[decomposition_id] == 1));
 }
 #endif
 
@@ -180,7 +178,7 @@ float decompose_vector2(int decomposition_id, vec2 value) {
 uniform int[NUM_VECTOR3_DECOMPOSITIONS] vector3_decomposition_output_channels;
 
 float decompose_vector3(int decomposition_id, vec3 value) {
-	return (value.x * float(vector3_decomposition_output_channels[decomposition_id] == 0) + value.y * float(vector3_decomposition_output_channels[decomposition_id] == 1) + value.z * float(vector3_decomposition_output_channels[decomposition_id] == 2) + length(value) * float(vector3_decomposition_output_channels[decomposition_id] == 3))
+	return (value.x * float(vector3_decomposition_output_channels[decomposition_id] == 0) + value.y * float(vector3_decomposition_output_channels[decomposition_id] == 1) + value.z * float(vector3_decomposition_output_channels[decomposition_id] == 2));
 }
 #endif
 
@@ -188,7 +186,7 @@ float decompose_vector3(int decomposition_id, vec3 value) {
 uniform int[NUM_VECTOR4_DECOMPOSITIONS] vector4_decomposition_output_channels;
 
 float decompose_vector3(int decomposition_id, vec4 value) {
-	return (value.x * float(vector4_decomposition_output_channels[decomposition_id] == 0) + value.y * float(vector4_decomposition_output_channels[decomposition_id] == 1) + value.z * float(vector4_decomposition_output_channels[decomposition_id] == 2) + value.w * float(vector4_decomposition_output_channels[decomposition_id] == 3) + length(value) * float(vector4_decomposition_output_channels[decomposition_id] == 4))
+	return (value.x * float(vector4_decomposition_output_channels[decomposition_id] == 0) + value.y * float(vector4_decomposition_output_channels[decomposition_id] == 1) + value.z * float(vector4_decomposition_output_channels[decomposition_id] == 2) + value.w * float(vector4_decomposition_output_channels[decomposition_id] == 3));
 }
 #endif
 
@@ -269,7 +267,9 @@ void fragment() {
 	
 	for (int i = starting_index; i < NUM_LAYERS; i++) {
 		if (process_index == 0) {
-			albedo_mix = get_layer_albedo(i, UV, UV2).rgb;
+			vec4 albedo = get_layer_albedo(i, UV, UV2);
+			albedo_mix = albedo.rgb;
+			//ALPHA = albedo.a;
 			normal_mix = get_layer_normal(i);
 			roughness_mix = get_layer_roughness(i);
 			metallic_mix = get_layer_metallic(i);

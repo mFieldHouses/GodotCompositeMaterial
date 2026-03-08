@@ -14,3 +14,9 @@ func _init(value : Vector2 = Vector2.ZERO) -> void:
 
 func get_expression() -> String:
 	return "vector2_values[%s]" % index
+
+func _to_string() -> String:
+	return "Vector2Value:" + resource_scene_unique_id
+
+func call_setters() -> void:
+	value = value

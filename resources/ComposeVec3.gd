@@ -16,3 +16,6 @@ func get_value() -> Vector3:
 
 func get_expression() -> String:
 	return "vec3(%s, %s, %s)" % [x.get_expression(), y.get_expression(), z.get_expression()]
+
+func _to_string() -> String:
+	return "ComposeVector3:" + resource_scene_unique_id

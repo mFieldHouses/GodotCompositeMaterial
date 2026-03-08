@@ -19,3 +19,8 @@ enum PolarityType {BIPOLAR, MONOPOLAR_POSITIVE, MONOPOLAR_NEGATIVE}
 
 func get_expression() -> String:
 	return "get_directional_mask(%s, local_vertex_normal, global_vertex_normal)" % index
+
+func call_setters() -> void:
+	space = space
+	direction = direction
+	polarity = polarity

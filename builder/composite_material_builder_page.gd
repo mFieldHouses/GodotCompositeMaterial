@@ -9,7 +9,7 @@ var node_mappings : Array = [
 	["UVTransformNode","UVMapNode","TriplanarMapNode"],
 	["masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/VertexColorMaskNode", "masks/EffectShapeMaskNode", "masks/UVMaskNode", "masks/NormalMapMaskNode"],
 	["vector/VectorMathNode", "vector/ComposeVector2Node", "vector/DecomposeVector2Node", "vector/ComposeVector3Node", "vector/DecomposeVector3Node", "vector/ComposeVector4Node", "vector/DecomposeVector4Node"],
-	["utility/MathNode", "utility/ComposeAlbedoNode"]
+	["utility/TimeNode, utility/MathNode", "utility/VectorOperationNode"]
 ]
 
 var dynamic_nodes : Array[GraphNode] = []
@@ -35,33 +35,12 @@ func _ready() -> void:
 	node_deselected.connect(func(node): selected_node = null)
 	
 	output_node = $output
-	
-	#for child in get_children():
-		#if child is CompileMasksSubNode:
-			#child.queue_free()
+	output_node.request_rebuild.connect(build_material)
 	
 
 func _process(delta: float) -> void:
 	pass
-	#
-	#for layer_node : LayerNode in node_groups.layers:
-		#for connection in get_connection_list_from_node(layer_node.name):
-			#if connection.to_node == layer_node.name:
-				#pass
-				#print(connection.to_port)
-	
-	#if output_node:
-		#if get_connection_count(output_node.name, output_node.get_child_count() - 1) > 0:
-			#var _label : Label = Label.new()
-			#_label.text = "Layer"
-			#output_node.add_child(_label)
-	#
-	#for dyn_node in dynamic_nodes:
-		#if dyn_node is CompileMasksNode:
-			#if get_connection_count(dyn_node.name, dyn_node.get_child_count() - 3) > 0:
-				#dyn_node.add_slot()
-	
-	#print(scroll_offset)
+
 
 func _connection_requested(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
 	#print("request for connection: port ", from_port, " on ", from_node, " to port ", to_port, " on ", to_node)
@@ -189,6 +168,10 @@ func build_material() -> void:
 		"TextureConfiguration": [],
 		"Texture": [],
 		
+		"ComposeVector2": [],
+		"ComposeVector3": [],
+		"ComposeVector4": [],
+		
 		"IntValue": [],
 		"FloatValue": [],
 		"Vector2Value": [],
@@ -199,6 +182,7 @@ func build_material() -> void:
 	var resources_to_check : Array[Resource] = []
 	
 	var append_resource_to_mapped_resources : Callable = func(resource : CPMB_Base, array_name : String) -> void:
+		#print("assigning index ", mapped_resources[array_name].size(), " to ", resource)
 		resource.index = mapped_resources[array_name].size()
 		mapped_resources[array_name].append(resource)
 	
@@ -222,6 +206,7 @@ func build_material() -> void:
 	#Go through resources_to_check and expand where neccesary until all resources have been checked and/or mapped.
 	while resources_to_check.size() > 0:
 		var resource_to_check : Resource = resources_to_check.pop_front()
+		print("mapping ", resource_to_check)
 		
 		if resource_to_check is CPMB_DirectionalMaskConfiguration:
 			append_resource_to_mapped_resources.call(resource_to_check, "DirectionalMaskConfiguration")
@@ -246,6 +231,22 @@ func build_material() -> void:
 			mapped_resources.Texture.append(resource_to_check.gradient)
 			resources_to_check.append(resource_to_check.fac)
 		
+		elif resource_to_check is CPMB_ComposeVec2:
+			resources_to_check.append(resource_to_check.x)
+			resources_to_check.append(resource_to_check.y)
+			append_resource_to_mapped_resources.call(resource_to_check, "ComposeVector2")
+		elif resource_to_check is CPMB_ComposeVec3:
+			resources_to_check.append(resource_to_check.x)
+			resources_to_check.append(resource_to_check.y)
+			resources_to_check.append(resource_to_check.z)
+			append_resource_to_mapped_resources.call(resource_to_check, "ComposeVector3")
+		elif resource_to_check is CPMB_ComposeVec4:
+			resources_to_check.append(resource_to_check.x)
+			resources_to_check.append(resource_to_check.y)
+			resources_to_check.append(resource_to_check.z)
+			resources_to_check.append(resource_to_check.w)
+			append_resource_to_mapped_resources.call(resource_to_check, "ComposeVector4")
+		
 		#these are base classes, classes that extend these should be checked for first
 		elif resource_to_check is CPMB_Vector2Value:
 			append_resource_to_mapped_resources.call(resource_to_check, "Vector2Value")
@@ -256,6 +257,7 @@ func build_material() -> void:
 		elif resource_to_check is CPMB_IntValue:
 			append_resource_to_mapped_resources.call(resource_to_check, "IntValue")
 		elif resource_to_check is CPMB_FloatValue:
+			#print("Resource is FloatValue: ", resource_to_check)
 			append_resource_to_mapped_resources.call(resource_to_check, "FloatValue")
 	
 	var _shader : Shader = Shader.new()
@@ -278,12 +280,75 @@ func build_material() -> void:
 		"Vector4Value" : "NUM_VECTOR4_VALUES"
 	}
 	
-	print(mapped_resources)
+	#print(mapped_resources)
+	
+	
 	
 	edited_composite_material.shader.code = edited_composite_material.shader.code.replace("NUM_LAYERS 1", "NUM_LAYERS " + str(edited_composite_material.layers.size()))
 	
+	var parameters_to_be_initialised : Array
+	
 	for key in definition_map.keys():
+		print(definition_map[key] + " " + str(mapped_resources[key].size()))
+		
+		if mapped_resources[key].size() == 0:
+			continue
+		
 		edited_composite_material.shader.code = edited_composite_material.shader.code.replace(definition_map[key] + " 0", definition_map[key] + " " + str(mapped_resources[key].size()))
+		
+		var _iter : int = 0
+		var _last_idx : int = 0
+		var _found_all_parameters : bool = false
+		while _found_all_parameters == false:
+			#print("high loop")
+			var _idx : int = edited_composite_material.shader.code.find("[" + definition_map[key] + "]", _last_idx)
+			if _idx == -1:
+				_found_all_parameters = true
+				break
+			
+			var _offset : int = 0
+			var _found_parameter_name : bool = false
+			
+			var _found_parameter_name_start : bool = false
+			var _parameter_name_start : int = 0
+			
+			var _found_parameter_name_end : bool = false
+			var _parameter_name_end : int = 0
+			
+			while _found_parameter_name == false:
+				#print("low loop")
+				
+				if !_found_parameter_name_start:
+					if edited_composite_material.shader.code[_idx + _offset] == " ":
+						_parameter_name_start = _idx + _offset + 1
+						_found_parameter_name_start = true
+				else:
+					if _found_parameter_name_end:
+						_found_parameter_name = true
+						break
+					
+					if edited_composite_material.shader.code[_idx + _offset] == ";" or edited_composite_material.shader.code[_idx + _offset] == " ":
+						_parameter_name_end = _idx + _offset
+						_found_parameter_name_end = true
+					
+				_offset += 1
+			
+		#	print("from ", _parameter_name_start, " to ", _parameter_name_end, ": ", edited_composite_material.shader.code.substr(_parameter_name_start, _parameter_name_end - _parameter_name_start))
+			parameters_to_be_initialised.append(edited_composite_material.shader.code.substr(_parameter_name_start, _parameter_name_end - _parameter_name_start))
+			_last_idx = _idx + 1
+			_iter += 1
+			
+		#edited_composite_material.shader.code = edited_composite_material.shader.code.replace("[" + definition_map[key] + "]", "[" + str(mapped_resources[key].size()) + "]")
+	
+	#make sure the editor notices the shader update
+	edited_composite_material.shader = null
+	edited_composite_material.shader = _shader
+	
+	print(mapped_resources.FloatValue.size())
+	
+	for parameter_name in parameters_to_be_initialised:
+		print("initialising ", parameter_name)
+		edited_composite_material.set_shader_parameter(parameter_name, null)
 	
 	if mapped_resources.Texture.size() > 0:
 		var _arr = []
@@ -295,19 +360,30 @@ func build_material() -> void:
 		var _idx : int = 0
 		for resource : Resource in mapped_resources[key]:
 			if resource == null:
+				print("resource ", resource, " is null")
 				continue #
 			
 			if resource.has_signal("value_changed"):
-				if !resource.has_connections("value_changed"):
-					resource.connect("value_changed", set_shader_property.bind(_idx))
+				if resource.has_connections("value_changed"):
+					resource.disconnect("value_changed", set_shader_property)
+				#print("connecting resource ", resource, " to index ", _idx)
+				resource.connect("value_changed", set_shader_property.bind(_idx))
 				
 			#initialize export values
-			for property in resource.get_property_list():
-				#print(property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE or (property.hint & PROPERTY_HINT_RESOURCE_TYPE and property.hint_string == "Texture2D"))
-				if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE or (property.hint & PROPERTY_HINT_RESOURCE_TYPE and property.hint_string == "Texture2D"):
-					#call setter on value so that set_shader_property automatically gets called correctly
-					print("setting ", property.name, " to ", resource.get(property.name))
-					resource.set(property.name, resource.get(property.name))
+			if resource is CPMB_Base:
+				#print("call_setters()")
+				resource.call_setters()
+			
+			#for property in resource.get_property_list():
+				#if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE or (property.hint & PROPERTY_HINT_RESOURCE_TYPE and property.hint_string == "Texture2D"):
+					##just set the value to what it was so that value_changed gets called on that resource
+					#
+					#if property.name == "value":
+						#if resource is not CPMB_FloatValue:
+							#continue
+					#
+					#print("updating ", property.name, " on ", resource)
+					#resource.set(property.name, resource.get(property.name))
 				
 			_idx += 1
 	
@@ -317,7 +393,7 @@ func build_material() -> void:
 	var get_layer_roughness_string : String = "switch (layer_index) {"
 	var get_layer_metallic_string : String = "switch (layer_index) {"
 	
-	#Sorry for the very funky string formatting up ahead! It's all to have nicely formatted shader code
+	#Sorry for the funky string formatting up ahead! It's all to have nicely formatted shader code
 	
 	var _idx : int = 0
 	for layer : CompositeMaterialLayer in edited_composite_material.layers:
@@ -368,6 +444,8 @@ func set_shader_property(value : Variant, shader_property_name : String, id : in
 	edited_composite_material.get_property_list() #????? This line needs to be present or get_shader_parameter will return Nil
 	
 	var _current_value : Array = edited_composite_material.get_shader_parameter(shader_property_name)
+	#print("setting ", shader_property_name, " for index ", id)
+	#print("Current value: ", _current_value, " id: ", id)
 	_current_value[id] = value
 	edited_composite_material.set_shader_parameter(shader_property_name, _current_value)
 
@@ -380,7 +458,7 @@ func edit_material(material : CompositeMaterial) -> void:
 
 func clear_graph() -> void:
 	for child in get_children():
-		if child is PopupMenu or child == output_node or child.name == "_connection_layer": #_connection_layer is an internal child made by GraphEdit itself to render connection lines. Removing it freezes the GraphEdit. See editor/scene/GraphEdit.cpp:3190 and editor/scene/GraphEdit.cpp:745 for more info
+		if child is PopupMenu or child == output_node or child.name == "_connection_layer": #_connection_layer is a semi-internal child made by GraphEdit itself to render connection lines. Removing it freezes the GraphEdit. See editor/scene/GraphEdit.cpp:3190 and editor/scene/GraphEdit.cpp:745 for more info
 			continue 
 		
 		child.queue_free()
