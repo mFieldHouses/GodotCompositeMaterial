@@ -1,20 +1,45 @@
 @tool
-extends CPMB_NumericValue
+extends CPMB_FloatValue
 class_name CPMB_Math
 
+enum OperationType {
+	ADD, SUBTRACT, MULTIPLY, DIVIDE,
+	POWER, ROOT, LOGARITHM, NATURAL_LOGARITHM
+}
+
 @export var value_A : CPMB_NumericValue
-@export_enum("Add", "Subtract", "Multiply", "Divide") var operation : int = 0
+
+var operation : OperationType = 0:
+	set(x):
+		operation = x
+		request_material_rebuild.emit()
+		
 @export var value_B : CPMB_NumericValue
 
-func get_value() -> float:
+func _init() -> void:
+	initialise_value()
+
+func initialise_value(index : int = -1) -> void:
+	if index == 0 or index == -1:
+		value_A = CPMB_FloatValue.new(1.0)
+	if index == 1 or index == -1:
+		value_B = CPMB_FloatValue.new(0.5)
+
+func get_expression() -> String:
+	print("expression requested from math node")
 	match operation:
-		0:
-			return value_A.value + value_B.value
-		1:
-			return value_A.value - value_B.value
-		2:
-			return value_A.value * value_B.value
-		3:
-			return value_A.value / value_B.value
-	
-	return 0.0
+		OperationType.ADD:
+			return "float(" + value_A.get_expression() + ") + float(" + value_B.get_expression() + ")"
+		OperationType.SUBTRACT:
+			return "float(" + value_A.get_expression() + ") - float(" + value_B.get_expression() + ")"
+		OperationType.MULTIPLY:
+			return "float(" + value_A.get_expression() + ") * float(" + value_B.get_expression() + ")"
+		OperationType.DIVIDE:
+			return "float(" + value_A.get_expression() + ") / float(" + value_B.get_expression() + ")"
+		
+		OperationType.POWER:
+			return "pow(float(" + value_A.get_expression() + "), float(" + value_B.get_expression() + "))"
+		OperationType.ROOT:
+			return "pow(float(" + value_A.get_expression() + "), 1.0 / float(" + value_B.get_expression() + "))"
+		
+	return value_A.get_expression() + " + " + value_B.get_expression()

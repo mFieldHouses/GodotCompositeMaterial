@@ -1,0 +1,135 @@
+[gd_scene format=3 uid="uid://dxlcsdhgyjtgf"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_ponhx"]
+[ext_resource type="Script" uid="uid://clx8gqlagakii" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/utility/math_node.gd" id="2_ponhx"]
+
+[node name="MathNode" type="GraphNode" unique_id=1174472716]
+offset_right = 207.0
+offset_bottom = 66.0
+tooltip_text = "Takes a number as an input and outputs a color based on where the input number lies between 0 and 1 on the gradient."
+theme = ExtResource("1_ponhx")
+theme_override_constants/separation = 15
+title = "Math"
+ignore_invalid_connection_type = true
+slot/0/left_enabled = false
+slot/0/left_type = 5
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 5
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = false
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 5
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = true
+slot/2/right_type = 5
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = true
+slot/3/left_type = 5
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = true
+slot/4/left_type = 5
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 0
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+script = ExtResource("2_ponhx")
+represented_resource_variable_name = "represented_config"
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+
+[node name="Label" type="Label" parent="." unique_id=356640209]
+layout_mode = 2
+text = "Operation"
+
+[node name="operation" type="OptionButton" parent="." unique_id=482261096]
+layout_mode = 2
+selected = 1
+item_count = 10
+popup/item_0/text = "Arithmetic"
+popup/item_0/id = 0
+popup/item_0/disabled = true
+popup/item_0/separator = true
+popup/item_1/text = "Add"
+popup/item_1/id = 0
+popup/item_2/text = "Subtract"
+popup/item_2/id = 1
+popup/item_3/text = "Multiply"
+popup/item_3/id = 2
+popup/item_4/text = "Divide"
+popup/item_4/id = 3
+popup/item_5/text = "Exponents"
+popup/item_5/id = 5
+popup/item_5/disabled = true
+popup/item_5/separator = true
+popup/item_6/text = "Power"
+popup/item_6/id = 4
+popup/item_7/text = "Root"
+popup/item_7/id = 5
+popup/item_8/text = "Logarithm"
+popup/item_8/id = 6
+popup/item_9/text = "Natural Logarithm"
+popup/item_9/id = 7
+
+[node name="result" type="Label" parent="." unique_id=1063963965]
+layout_mode = 2
+text = "Result"
+horizontal_alignment = 2
+
+[node name="value_1" type="HBoxContainer" parent="." unique_id=1593582084]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label2" type="Label" parent="value_1" unique_id=809324394]
+layout_mode = 2
+text = "A"
+
+[node name="value" type="SpinBox" parent="value_1" unique_id=1461763403]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -100000.0
+max_value = 100000.0
+step = 0.001
+value = 1.0
+allow_greater = true
+allow_lesser = true
+
+[node name="value_2" type="HBoxContainer" parent="." unique_id=1712846553]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label2" type="Label" parent="value_2" unique_id=1643898507]
+layout_mode = 2
+text = "B"
+
+[node name="value" type="SpinBox" parent="value_2" unique_id=116284263]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -100000.0
+max_value = 100000.0
+step = 0.001
+value = 0.5
+allow_greater = true
+allow_lesser = true

@@ -19,6 +19,7 @@ slot/0/right_color = Color(1, 1, 1, 1)
 slot/0/right_icon = null
 slot/0/draw_stylebox = true
 script = ExtResource("2_ynfvp")
+represented_resource_variable_name = "represented_config"
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 metadata/renamable = false
 

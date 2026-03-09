@@ -9,6 +9,9 @@ class_name CPMB_DecomposeVec2
 		value_changed.emit(x, "vector2_decomposition_output_channels")
 
 func _init() -> void:
+	initialise_value()
+
+func initialise_value(index : int = -1) -> void:
 	source_vector = CPMB_Vector2Value.new()
 
 func get_expression() -> String:

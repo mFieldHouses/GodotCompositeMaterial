@@ -110,6 +110,7 @@ slot/10/right_color = Color(1, 1, 1, 1)
 slot/10/right_icon = null
 slot/10/draw_stylebox = true
 script = ExtResource("2_bn3q7")
+represented_resource_variable_name = "represented_config"
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 
 [node name="configuration" type="VBoxContainer" parent="." unique_id=506031578]

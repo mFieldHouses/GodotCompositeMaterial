@@ -2,6 +2,8 @@
 extends GraphNode
 class_name CompositeMaterialBuilderGraphNode
 
+@export var represented_resource_variable_name : String = ""
+
 @export var title_bar_color : Color = Color.DARK_KHAKI
 
 func _node_ready() -> void: ##Called after _ready() by [CompositeMaterialBuilderGraphNode] to allow extending classes to extend _ready() functionality without overriding base behavior.
@@ -23,3 +25,6 @@ func get_represented_object(port_idx : int) -> Object: ##This method must be ove
 
 func set_represented_object(object : Object) -> void:
 	pass
+
+func disconnected(input_port_id : int) -> void:
+	get(represented_resource_variable_name).initialise_value(input_port_id)

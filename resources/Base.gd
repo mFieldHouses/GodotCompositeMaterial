@@ -1,6 +1,8 @@
 extends Resource
 class_name CPMB_Base
 
+signal request_material_rebuild
+
 var internal_to_node : bool = false
 var index : int = 0: ##Index of this resource in the shader uniform arrays. Used to build the returned expression.
 	set(x):
@@ -15,3 +17,6 @@ func get_output_port_for_state() -> int:
 
 #func call_setters() -> void: ##Override this in extending classes
 	#pass
+
+func initialise_value(index : int = -1) -> void: ##Override this function
+	pass

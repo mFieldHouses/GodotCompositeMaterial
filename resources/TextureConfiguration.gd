@@ -9,13 +9,12 @@ class_name CPMB_TextureConfiguration
 		value_changed.emit(x, "textures")
 
 func _init() -> void:
-	uv = CPMB_UVMapConfiguration.new()
-	uv.internal_to_node = true
+	initialise_value()
 	
 	value = Vector4.INF
 
+func initialise_value(index : int = -1) -> void:
+	uv = CPMB_UVMapConfiguration.new()
+
 func get_expression() -> String:
 	return "texture(textures[%s], %s)" % [index, uv.get_expression()]
-
-#func call_setters() -> void:
-	#texture = texture

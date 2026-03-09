@@ -13,6 +13,7 @@ shader_type spatial;
 
 #define NUM_COLOR_RAMPS 0
 #define NUM_TEXTURES 0
+#define NUM_NORMAL_MAP_TEXTURES 0
 
 #define NUM_VECTOR2_DECOMPOSITIONS 0
 #define NUM_VECTOR3_DECOMPOSITIONS 0
@@ -118,12 +119,6 @@ float get_effect_shape_mask(int mask_id, vec3 global_position) {
 }
 #endif
 
-
-#if NUM_UV_TRANSFORMS > 0
-uniform vec2[NUM_UV_TRANSFORMS] uv_transform_scales;
-uniform vec2[NUM_UV_TRANSFORMS] uv_transform_offsets;
-#endif
-
 #if NUM_UV_MAPS > 0
 uniform int[NUM_UV_MAPS] uv_map_sources;
 #endif
@@ -164,6 +159,10 @@ vec2 get_triplanar_uv(int uv_index, vec3 local_normal, vec3 global_normal, vec3 
 
 #if NUM_TEXTURES > 0
 uniform sampler2D[NUM_TEXTURES] textures : source_color;
+#endif
+
+#if NUM_NORMAL_MAP_TEXTURES > 0
+uniform sampler2D[NUM_NORMAL_MAP_TEXTURES] normal_map_textures;
 #endif
 
 
@@ -224,7 +223,7 @@ varying vec3 vertex_color;
 varying vec3 global_camera_pos;
 
 #if NUM_COLOR_RAMPS > 0
-uniform sampler2D[NUM_COLOR_RAMPS] color_ramp_textures : repeat_disable;
+uniform sampler2D[NUM_COLOR_RAMPS] color_ramp_textures : source_color, repeat_disable;
 vec4 get_color_ramp(int color_ramp_id, float fac) {
 	//get_color_ramp
 	return vec4(0.0);
@@ -261,6 +260,9 @@ void vertex() {
 }
 
 void fragment() {
+	
+	vec2 uv = UV;
+	vec2 uv2 = UV2;
 	
 	vec3 albedo_mix;
 	vec3 normal_mix;

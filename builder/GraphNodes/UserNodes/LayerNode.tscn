@@ -75,6 +75,7 @@ slot/6/right_color = Color(1, 1, 1, 1)
 slot/6/right_icon = null
 slot/6/draw_stylebox = true
 script = ExtResource("2_j8qlm")
+represented_resource_variable_name = "represented_layer"
 metadata/_custom_type_script = "uid://d0h74nt1hl8ms"
 metadata/renamable = false
 

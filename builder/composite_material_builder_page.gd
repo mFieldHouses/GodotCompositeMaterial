@@ -58,13 +58,6 @@ func _connection_requested(from_node: StringName, from_port: int, to_node: Strin
 		print("connecting to itself")
 		return
 	
-	#if _to_node is CompileMasksNode:
-		#var _new_node = _to_node.add_slot()
-		#_new_node.linked_node = _from_node
-		#connect_node(from_node, from_port, _new_node.name, 0)
-		#_to_node.connect_and_pass_object(to_port, _from_node.get_represented_object(from_port))
-		#build_material()
-		#return
 	elif _to_node is CompositeMaterialOutputNode:
 		var _new_node = get_node(String(to_node)).add_slot()
 		_new_node.linked_node = get_node(String(from_node))
@@ -85,17 +78,20 @@ func _connection_requested(from_node: StringName, from_port: int, to_node: Strin
 
 
 func _disconnection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
-	
-	print("disconnection")
-	
-	var _from_node : GraphNode = get_node(String(from_node))
-	var _to_node : GraphNode = get_node(String(to_node))
+	var _from_node : CompositeMaterialBuilderGraphNode = get_node(String(from_node))
+	var _to_node : CompositeMaterialBuilderGraphNode = get_node(String(to_node))
 	
 	if _to_node is LayerNode:
 		if to_port == 2:
 			_to_node.enable_value(0, true)
 		elif to_port == 3:
 			_to_node.enable_value(1, true)
+	
+	disconnect_node(from_node, from_port, to_node, to_port)
+	
+	_to_node.disconnected(to_port)
+	
+	build_material()
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -185,7 +181,7 @@ func build_material() -> void:
 		"Vector4Value": []
 	}
 	
-	var resources_to_check : Array[Resource] = []
+	var resources_to_check : Array[CPMB_Base] = []
 	
 	var append_resource_to_mapped_resources : Callable = func(resource : CPMB_Base, array_name : String) -> void:
 		#print("assigning index ", mapped_resources[array_name].size(), " to ", resource)
@@ -211,8 +207,11 @@ func build_material() -> void:
 	
 	#Go through resources_to_check and expand where neccesary until all resources have been checked and/or mapped.
 	while resources_to_check.size() > 0:
-		var resource_to_check : Resource = resources_to_check.pop_front()
+		var resource_to_check : CPMB_Base = resources_to_check.pop_front()
 		print("mapping ", resource_to_check)
+		
+		if !resource_to_check.is_connected("request_material_rebuild", request_rebuild_material):
+			resource_to_check.request_material_rebuild.connect(request_rebuild_material)
 		
 		if resource_to_check is CPMB_DirectionalMaskConfiguration:
 			append_resource_to_mapped_resources.call(resource_to_check, "DirectionalMaskConfiguration")
@@ -229,6 +228,10 @@ func build_material() -> void:
 			resources_to_check.append(resource_to_check.base_uv)
 			resources_to_check.append(resource_to_check.offset)
 			resources_to_check.append(resource_to_check.scale)
+		elif resource_to_check is CPMB_TriplanarUVConfiguration:
+			append_resource_to_mapped_resources.call(resource_to_check, "TriplanarUVConfiguration")
+		elif resource_to_check is CPMB_UVConfiguration:
+			printerr("Found a UVConfiguration, which should not happen")
 		elif resource_to_check is CPMB_TextureConfiguration:
 			append_resource_to_mapped_resources.call(resource_to_check, "TextureConfiguration")
 			mapped_resources.Texture.append(resource_to_check.texture)
@@ -237,6 +240,10 @@ func build_material() -> void:
 			mapped_resources.ColorRampTexture.append(resource_to_check.gradient_texture)
 			append_resource_to_mapped_resources.call(resource_to_check, "ColorRampConfiguration")
 			resources_to_check.append(resource_to_check.fac)
+		
+		elif resource_to_check is CPMB_Math:
+			resources_to_check.append(resource_to_check.value_A)
+			resources_to_check.append(resource_to_check.value_B)
 		
 		elif resource_to_check is CPMB_ComposeVec2:
 			resources_to_check.append(resource_to_check.x)
@@ -264,8 +271,12 @@ func build_material() -> void:
 			resources_to_check.append(resource_to_check.source_vector)
 			append_resource_to_mapped_resources.call(resource_to_check, "DecomposeVector4")
 		
+		elif resource_to_check is CPMB_TimeConfig:
+			resources_to_check.append(resource_to_check.scale)
+		
 		#these are base classes, classes that extend these should be checked for first
 		elif resource_to_check is CPMB_Vector2Value:
+			print("Found vector2value")
 			append_resource_to_mapped_resources.call(resource_to_check, "Vector2Value")
 		elif resource_to_check is CPMB_Vector3Value:
 			append_resource_to_mapped_resources.call(resource_to_check, "Vector3Value")
@@ -387,7 +398,7 @@ func build_material() -> void:
 		var _idx : int = 0
 		for resource : Resource in mapped_resources[key]:
 			if resource == null:
-				print("resource ", resource, " is null")
+				print("resource is null")
 				continue #
 			
 			if resource.has_signal("value_changed"):
@@ -396,10 +407,6 @@ func build_material() -> void:
 				#print("connecting resource ", resource, " to index ", _idx)
 				resource.connect("value_changed", set_shader_property.bind(_idx))
 				
-			#initialize export values
-			#if resource is CPMB_Base:
-				##print("call_setters()")
-				#resource.call_setters()
 			
 			for property in resource.get_property_list():
 				if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE or (property.hint & PROPERTY_HINT_RESOURCE_TYPE and property.hint_string == "Texture2D"):
@@ -477,11 +484,15 @@ func build_material() -> void:
 	edited_composite_material.shader = _shader
 	
 
+func request_rebuild_material() -> void:
+	build_material()
+
 func set_shader_property(value : Variant, shader_property_name : String, id : int) -> void:
 	edited_composite_material.get_property_list() #????? This line needs to be present or get_shader_parameter will return Nil
 	
+	#print("setting ", shader_property_name, " for index ", id)
+	
 	var _current_value : Array = edited_composite_material.get_shader_parameter(shader_property_name)
-	print("setting ", shader_property_name, " for index ", id)
 	#print("Current value: ", _current_value, " id: ", id)
 	_current_value[id] = value
 	edited_composite_material.set_shader_parameter(shader_property_name, _current_value)

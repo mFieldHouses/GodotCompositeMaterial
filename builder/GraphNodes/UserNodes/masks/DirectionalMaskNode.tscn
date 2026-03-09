@@ -88,6 +88,8 @@ slot/6/right_color = Color(1, 1, 1, 1)
 slot/6/right_icon = null
 slot/6/draw_stylebox = true
 script = ExtResource("2_h30bl")
+represented_resource_variable_name = "represented_configuration"
+title_bar_color = Color(0, 0, 0, 1)
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 metadata/renamable = false
 

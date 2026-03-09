@@ -7,12 +7,27 @@ class_name CPMB_UVTransformConfiguration
 @export var offset : CPMB_ComposeVec2
 
 func _init() -> void:
-	base_uv = CPMB_UVMapConfiguration.new()
-	scale = CPMB_ComposeVec2.new()
-	scale.x.value = 1.0
-	scale.y.value = 1.0
+	value = Vector2.INF
 	
+	scale = CPMB_ComposeVec2.new()
 	offset = CPMB_ComposeVec2.new()
+	
+	initialise_value()
+
+func initialise_value(index : int = -1) -> void:
+	if index == 0 or index == -1:
+		base_uv = CPMB_UVMapConfiguration.new()
+	if index == 1 or index == -1:
+		scale.x = CPMB_FloatValue.new(1.0)
+	if index == 2 or index == -1:
+		scale.y = CPMB_FloatValue.new(1.0)
+	if index == 3 or index == -1:
+		offset.x = CPMB_FloatValue.new()
+	if index == 4 or index == -1:
+		offset.y = CPMB_FloatValue.new()
+	
+func _to_string() -> String:
+	return "UVTransformConfiguration:" + resource_scene_unique_id
 
 func get_expression() -> String:
-	return "((%s) + uv_transform_offsets[%s]) * uv_transform_scales[%s]" % [base_uv.get_expression(), index, index]
+	return "((%s) + %s) * %s" % [base_uv.get_expression(), offset.get_expression(), scale.get_expression()]

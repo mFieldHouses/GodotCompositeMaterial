@@ -6,9 +6,16 @@ class_name CPMB_ComposeVec2
 @export var y : CPMB_NumericValue = CPMB_FloatValue.new()
 
 func _init() -> void:
-	x = CPMB_FloatValue.new()
-	y = CPMB_FloatValue.new()
-	
+	value = Vector2.INF
+	initialise_value()
+
+func initialise_value(index : int = -1) -> void:
+	if index == 0 or index == -1:
+		x = CPMB_FloatValue.new()
+	if index == 1 or index == -1:
+		y = CPMB_FloatValue.new()
+
+
 func get_value() -> Vector2:
 	return Vector2(x.value, y.value)
 

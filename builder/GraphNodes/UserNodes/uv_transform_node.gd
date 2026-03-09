@@ -6,10 +6,10 @@ extends CompositeMaterialBuilderGraphNode
 func _node_ready() -> void:
 	represented_uv_config = CPMB_UVTransformConfiguration.new()
 	
-	$scale_x/value.changed.connect(func(x): represented_uv_config.scale.x.value = x)
-	$scale_y/value.changed.connect(func(x): represented_uv_config.scale.y.value = x)
-	$offset_x/value.changed.connect(func(x): represented_uv_config.offset.x.value = x)
-	$offset_y/value.changed.connect(func(x): represented_uv_config.offset.y.value = x)
+	$scale_x/value.value_changed.connect(func(x): represented_uv_config.scale.x.value = x)
+	$scale_y/value.value_changed.connect(func(x): represented_uv_config.scale.y.value = x)
+	$offset_x/value.value_changed.connect(func(x): represented_uv_config.offset.x.value = x)
+	$offset_y/value.value_changed.connect(func(x): represented_uv_config.offset.y.value = x)
 
 func get_represented_object(port_idx : int) -> Object:
 	return represented_uv_config

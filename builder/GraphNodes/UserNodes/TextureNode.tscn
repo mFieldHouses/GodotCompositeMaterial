@@ -94,6 +94,7 @@ slot/7/right_icon = null
 slot/7/draw_stylebox = true
 script = ExtResource("2_suxfi")
 respresented_texture_config = SubResource("Resource_u7sga")
+represented_resource_variable_name = "represented_texture_config"
 metadata/_custom_type_script = "uid://th3iwfgyvayb"
 
 [node name="uv_in" type="Label" parent="." unique_id=408030845]

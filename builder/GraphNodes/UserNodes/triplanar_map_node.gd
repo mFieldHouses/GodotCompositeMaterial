@@ -1,3 +1,4 @@
+@tool
 extends CompositeMaterialBuilderGraphNode
 class_name TriplanarMapNode
 
@@ -5,6 +6,7 @@ var represented_configuration : CPMB_TriplanarUVConfiguration
 
 func _node_ready() -> void:
 	represented_configuration = CPMB_TriplanarUVConfiguration.new()
+	$mode.item_selected.connect(func(x): represented_configuration.space = x)
 
 func get_represented_object(port_idx : int) -> Object:
 	return represented_configuration

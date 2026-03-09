@@ -6,3 +6,6 @@ class_name CPMB_UVMapConfiguration
 
 func get_expression() -> String:
 	return "float(uv_map_sources[%s] == 0) * uv + float(uv_map_sources[%s] == 1) * uv2" % [index, index]
+
+func _to_string() -> String:
+	return "UVMapConfiguration:" + resource_scene_unique_id

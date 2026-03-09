@@ -7,6 +7,7 @@ class_name CPMB_Vector2Value
 		value = x
 		
 		if x != Vector2.INF:
+			print("called from class extending vector2value: ", self)
 			value_changed.emit(x, "vector2_values")
 
 func _init(value : Vector2 = Vector2.ZERO) -> void:

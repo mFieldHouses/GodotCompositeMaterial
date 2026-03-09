@@ -20,26 +20,14 @@ enum OperationType {
 @export var operation : OperationType = OperationType.ADD
 
 func _init() -> void:
-	x_in = CPMB_FloatValue.new()
-	y_in = CPMB_FloatValue.new(0.0)
-	z_in = CPMB_FloatValue.new()
-	w_in = CPMB_FloatValue.new(1.0)
+	initialise_value()
 
-#func get_utilised_resources() -> Array[CPMB_Base]:
-	#match operation:
-		#0:
-			#match vector_type:
-				#0:
-					#print("returning resources for x and y")
-					#return [x_in, y_in]
-				#1:	
-					#print("returning resources for x, y and z")
-					#return [x_in, y_in, z_in]
-				#3:
-					#print("returning resources for x, y, z and w")
-					#return [x_in, y_in, z_in, w_in]
-		#1:
-			#print("returning source vector")
-			#return [source_vector]
-	#
-	#return []
+func initialise_value(index : int = -1) -> void:
+	if index == 0 or index == -1:
+		x_in = CPMB_FloatValue.new()
+	if index == 1 or index == -1:
+		y_in = CPMB_FloatValue.new()
+	if index == 2 or index == -1:
+		z_in = CPMB_FloatValue.new()
+	if index == 3 or index == -1:
+		w_in = CPMB_FloatValue.new(1.0)
