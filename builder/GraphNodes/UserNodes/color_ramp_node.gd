@@ -20,3 +20,6 @@ func get_represented_object(port_idx : int) -> Object:
 
 func set_represented_object(object : Object) -> void:
 	represented_configuration = object
+
+func connect_and_pass_object(input_port_id : int, object : Object) -> void:
+	represented_configuration.fac = object

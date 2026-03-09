@@ -166,12 +166,17 @@ func build_material() -> void:
 		"TriplanarUVConfiguration": [],
 		
 		"ColorRampConfiguration": [],
+		"ColorRampTexture": [], #need their own array for repeat_disable hint
 		"TextureConfiguration": [],
 		"Texture": [],
 		
 		"ComposeVector2": [],
 		"ComposeVector3": [],
 		"ComposeVector4": [],
+		
+		"DecomposeVector2": [],
+		"DecomposeVector3": [],
+		"DecomposeVector4": [],
 		
 		"IntValue": [],
 		"FloatValue": [],
@@ -229,7 +234,7 @@ func build_material() -> void:
 			mapped_resources.Texture.append(resource_to_check.texture)
 			resources_to_check.append(resource_to_check.uv)
 		elif resource_to_check is CPMB_ColorRampConfiguration:
-			mapped_resources.Texture.append(resource_to_check.gradient_texture)
+			mapped_resources.ColorRampTexture.append(resource_to_check.gradient_texture)
 			append_resource_to_mapped_resources.call(resource_to_check, "ColorRampConfiguration")
 			resources_to_check.append(resource_to_check.fac)
 		
@@ -248,6 +253,16 @@ func build_material() -> void:
 			resources_to_check.append(resource_to_check.z)
 			resources_to_check.append(resource_to_check.w)
 			append_resource_to_mapped_resources.call(resource_to_check, "ComposeVector4")
+		
+		elif resource_to_check is CPMB_DecomposeVec2:
+			resources_to_check.append(resource_to_check.source_vector)
+			append_resource_to_mapped_resources.call(resource_to_check, "DecomposeVector2")
+		elif resource_to_check is CPMB_DecomposeVec3:
+			resources_to_check.append(resource_to_check.source_vector)
+			append_resource_to_mapped_resources.call(resource_to_check, "DecomposeVector3")
+		elif resource_to_check is CPMB_DecomposeVec4:
+			resources_to_check.append(resource_to_check.source_vector)
+			append_resource_to_mapped_resources.call(resource_to_check, "DecomposeVector4")
 		
 		#these are base classes, classes that extend these should be checked for first
 		elif resource_to_check is CPMB_Vector2Value:
@@ -274,10 +289,13 @@ func build_material() -> void:
 		"UVMapConfiguration" : "NUM_UV_MAPS",
 		"UVTransformConfiguration" : "NUM_UV_TRANSFORMS",
 		"TriplanarUVConfiguration" : "NUM_TRIPLANAR_MAPS",
-		"ColorRampConfiguration": "NUM_COLOR_RAMPS",
+		"ColorRampTexture": "NUM_COLOR_RAMPS",
 		"Texture" : "NUM_TEXTURES",
 		"IntValue" : "NUM_INT_VALUES",
 		"FloatValue" : "NUM_FLOAT_VALUES",
+		"DecomposeVector2" : "NUM_VECTOR2_DECOMPOSITIONS",
+		"DecomposeVector3" : "NUM_VECTOR3_DECOMPOSITIONS",
+		"DecomposeVector4" : "NUM_VECTOR4_DECOMPOSITIONS",
 		"Vector2Value" : "NUM_VECTOR2_VALUES",
 		"Vector3Value" : "NUM_VECTOR3_VALUES",
 		"Vector4Value" : "NUM_VECTOR4_VALUES"
@@ -347,7 +365,7 @@ func build_material() -> void:
 	edited_composite_material.shader = null
 	edited_composite_material.shader = _shader
 	
-	print(mapped_resources.FloatValue.size())
+	#print(mapped_resources.FloatValue.size())
 	
 	for parameter_name in parameters_to_be_initialised:
 		print("initialising ", parameter_name)
@@ -358,6 +376,12 @@ func build_material() -> void:
 		_arr.resize(mapped_resources.Texture.size())
 		_arr.fill(null)
 		edited_composite_material.set_shader_parameter("textures", _arr)
+	
+	if mapped_resources.ColorRampTexture.size() > 0:
+		var _arr = []
+		_arr.resize(mapped_resources.ColorRampTexture.size())
+		_arr.fill(null)
+		edited_composite_material.set_shader_parameter("color_ramp_textures", _arr)
 	
 	for key in mapped_resources.keys():
 		var _idx : int = 0
@@ -433,7 +457,7 @@ func build_material() -> void:
 	for color_ramp_config : CPMB_ColorRampConfiguration in mapped_resources.ColorRampConfiguration:
 		get_color_ramp_string += "
 		case %s:
-			return texture(textures[%s], vec2(%s, 0.0));" % [_idx, mapped_resources.Texture.find(color_ramp_config.gradient_texture), color_ramp_config.fac.get_expression()]
+			return texture(color_ramp_textures[%s], vec2(fac, 0.0));" % [_idx, mapped_resources.ColorRampTexture.find(color_ramp_config.gradient_texture)]
 		_idx += 1
 	
 	get_color_ramp_string += "

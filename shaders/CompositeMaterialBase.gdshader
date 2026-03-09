@@ -187,7 +187,7 @@ float decompose_vector3(int decomposition_id, vec3 value) {
 #if NUM_VECTOR4_DECOMPOSITIONS > 0
 uniform int[NUM_VECTOR4_DECOMPOSITIONS] vector4_decomposition_output_channels;
 
-float decompose_vector3(int decomposition_id, vec4 value) {
+float decompose_vector4(int decomposition_id, vec4 value) {
 	return (value.x * float(vector4_decomposition_output_channels[decomposition_id] == 0) + value.y * float(vector4_decomposition_output_channels[decomposition_id] == 1) + value.z * float(vector4_decomposition_output_channels[decomposition_id] == 2) + value.w * float(vector4_decomposition_output_channels[decomposition_id] == 3));
 }
 #endif
@@ -224,7 +224,8 @@ varying vec3 vertex_color;
 varying vec3 global_camera_pos;
 
 #if NUM_COLOR_RAMPS > 0
-vec4 get_color_ramp(int color_ramp_id) {
+uniform sampler2D[NUM_COLOR_RAMPS] color_ramp_textures : repeat_disable;
+vec4 get_color_ramp(int color_ramp_id, float fac) {
 	//get_color_ramp
 	return vec4(0.0);
 }
@@ -286,9 +287,9 @@ void fragment() {
 			vec4 albedo = get_layer_albedo(i, UV, UV2);
 			albedo_mix = mix(albedo_mix, albedo.rgb, layer_masks[i] * albedo.a);
 			
-			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i]);
-			roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i]);
-			metallic_mix = mix(metallic_mix, get_layer_metallic(i), layer_masks[i]);
+			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i] * albedo.a);
+			roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i] * albedo.a);
+			metallic_mix = mix(metallic_mix, get_layer_metallic(i), layer_masks[i] * albedo.a);
 		}
 		
 		process_index += 1;

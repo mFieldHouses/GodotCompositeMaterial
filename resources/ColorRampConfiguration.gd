@@ -6,7 +6,7 @@ class_name CPMB_ColorRampConfiguration
 @export var gradient_texture : GradientTexture1D:
 	set(x):
 		gradient_texture = x
-		value_changed.emit(x, "textures")
+		value_changed.emit(x, "color_ramp_textures")
 
 func _init() -> void:
 	fac = CPMB_FloatValue.new(0.5)
@@ -14,4 +14,4 @@ func _init() -> void:
 	gradient_texture.gradient = Gradient.new()
 
 func get_expression() -> String:
-	return "get_color_ramp(%s)" % [index]
+	return "get_color_ramp(%s, %s)" % [index, fac.get_expression()]

@@ -189,37 +189,45 @@ layout_mode = 2
 text = "Vector2"
 
 [node name="x_in" type="Label" parent="." unique_id=359176011]
+visible = false
 layout_mode = 2
 text = "X"
 
 [node name="x_out" type="Label" parent="." unique_id=2028218977]
+visible = false
 layout_mode = 2
 text = "X"
 horizontal_alignment = 2
 
 [node name="y_in" type="Label" parent="." unique_id=219848325]
+visible = false
 layout_mode = 2
 text = "Y"
 
 [node name="y_out" type="Label" parent="." unique_id=19792127]
+visible = false
 layout_mode = 2
 text = "Y"
 horizontal_alignment = 2
 
 [node name="z_in" type="Label" parent="." unique_id=886500961]
+visible = false
 layout_mode = 2
 text = "Z"
 
 [node name="z_out" type="Label" parent="." unique_id=1265709679]
+visible = false
 layout_mode = 2
 text = "Z"
 horizontal_alignment = 2
 
 [node name="w_in" type="Label" parent="." unique_id=1247647582]
+visible = false
 layout_mode = 2
 text = "W"
 
 [node name="w_out" type="Label" parent="." unique_id=1533922310]
+visible = false
 layout_mode = 2
 text = "W"
 horizontal_alignment = 2

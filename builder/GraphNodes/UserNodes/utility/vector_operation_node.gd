@@ -145,6 +145,7 @@ func get_represented_object(port_idx : int) -> Object:
 			_result.y = represented_config.y_in
 			
 		1:
+			print("returning decompose config")
 			match represented_config.vector_type:
 				0:
 					_result = CPMB_DecomposeVec2.new()
@@ -152,8 +153,10 @@ func get_represented_object(port_idx : int) -> Object:
 					_result = CPMB_DecomposeVec3.new()
 				2:
 					_result = CPMB_DecomposeVec4.new()
-				
+			
+			print("channel: ", port_idx)
 			_result.output_channel = port_idx
+			print("source: ", represented_config.source_vector)
 			_result.source_vector = represented_config.source_vector
 				
 	return _result
@@ -171,4 +174,5 @@ func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 				3:
 					represented_config.w_in = object
 		1:
+			print("connected new input: ", object)
 			represented_config.source_vector = object

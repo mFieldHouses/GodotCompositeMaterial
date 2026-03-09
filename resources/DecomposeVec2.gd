@@ -3,7 +3,10 @@ extends CPMB_FloatValue
 class_name CPMB_DecomposeVec2
 
 @export var source_vector : CPMB_Vector2Value
-@export_enum("X", "Y") var output_channel : int = 0
+@export_enum("X", "Y") var output_channel : int = 0:
+	set(x):
+		output_channel = x
+		value_changed.emit(x, "vector2_decomposition_output_channels")
 
 func _init() -> void:
 	source_vector = CPMB_Vector2Value.new()
