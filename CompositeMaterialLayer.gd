@@ -14,7 +14,7 @@ func _init() -> void:
 
 func initialise_value(index : int = -1) -> void:
 	if index == 0 or index == -1:
-		albedo = CPMB_Vector4Value.new()
+		albedo = CPMB_Vector4Value.new(Vector4(0.0, 0.0, 0.0, 1.0))
 	if index == 1 or index == -1:
 		normal = CPMB_Vector3Value.new(Vector3.UP)
 	if index == 2 or index == -1:

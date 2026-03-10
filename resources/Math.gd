@@ -43,3 +43,6 @@ func get_expression() -> String:
 			return "pow(float(" + value_A.get_expression() + "), 1.0 / float(" + value_B.get_expression() + "))"
 		
 	return value_A.get_expression() + " + " + value_B.get_expression()
+
+func _to_string() -> String:
+	return "Math:" + resource_scene_unique_id

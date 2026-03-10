@@ -16,7 +16,12 @@ func get_represented_object(port_idx : int) -> Object:
 
 func set_represented_object(object : Object) -> void:
 	represented_uv_config = object
-
+	
+	$scale_x/value.value = object.scale.x.value
+	$scale_y/value.value = object.scale.y.value
+	$offset_x/value.value = object.offset.x.value
+	$offset_y/value.value = object.offset.y.value
+	
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 	match input_port_id:
 		0:

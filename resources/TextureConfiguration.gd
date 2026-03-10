@@ -18,3 +18,6 @@ func initialise_value(index : int = -1) -> void:
 
 func get_expression() -> String:
 	return "texture(textures[%s], %s)" % [index, uv.get_expression()]
+
+func _to_string() -> String:
+	return "TextureConfiguration:" + resource_scene_unique_id

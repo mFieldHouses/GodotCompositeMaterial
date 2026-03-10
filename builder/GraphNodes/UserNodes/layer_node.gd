@@ -14,7 +14,7 @@ func _node_ready() -> void:
 	represented_layer = CompositeMaterialLayer.new()
 	
 	if Engine.is_editor_hint():
-		node_selected.connect(EditorInterface.edit_resource.bind(represented_layer))
+		node_selected.connect(edit_layer)
 	
 	represented_layer.roughness_value.value = 0.5
 	represented_layer.metallic_value.value = 0.5
@@ -34,7 +34,11 @@ func _node_ready() -> void:
 	
 	$roughness_in/value.value_changed.connect(func(x): represented_layer.roughness_value.value = x)
 	$metallic_in/value.value_changed.connect(func(x): represented_layer.metallic_value.value = x)
-	
+
+
+func edit_layer() -> void:
+	EditorInterface.edit_resource(represented_layer)
+
 
 func start_capturing_keyboard() -> void:
 	capturing_keyboard = true

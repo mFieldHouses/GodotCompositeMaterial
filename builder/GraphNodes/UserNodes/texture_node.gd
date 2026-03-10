@@ -9,7 +9,10 @@ func _node_ready() -> void:
 	respresented_texture_config = CPMB_TextureConfiguration.new()
 	
 	if Engine.is_editor_hint():
-		node_selected.connect(EditorInterface.edit_resource.bind(respresented_texture_config))
+		node_selected.connect(edit_texture)
+
+func edit_texture() -> void:
+	EditorInterface.edit_resource(respresented_texture_config)
 
 func _load_texture() -> void:
 	var _file_dialog : EditorFileDialog = EditorFileDialog.new()

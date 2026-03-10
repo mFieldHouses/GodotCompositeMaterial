@@ -26,6 +26,11 @@ func get_represented_object(port_idx : int) -> Object:
 
 func set_represented_object(object : Object) -> void:
 	represented_config = object
+	
+	$operation.selected = $operation.get_item_index(represented_config.operation)
+	$value_1/value.value = represented_config.value_A.value
+	$value_2/value.value = represented_config.value_B.value
+
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 	match input_port_id:

@@ -12,3 +12,4 @@ func get_represented_object(port_idx : int) -> Object:
 
 func set_represented_object(object : Object) -> void:
 	represented_config = object
+	$scale.value = object.scale.value

@@ -499,10 +499,10 @@ func set_shader_property(value : Variant, shader_property_name : String, id : in
 
 func edit_material(material : CompositeMaterial) -> void:
 	edited_composite_material = material
-
-	output_node.represented_composite_material = edited_composite_material
-
-	reconstruct_material_graph(material)
+	
+	output_node.represented_composite_material = material
+	
+	reconstruct_material_graph(edited_composite_material)
 
 func clear_graph() -> void:
 	for child in get_children():
@@ -520,33 +520,42 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 	
 	clear_graph()
 	
-	var nodes_to_add : Dictionary[Resource, Dictionary] = {} #Map of what resources to add and which nodes and ports they should connect to
+	var nodes_to_add : Array[Array] = [] #Map of what resources to add and which nodes and ports they should connect to
 	var existing_resources : Dictionary[CPMB_Base, CompositeMaterialBuilderGraphNode] = {} #Map of which resources have already been manifested as nodes
 	var decomposition_nodes : Dictionary[CPMB_Base, CompositeMaterialBuilderGraphNode] = {} #Map of decomposition nodes keyed by their source value resource
 	
 	var layer_nodes : Array[LayerNode] = []
 	
-	for layer in material.layers:
-		#print("layer")
-		nodes_to_add[layer] = {"from_port": 0, "to_node": "output", "to_port": 0}
+	var simple_instantiation_map : Dictionary[String, Array] = {
+		"CPMB_TextureConfiguration":["uv"],
+		"CPMB_ColorRampConfiguration": ["fac"],
+		"CPMB_UVTransformConfiguration": ["base_uv", "scale", "offset"]
+	}
 	
-	while nodes_to_add.keys().size() > 0:
-		var _do_not_connect_automatically : bool = false
-		var _resource : Resource = nodes_to_add.keys()[0]
-		var _instructions : Dictionary = nodes_to_add[_resource]
+
+	for layer in material.layers:
+		nodes_to_add.append([layer, {"from_port": 0, "to_node": "output", "to_port": 0}])
+	
+	while nodes_to_add.size() > 0:
+		var _tmp = nodes_to_add.pop_front()
+		var _resource : Resource = _tmp[0]
+		var _instructions : Dictionary = _tmp[1]
 		var _to_node = get_node(_instructions.to_node)
 		
-		#print("resource ", _resource)
-		
-		nodes_to_add.erase(_resource)
+		print("resource ", _resource)
 		
 		if _resource is CPMB_Base:
 			if _resource.internal_to_node:
+				print("resource is internal, skipping this one")
 				continue
 		
 		var _new_node : CompositeMaterialBuilderGraphNode
-		#print("checking resource type")
-		if _resource is CompositeMaterialLayer:
+		
+		if existing_resources.has(_resource as CPMB_Base):
+			print("resource already exists as a node")
+			_new_node = existing_resources[_resource as CPMB_Base]
+		
+		elif _resource is CompositeMaterialLayer:
 			_new_node = instantiate_node("LayerNode")
 			add_child(_new_node)
 			
@@ -554,29 +563,52 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			var _new_subnode = _to_node.add_slot()
 			_new_subnode.linked_node = _new_node
 			connect_node(_new_node.name, 0, _new_subnode.name, 0)
-			_do_not_connect_automatically = true
 			
-			nodes_to_add[_resource.albedo] = {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.albedo.get_output_port_for_state()}
+			print(_resource.roughness_value)
+			print(_resource.mask)
+			
+			nodes_to_add.append([_resource.albedo,  {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.albedo.get_output_port_for_state()}])
 			#nodes_to_add[_resource.normal] = {"to_node": _new_node.name, "to_port": 1, "from_port": _resource.albedo.get_output_port_for_state()}
-			nodes_to_add[_resource.mask] = {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.mask.get_output_port_for_state()}
+			nodes_to_add.append([_resource.roughness_value,  {"to_node": String(_new_node.name), "to_port": 2, "from_port": _resource.roughness_value.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.metallic_value,  {"to_node": String(_new_node.name), "to_port": 3, "from_port": _resource.metallic_value.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.mask,  {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.albedo.get_output_port_for_state()}])
 			
-			_new_node.set_represented_object(_resource)
 			layer_nodes.append(_new_node)
+			
+			#await get_tree().create_timer(0.1).timeout
+			_new_node.set_represented_object(_resource)
 			continue
 			#
 		elif _resource is CPMB_DirectionalMaskConfiguration:
 			_new_node = instantiate_node("masks/DirectionalMaskNode")
 		elif _resource is CPMB_TextureConfiguration:
 			_new_node = instantiate_node("TextureNode")
-		
-		
+			nodes_to_add.append([_resource.uv, {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.uv.get_output_port_for_state()}])
+		elif _resource is CPMB_UVMapConfiguration:
+			_new_node = instantiate_node("UVMapNode")
+		elif _resource is CPMB_UVTransformConfiguration:
+			_new_node = instantiate_node("UVTransformNode")
+			nodes_to_add.append([_resource.base_uv, {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.base_uv.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.scale.x, {"to_node": String(_new_node.name), "to_port": 1, "from_port": _resource.scale.x.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.scale.y, {"to_node": String(_new_node.name), "to_port": 2, "from_port": _resource.scale.y.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.offset.x, {"to_node": String(_new_node.name), "to_port": 3, "from_port": _resource.offset.x.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.offset.y, {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.offset.y.get_output_port_for_state()}])
+		elif _resource is CPMB_TriplanarUVConfiguration:
+			_new_node = instantiate_node("TriplanarMapNode")
+		elif _resource is CPMB_TimeConfig:
+			_new_node = instantiate_node("utility/TimeNode")
+		elif _resource is CPMB_Math:
+			_new_node = instantiate_node("utility/MathNode")
 		
 		if _new_node:
-			add_child(_new_node)
-			_new_node.set_represented_object(_resource)
+			if !existing_resources.has(_resource):
+				add_child(_new_node)
 			connect_node(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
 			(get_node(_instructions.to_node) as CompositeMaterialBuilderGraphNode).call_deferred("connect_and_pass_object", _instructions.to_port, _resource)
-		
+			
+			#await get_tree().create_timer(0.1).timeout
+			_new_node.set_represented_object(_resource)
+			existing_resources[_resource as CPMB_Base] = _new_node
 	
 	await get_tree().create_timer(0.1).timeout
 	

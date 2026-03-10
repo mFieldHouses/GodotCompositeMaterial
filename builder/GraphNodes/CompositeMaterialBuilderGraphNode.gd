@@ -3,6 +3,7 @@ extends GraphNode
 class_name CompositeMaterialBuilderGraphNode
 
 @export var represented_resource_variable_name : String = ""
+@export var set_represented_resource_map : Dictionary[String, String] = {}
 
 @export var title_bar_color : Color = Color.DARK_KHAKI
 
@@ -21,10 +22,13 @@ func connect_and_pass_object(input_port_id : int, object : Object) -> void: ##Ov
 	pass
 
 func get_represented_object(port_idx : int) -> Object: ##This method must be overridden to provide values in the case of connections.
+	printerr("get_represented_object has not been overridden yet: ", self)
 	return null
 
 func set_represented_object(object : Object) -> void:
+	printerr("set_represented_object has not been overridden yet: ", self)
 	pass
+	#set(represented_resource_variable_name, object)
 
 func disconnected(input_port_id : int) -> void:
 	get(represented_resource_variable_name).initialise_value(input_port_id)
