@@ -161,6 +161,16 @@ func get_represented_object(port_idx : int) -> Object:
 				
 	return _result
 
+func set_represented_object(object : Object) -> void:
+	
+	if object is CPMB_VectorOperationConfiguration:
+		represented_config = object
+	elif object is CPMB_DecomposeVec4:
+		represented_config.vector_type = CPMB_VectorOperationConfiguration.VectorType.VECTOR4
+		represented_config.operation = CPMB_VectorOperationConfiguration.OperationType.DECOMPOSE
+	
+	update_node()
+
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 	match represented_config.operation:
 		0:

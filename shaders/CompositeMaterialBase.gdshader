@@ -222,6 +222,9 @@ varying vec3 local_vertex_pos;
 varying vec3 vertex_color;
 varying vec3 global_camera_pos;
 
+varying vec2 uv;
+varying vec2 uv2;
+
 #if NUM_COLOR_RAMPS > 0
 uniform sampler2D[NUM_COLOR_RAMPS] color_ramp_textures : source_color, repeat_disable;
 vec4 get_color_ramp(int color_ramp_id, float fac) {
@@ -230,7 +233,7 @@ vec4 get_color_ramp(int color_ramp_id, float fac) {
 }
 #endif
 
-vec4 get_layer_albedo(int layer_index, vec2 uv, vec2 uv2) {
+vec4 get_layer_albedo(int layer_index) {
 	//get_albedo
 	return vec4(0.0);
 }
@@ -261,8 +264,8 @@ void vertex() {
 
 void fragment() {
 	
-	vec2 uv = UV;
-	vec2 uv2 = UV2;
+	uv = UV;
+	uv2 = UV2;
 	
 	vec3 albedo_mix;
 	vec3 normal_mix;
@@ -278,7 +281,7 @@ void fragment() {
 	
 	for (int i = starting_index; i < NUM_LAYERS; i++) {
 		if (process_index == 0) {
-			vec4 albedo = get_layer_albedo(i, UV, UV2);
+			vec4 albedo = get_layer_albedo(i);
 			albedo_mix = albedo.rgb;
 			//ALPHA = albedo.a;
 			normal_mix = get_layer_normal(i);
@@ -286,7 +289,7 @@ void fragment() {
 			metallic_mix = get_layer_metallic(i);
 		}
 		else {
-			vec4 albedo = get_layer_albedo(i, UV, UV2);
+			vec4 albedo = get_layer_albedo(i);
 			albedo_mix = mix(albedo_mix, albedo.rgb, layer_masks[i] * albedo.a);
 			
 			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i] * albedo.a);

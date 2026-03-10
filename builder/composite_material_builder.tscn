@@ -55,7 +55,6 @@ custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
 
 [node name="template_page" type="GraphEdit" parent="pages" unique_id=339063044]
-visible = false
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 1
 anchors_preset = 15
@@ -64,6 +63,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
+scroll_offset = Vector2(-0.0004272461, 3.0517578e-05)
 grid_pattern = 1
 snapping_enabled = false
 right_disconnects = true
@@ -163,8 +163,7 @@ item_2/id = 2
 
 [node name="output" parent="pages/template_page" unique_id=1293774481 instance=ExtResource("3_xl7ga")]
 layout_mode = 0
-offset_left = 640.0
-offset_top = 180.0
-offset_right = 882.0
-offset_bottom = 386.0
-set_represented_resource_map = null
+offset_left = 640.0004
+offset_top = 179.99997
+offset_right = 882.0006
+offset_bottom = 385.99966

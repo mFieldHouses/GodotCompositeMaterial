@@ -26,6 +26,8 @@ var node_groups : Dictionary[String, Array] = {
 	"masks": []
 }
 
+var initial_mouse_position : Vector2 #value used for storing where the user opened the context menu in case the user wants to add a node
+
 func _ready() -> void:
 	connection_request.connect(_connection_requested)
 	disconnection_request.connect(_disconnection_request)
@@ -39,7 +41,7 @@ func _ready() -> void:
 	
 
 func _process(delta: float) -> void:
-	pass
+	print(scroll_offset)
 
 
 func _connection_requested(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
@@ -100,6 +102,7 @@ func _gui_input(event: InputEvent) -> void:
 			return
 		
 		if event.button_index == MOUSE_BUTTON_RIGHT:
+			initial_mouse_position = get_local_mouse_position()
 			$context_menu.popup(Rect2i(get_global_mouse_position(), Vector2i(100,100)))
 	
 	elif event is InputEventKey:
@@ -117,7 +120,7 @@ func add_node(idx1 : int, idx2 : int) -> void:
 	instantiate_node_at_mouse(_node_name)
 	
 func instantiate_node_at_mouse(node_name : String) -> void:
-	var _node = load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_name + ".tscn").instantiate()
+	var _node : CompositeMaterialBuilderGraphNode = load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_name + ".tscn").instantiate()
 	add_child(_node)
 	
 	if _node is LayerNode:
@@ -126,7 +129,7 @@ func instantiate_node_at_mouse(node_name : String) -> void:
 	elif _node is MaskNode:
 		add_node_to_group(_node, "masks")
 	
-	_node.global_position = get_global_mouse_position()
+	_node.position_offset = (scroll_offset / zoom) + (initial_mouse_position / zoom)
 
 func add_node_to_group(node : GraphNode, group_name : String) -> void:
 	if node_groups.has(group_name):
@@ -578,7 +581,11 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			#await get_tree().create_timer(0.1).timeout
 			_new_node.set_represented_object(_resource)
 			continue
-			#
+		
+		elif _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4:
+			_new_node = instantiate_node("utility/VectorOperationNode")
+			nodes_to_add.append([_resource.source_vector, {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.source_vector.get_output_port_for_state()}])
+		
 		elif _resource is CPMB_DirectionalMaskConfiguration:
 			_new_node = instantiate_node("masks/DirectionalMaskNode")
 		elif _resource is CPMB_TextureConfiguration:
