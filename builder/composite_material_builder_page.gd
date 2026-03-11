@@ -6,7 +6,7 @@ var output_node : CompositeMaterialOutputNode
 
 var node_mappings : Array = [
 	["LayerNode", "VariableNode", "", "", "", "DistanceFadeNode"],
-	["textures/TextureNode", "textures/ColorRampNode", "textures/NormalMapNode"],
+	["textures/TextureNode", "textures/ColorRampNode", "textures/NormalMapNode", "textures/DepthMapNode", "textures/NoiseTextureNode"],
 	["UVTransformNode","UVMapNode","TriplanarMapNode"],
 	["masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/VertexColorMaskNode", "masks/EffectShapeMaskNode", "masks/UVMaskNode", "masks/NormalMapMaskNode"],
 	["utility/TimeNode", "utility/MathNode", "utility/VectorOperationNode"]
@@ -114,7 +114,7 @@ func add_node(idx1 : int, idx2 : int) -> void:
 	instantiate_node_at_mouse(_node_name)
 	
 func instantiate_node_at_mouse(node_name : String) -> void:
-	var _node : CompositeMaterialBuilderGraphNode = load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_name + ".tscn").instantiate()
+	var _node = load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_name + ".tscn").instantiate()
 	add_child(_node)
 	
 	if _node is LayerNode:

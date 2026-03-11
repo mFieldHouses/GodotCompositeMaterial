@@ -106,7 +106,13 @@ text = "Load texture"
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="texture_view" type="TextureRect" parent="." unique_id=1004159057]
+[node name="FoldableContainer" type="FoldableContainer" parent="." unique_id=69738558]
+layout_mode = 2
+folded = true
+title = "Texture preview"
+
+[node name="texture_view" type="TextureRect" parent="FoldableContainer" unique_id=1004159057]
+visible = false
 layout_mode = 2
 expand_mode = 5
 stretch_mode = 4

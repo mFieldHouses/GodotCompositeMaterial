@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://gu1j8h3nm2m2"]
+
+[ext_resource type="Script" uid="uid://25dwvl545gf4" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/textures/noise_texture_node.gd" id="1_bth5l"]
+[ext_resource type="PackedScene" uid="uid://bjf5nk1ipb353" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/textures/TextureNode.tscn" id="2_ukebk"]
+[ext_resource type="Script" uid="uid://b5gr64jphjmpw" path="res://addons/CompositeMaterial/resources/TextureConfiguration.gd" id="3_b1gof"]
+[ext_resource type="Script" uid="uid://ceepdgj2ci30a" path="res://addons/CompositeMaterial/resources/UVMapConfiguration.gd" id="4_v384q"]
+
+[sub_resource type="Resource" id="Resource_ukebk"]
+script = ExtResource("4_v384q")
+value = Vector2(inf, inf)
+
+[sub_resource type="Resource" id="Resource_503x2"]
+script = ExtResource("3_b1gof")
+uv = SubResource("Resource_ukebk")
+value = Vector4(inf, inf, inf, inf)
+
+[node name="NoiseTextureNode" type="Node" unique_id=1968927465]
+script = ExtResource("1_bth5l")
+
+[node name="TextureNode" parent="." unique_id=962352097 instance=ExtResource("2_ukebk")]
+respresented_texture_config = SubResource("Resource_503x2")

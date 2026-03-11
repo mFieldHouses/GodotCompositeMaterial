@@ -18,6 +18,7 @@ func _init(value : Vector3 = Vector3.ZERO) -> void:
 func initialise_value(index : int = -1) -> void:
 	if index == 0 or index == -1:
 		uv = CPMB_UVMapConfiguration.new()
+		uv.internal_to_node = true
 
 func get_expression() -> String:
 	return "mix(vec3(0.5, 0.5, 1.0), texture(normal_map_textures[%s], %s).rgb, normal_map_scales[%s])" % [index, uv.get_expression(), index]
