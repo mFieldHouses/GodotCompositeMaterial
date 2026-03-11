@@ -10,7 +10,7 @@ func _node_ready() -> void:
 	
 	represented_normal_map_config = CPMB_NormalMapConfiguration.new()
 	
-	if !Engine.is_editor_hint():
+	if Engine.is_editor_hint():
 		node_selected.connect(edit_texture)
 
 func _process(delta: float) -> void:
@@ -33,7 +33,7 @@ func _load_texture() -> void:
 	$FoldableContainer.folded = false
 
 func edit_texture() -> void:
-	EditorInterface.edit_resource(represented_normal_map_config.normal_map)
+	EditorInterface.edit_resource(represented_normal_map_config)
 
 func get_represented_object(port_idx : int) -> Object:
 	return represented_normal_map_config

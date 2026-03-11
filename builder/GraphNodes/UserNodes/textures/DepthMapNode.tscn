@@ -1,25 +1,14 @@
-[gd_scene format=3 uid="uid://bjf5nk1ipb353"]
+[gd_scene format=3 uid="uid://dkbe84ofh783i"]
 
-[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_dmtf5"]
-[ext_resource type="Script" uid="uid://th3iwfgyvayb" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/textures/texture_node.gd" id="2_suxfi"]
-[ext_resource type="Script" uid="uid://b5gr64jphjmpw" path="res://addons/CompositeMaterial/resources/builder/TextureConfiguration.gd" id="3_suxfi"]
-[ext_resource type="Script" uid="uid://ceepdgj2ci30a" path="res://addons/CompositeMaterial/resources/builder/UVMapConfiguration.gd" id="5_wam4e"]
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_xr6ia"]
+[ext_resource type="Script" uid="uid://bb7ru3gehbdhk" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/textures/depth_map_node.gd" id="2_xr6ia"]
 
-[sub_resource type="Resource" id="Resource_lckmy"]
-script = ExtResource("5_wam4e")
-value = Vector2(inf, inf)
-
-[sub_resource type="Resource" id="Resource_u7sga"]
-script = ExtResource("3_suxfi")
-uv = SubResource("Resource_lckmy")
-value = Vector4(inf, inf, inf, inf)
-
-[node name="TextureNode" type="GraphNode" unique_id=962352097]
+[node name="DepthMapNode" type="GraphNode" unique_id=962352097]
 offset_right = 239.0
-offset_bottom = 126.0
+offset_bottom = 272.0
 tooltip_text = "Loads in a texture and samples it according to the input UV."
-theme = ExtResource("1_dmtf5")
-title = "Texture"
+theme = ExtResource("1_xr6ia")
+title = "Depth Map"
 slot/0/left_enabled = true
 slot/0/left_type = 4
 slot/0/left_color = Color(1, 1, 1, 1)
@@ -79,7 +68,7 @@ slot/6/left_type = 0
 slot/6/left_color = Color(1, 1, 1, 1)
 slot/6/left_icon = null
 slot/6/right_enabled = false
-slot/6/right_type = 2
+slot/6/right_type = 3
 slot/6/right_color = Color(1, 1, 1, 1)
 slot/6/right_icon = null
 slot/6/draw_stylebox = true
@@ -87,14 +76,21 @@ slot/7/left_enabled = false
 slot/7/left_type = 0
 slot/7/left_color = Color(1, 1, 1, 1)
 slot/7/left_icon = null
-slot/7/right_enabled = true
+slot/7/right_enabled = false
 slot/7/right_type = 2
 slot/7/right_color = Color(1, 1, 1, 1)
 slot/7/right_icon = null
 slot/7/draw_stylebox = true
-script = ExtResource("2_suxfi")
-respresented_texture_config = SubResource("Resource_u7sga")
-represented_resource_variable_name = "represented_texture_config"
+slot/8/left_enabled = false
+slot/8/left_type = 0
+slot/8/left_color = Color(1, 1, 1, 1)
+slot/8/left_icon = null
+slot/8/right_enabled = true
+slot/8/right_type = 3
+slot/8/right_color = Color(1, 1, 1, 1)
+slot/8/right_icon = null
+slot/8/draw_stylebox = true
+script = ExtResource("2_xr6ia")
 metadata/_custom_type_script = "uid://th3iwfgyvayb"
 
 [node name="uv_in" type="Label" parent="." unique_id=408030845]
@@ -109,7 +105,13 @@ text = "Load texture"
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="texture_view" type="TextureRect" parent="." unique_id=1004159057]
+[node name="FoldableContainer" type="FoldableContainer" parent="." unique_id=69738558]
+layout_mode = 2
+folded = true
+title = "Texture preview"
+
+[node name="texture_view" type="TextureRect" parent="FoldableContainer" unique_id=1004159057]
+visible = false
 layout_mode = 2
 expand_mode = 5
 stretch_mode = 4
@@ -118,18 +120,15 @@ stretch_mode = 4
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="filter" type="OptionButton" parent="." unique_id=567650387]
+[node name="Label" type="Label" parent="." unique_id=940598327]
 layout_mode = 2
-selected = 1
-item_count = 4
-popup/item_0/text = "Linear"
-popup/item_0/id = 0
-popup/item_1/text = "Linear Mipmap"
-popup/item_1/id = 1
-popup/item_2/text = "Nearest Neighbor"
-popup/item_2/id = 2
-popup/item_3/text = "Nearest Neighbor Mipmap"
-popup/item_3/id = 3
+text = "Scale"
+
+[node name="scale" type="SpinBox" parent="." unique_id=388833047]
+layout_mode = 2
+min_value = -100.0
+step = 0.001
+value = 1.0
 
 [node name="export" type="CheckButton" parent="." unique_id=1791086357]
 layout_mode = 2
@@ -137,5 +136,5 @@ text = "As export variable"
 
 [node name="albedo_out" type="Label" parent="." unique_id=1737254237]
 layout_mode = 2
-text = "Albedo"
+text = "Normal"
 horizontal_alignment = 2
