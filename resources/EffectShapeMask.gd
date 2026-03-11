@@ -17,6 +17,5 @@ func get_expression() -> String:
 func _to_string() -> String:
 	return "EffectShapeMask:" + resource_scene_unique_id
 
-func call_setters() -> void:
-	layer = layer
-	falloff_distance = falloff_distance
+func get_mapping_key() -> String:
+	return "EffectShapeMaskConfiguration"

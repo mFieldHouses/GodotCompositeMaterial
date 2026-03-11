@@ -14,9 +14,19 @@ func _init() -> void:
 	initialise_value()
 
 func initialise_value(index : int = -1) -> void:
-	print("initialise")
 	fac = CPMB_FloatValue.new(0.5)
 
 func get_expression() -> String:
-	print("expression requested from color ramp")
 	return "get_color_ramp(%s, %s)" % [index, fac.get_expression()]
+
+func get_mapping_key() -> String:
+	return "CPMB_ColorRampConfiguration"
+
+func get_child_resources() -> Array[CPMB_Base]:
+	return [fac]
+
+func on_mapped(resource_map : Dictionary[String, Array]) -> void:
+	resource_map.ColorRampTexture.append(gradient_texture)
+
+func get_node_name() -> String:
+	return "textures/ColorRampNode"

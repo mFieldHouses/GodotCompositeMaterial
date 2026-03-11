@@ -9,3 +9,6 @@ class_name CPMB_PositionalMaskConfiguration
 
 func get_expression() -> String:
 	return "get_positional_mask(%s, local_vertex_pos, global_vertex_pos)" % index
+
+func get_mapping_key() -> String:
+	return "PositionalMaskConfiguration"

@@ -19,5 +19,5 @@ func get_expression() -> String:
 func _to_string() -> String:
 	return "Vector2Value:" + resource_scene_unique_id
 
-#func call_setters() -> void:
-	#value = value
+func get_mapping_key() -> String:
+	return "Vector2Value"

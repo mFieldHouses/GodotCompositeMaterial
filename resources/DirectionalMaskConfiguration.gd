@@ -19,3 +19,9 @@ enum PolarityType {BIPOLAR, MONOPOLAR_POSITIVE, MONOPOLAR_NEGATIVE}
 
 func get_expression() -> String:
 	return "get_directional_mask(%s, local_vertex_normal, global_vertex_normal)" % index
+
+func get_mapping_key() -> String:
+	return "DirectionalMaskConfiguration"
+
+func get_node_name() -> String:
+	return "masks/DirectionalMaskNode"

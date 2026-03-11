@@ -15,11 +15,16 @@ func _init() -> void:
 func initialise_value(index : int = -1) -> void:
 	if index == 0 or index == -1:
 		albedo = CPMB_Vector4Value.new(Vector4(0.0, 0.0, 0.0, 1.0))
+		albedo.internal_to_node = true
 	if index == 1 or index == -1:
 		normal = CPMB_Vector3Value.new(Vector3.UP)
+		normal.internal_to_node = true
 	if index == 2 or index == -1:
 		roughness_value = CPMB_FloatValue.new()
+		roughness_value.internal_to_node = true
 	if index == 3 or index == -1:
 		metallic_value = CPMB_FloatValue.new()
+		metallic_value.internal_to_node = true
 	if index == 4 or index == -1:
 		mask = CPMB_FloatValue.new(1.0)
+		mask.internal_to_node = true

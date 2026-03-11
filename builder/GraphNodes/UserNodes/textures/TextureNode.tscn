@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bjf5nk1ipb353"]
 
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_dmtf5"]
-[ext_resource type="Script" uid="uid://th3iwfgyvayb" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/texture_node.gd" id="2_suxfi"]
+[ext_resource type="Script" uid="uid://th3iwfgyvayb" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/textures/texture_node.gd" id="2_suxfi"]
 [ext_resource type="Script" uid="uid://b5gr64jphjmpw" path="res://addons/CompositeMaterial/resources/TextureConfiguration.gd" id="3_suxfi"]
 [ext_resource type="Script" uid="uid://ceepdgj2ci30a" path="res://addons/CompositeMaterial/resources/UVMapConfiguration.gd" id="5_wam4e"]
 

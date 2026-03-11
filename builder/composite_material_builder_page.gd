@@ -5,10 +5,10 @@ class_name CompositeMaterialBuilderPage
 var output_node : CompositeMaterialOutputNode
 
 var node_mappings : Array = [
-	["VariableNode", "LayerNode", "TextureNode", "ColorRampNode", "", "", "", "DistanceFadeNode"],
+	["LayerNode", "VariableNode", "", "", "", "DistanceFadeNode"],
+	["textures/TextureNode", "textures/ColorRampNode", "textures/NormalMapNode"],
 	["UVTransformNode","UVMapNode","TriplanarMapNode"],
 	["masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/VertexColorMaskNode", "masks/EffectShapeMaskNode", "masks/UVMaskNode", "masks/NormalMapMaskNode"],
-	["vector/VectorMathNode", "vector/ComposeVector2Node", "vector/DecomposeVector2Node", "vector/ComposeVector3Node", "vector/DecomposeVector3Node", "vector/ComposeVector4Node", "vector/DecomposeVector4Node"],
 	["utility/TimeNode", "utility/MathNode", "utility/VectorOperationNode"]
 ]
 
@@ -28,20 +28,17 @@ var node_groups : Dictionary[String, Array] = {
 
 var initial_mouse_position : Vector2 #value used for storing where the user opened the context menu in case the user wants to add a node
 
+var is_building_material : bool = false
+
 func _ready() -> void:
 	connection_request.connect(_connection_requested)
 	disconnection_request.connect(_disconnection_request)
-	$context_menu.id_pressed.connect(_context_menu_option_pressed)
 	
 	node_selected.connect(func(node): selected_node = node)
 	node_deselected.connect(func(node): selected_node = null)
 	
 	output_node = $output
 	output_node.request_rebuild.connect(build_material)
-	
-
-func _process(delta: float) -> void:
-	print(scroll_offset)
 
 
 func _connection_requested(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
@@ -103,7 +100,7 @@ func _gui_input(event: InputEvent) -> void:
 		
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			initial_mouse_position = get_local_mouse_position()
-			$context_menu.popup(Rect2i(get_global_mouse_position(), Vector2i(100,100)))
+			$context_menu.popup(Rect2i(get_global_mouse_position() + Vector2(0, 50), Vector2i(100,100)))
 	
 	elif event is InputEventKey:
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE and event.pressed:
@@ -111,9 +108,6 @@ func _gui_input(event: InputEvent) -> void:
 				selected_node.queue_free()
 				selected_node = null
 			
-
-func _context_menu_option_pressed(option_id : int) -> void:
-	print(option_id)
 
 func add_node(idx1 : int, idx2 : int) -> void:
 	var _node_name = node_mappings[idx1][idx2]
@@ -150,46 +144,44 @@ func deregister_dynamic_node(node : GraphNode) -> void:
 		dynamic_nodes.erase(node)
 
 func build_material() -> void:
+	
+	is_building_material = true
+	
 	#Clear out material
 	edited_composite_material.layers = [] as Array[CompositeMaterialLayer]
 	
 	#Map out all used resources
 	var mapped_resources : Dictionary[String, Array] = {
-		"DirectionalMaskConfiguration": [],
-		"PositionalMaskConfiguration": [],
-		"VertexColorMaskConfiguration": [],
-		"EffectShapeMaskConfiguration": [],
-		
-		"UVTransformConfiguration": [],
-		"UVMapConfiguration": [],
-		"TriplanarUVConfiguration": [],
-		
-		"ColorRampConfiguration": [],
-		"ColorRampTexture": [], #need their own array for repeat_disable hint
-		"TextureConfiguration": [],
-		"Texture": [],
-		
-		"ComposeVector2": [],
-		"ComposeVector3": [],
-		"ComposeVector4": [],
-		
-		"DecomposeVector2": [],
-		"DecomposeVector3": [],
-		"DecomposeVector4": [],
-		
-		"IntValue": [],
-		"FloatValue": [],
-		"Vector2Value": [],
-		"Vector3Value": [],
-		"Vector4Value": []
+		#"DirectionalMaskConfiguration": [],
+		#"PositionalMaskConfiguration": [],
+		#"VertexColorMaskConfiguration": [],
+		#"EffectShapeMaskConfiguration": [],
+		#
+		#"UVTransformConfiguration": [],
+		#"UVMapConfiguration": [],
+		#"TriplanarUVConfiguration": [],
+		#
+		#"ColorRampConfiguration": [],
+		#"ColorRampTexture": [], #need their own array for repeat_disable hint
+		#"TextureConfiguration": [],
+		#"Texture": [],
+		#
+		#"ComposeVector2": [],
+		#"ComposeVector3": [],
+		#"ComposeVector4": [],
+		#
+		#"DecomposeVector2": [],
+		#"DecomposeVector3": [],
+		#"DecomposeVector4": [],
+		#
+		#"IntValue": [],
+		#"FloatValue": [],
+		#"Vector2Value": [],
+		#"Vector3Value": [],
+		#"Vector4Value": []
 	}
 	
 	var resources_to_check : Array[CPMB_Base] = []
-	
-	var append_resource_to_mapped_resources : Callable = func(resource : CPMB_Base, array_name : String) -> void:
-		#print("assigning index ", mapped_resources[array_name].size(), " to ", resource)
-		resource.index = mapped_resources[array_name].size()
-		mapped_resources[array_name].append(resource)
 	
 	#Initialize resources_to_check with resources in all layers
 	for subnode : SubNode in $output.get_connected_layers():
@@ -211,85 +203,25 @@ func build_material() -> void:
 	#Go through resources_to_check and expand where neccesary until all resources have been checked and/or mapped.
 	while resources_to_check.size() > 0:
 		var resource_to_check : CPMB_Base = resources_to_check.pop_front()
+		var resource_mapping_key : String = resource_to_check.get_mapping_key()
 		print("mapping ", resource_to_check)
+		
+		if resource_mapping_key != "":
+			if !mapped_resources.has(resource_mapping_key):
+				mapped_resources[resource_mapping_key] = []
+			
+			if mapped_resources[resource_mapping_key].has(resource_to_check):
+				continue
+			
+			resource_to_check.index = mapped_resources[resource_mapping_key].size()
+			mapped_resources[resource_mapping_key].append(resource_to_check)
+			
+		resources_to_check.append_array(resource_to_check.get_child_resources())
 		
 		if !resource_to_check.is_connected("request_material_rebuild", request_rebuild_material):
 			resource_to_check.request_material_rebuild.connect(request_rebuild_material)
 		
-		if resource_to_check is CPMB_DirectionalMaskConfiguration:
-			append_resource_to_mapped_resources.call(resource_to_check, "DirectionalMaskConfiguration")
-		elif resource_to_check is CPMB_PositionalMaskConfiguration:
-			append_resource_to_mapped_resources.call(resource_to_check, "PositionalMaskConfiguration")
-		elif resource_to_check is CPMB_VertexColorMaskConfiguration:
-			append_resource_to_mapped_resources.call(resource_to_check, "VertexColorMaskConfiguration")
-		elif resource_to_check is CPMB_EffectShapeMaskConfiguration:
-			append_resource_to_mapped_resources.call(resource_to_check, "EffectShapeMaskConfiguration")
-		elif resource_to_check is CPMB_UVMapConfiguration:
-			append_resource_to_mapped_resources.call(resource_to_check, "UVMapConfiguration")
-		elif resource_to_check is CPMB_UVTransformConfiguration:
-			append_resource_to_mapped_resources.call(resource_to_check, "UVTransformConfiguration")
-			resources_to_check.append(resource_to_check.base_uv)
-			resources_to_check.append(resource_to_check.offset)
-			resources_to_check.append(resource_to_check.scale)
-		elif resource_to_check is CPMB_TriplanarUVConfiguration:
-			append_resource_to_mapped_resources.call(resource_to_check, "TriplanarUVConfiguration")
-		elif resource_to_check is CPMB_UVConfiguration:
-			printerr("Found a UVConfiguration, which should not happen")
-		elif resource_to_check is CPMB_TextureConfiguration:
-			append_resource_to_mapped_resources.call(resource_to_check, "TextureConfiguration")
-			mapped_resources.Texture.append(resource_to_check.texture)
-			resources_to_check.append(resource_to_check.uv)
-		elif resource_to_check is CPMB_ColorRampConfiguration:
-			mapped_resources.ColorRampTexture.append(resource_to_check.gradient_texture)
-			append_resource_to_mapped_resources.call(resource_to_check, "ColorRampConfiguration")
-			resources_to_check.append(resource_to_check.fac)
-		
-		elif resource_to_check is CPMB_Math:
-			resources_to_check.append(resource_to_check.value_A)
-			resources_to_check.append(resource_to_check.value_B)
-		
-		elif resource_to_check is CPMB_ComposeVec2:
-			resources_to_check.append(resource_to_check.x)
-			resources_to_check.append(resource_to_check.y)
-			append_resource_to_mapped_resources.call(resource_to_check, "ComposeVector2")
-		elif resource_to_check is CPMB_ComposeVec3:
-			resources_to_check.append(resource_to_check.x)
-			resources_to_check.append(resource_to_check.y)
-			resources_to_check.append(resource_to_check.z)
-			append_resource_to_mapped_resources.call(resource_to_check, "ComposeVector3")
-		elif resource_to_check is CPMB_ComposeVec4:
-			resources_to_check.append(resource_to_check.x)
-			resources_to_check.append(resource_to_check.y)
-			resources_to_check.append(resource_to_check.z)
-			resources_to_check.append(resource_to_check.w)
-			append_resource_to_mapped_resources.call(resource_to_check, "ComposeVector4")
-		
-		elif resource_to_check is CPMB_DecomposeVec2:
-			resources_to_check.append(resource_to_check.source_vector)
-			append_resource_to_mapped_resources.call(resource_to_check, "DecomposeVector2")
-		elif resource_to_check is CPMB_DecomposeVec3:
-			resources_to_check.append(resource_to_check.source_vector)
-			append_resource_to_mapped_resources.call(resource_to_check, "DecomposeVector3")
-		elif resource_to_check is CPMB_DecomposeVec4:
-			resources_to_check.append(resource_to_check.source_vector)
-			append_resource_to_mapped_resources.call(resource_to_check, "DecomposeVector4")
-		
-		elif resource_to_check is CPMB_TimeConfig:
-			resources_to_check.append(resource_to_check.scale)
-		
-		#these are base classes, classes that extend these should be checked for first
-		elif resource_to_check is CPMB_Vector2Value:
-			print("Found vector2value")
-			append_resource_to_mapped_resources.call(resource_to_check, "Vector2Value")
-		elif resource_to_check is CPMB_Vector3Value:
-			append_resource_to_mapped_resources.call(resource_to_check, "Vector3Value")
-		elif resource_to_check is CPMB_Vector4Value:
-			append_resource_to_mapped_resources.call(resource_to_check, "Vector4Value")
-		elif resource_to_check is CPMB_IntValue:
-			append_resource_to_mapped_resources.call(resource_to_check, "IntValue")
-		elif resource_to_check is CPMB_FloatValue:
-			#print("Resource is FloatValue: ", resource_to_check)
-			append_resource_to_mapped_resources.call(resource_to_check, "FloatValue")
+		resource_to_check.on_mapped(mapped_resources)
 	
 	var _shader : Shader = Shader.new()
 	edited_composite_material.shader = _shader
@@ -305,6 +237,7 @@ func build_material() -> void:
 		"TriplanarUVConfiguration" : "NUM_TRIPLANAR_MAPS",
 		"ColorRampTexture": "NUM_COLOR_RAMPS",
 		"Texture" : "NUM_TEXTURES",
+		"NormalMapTexture" : "NUM_NORMAL_MAP_TEXTURES",
 		"IntValue" : "NUM_INT_VALUES",
 		"FloatValue" : "NUM_FLOAT_VALUES",
 		"DecomposeVector2" : "NUM_VECTOR2_DECOMPOSITIONS",
@@ -317,17 +250,19 @@ func build_material() -> void:
 	
 	#print(mapped_resources)
 	
-	
-	
 	edited_composite_material.shader.code = edited_composite_material.shader.code.replace("NUM_LAYERS 1", "NUM_LAYERS " + str(edited_composite_material.layers.size()))
 	
 	var parameters_to_be_initialised : Array
 	
 	for key in definition_map.keys():
-		print(definition_map[key] + " " + str(mapped_resources[key].size()))
 		
+		if !mapped_resources.has(key):
+			continue
 		if mapped_resources[key].size() == 0:
 			continue
+		
+		print(definition_map[key] + " " + str(mapped_resources[key].size()))
+
 		
 		edited_composite_material.shader.code = edited_composite_material.shader.code.replace(definition_map[key] + " 0", definition_map[key] + " " + str(mapped_resources[key].size()))
 		
@@ -385,24 +320,33 @@ func build_material() -> void:
 		print("initialising ", parameter_name)
 		edited_composite_material.set_shader_parameter(parameter_name, null)
 	
-	if mapped_resources.Texture.size() > 0:
-		var _arr = []
-		_arr.resize(mapped_resources.Texture.size())
-		_arr.fill(null)
-		edited_composite_material.set_shader_parameter("textures", _arr)
+	if mapped_resources.has("Texture"):
+		if mapped_resources.Texture.size() > 0:
+			var _arr = []
+			_arr.resize(mapped_resources.Texture.size())
+			_arr.fill(null)
+			edited_composite_material.set_shader_parameter("textures", _arr)
 	
-	if mapped_resources.ColorRampTexture.size() > 0:
-		var _arr = []
-		_arr.resize(mapped_resources.ColorRampTexture.size())
-		_arr.fill(null)
-		edited_composite_material.set_shader_parameter("color_ramp_textures", _arr)
+	if mapped_resources.has("NormalMapTexture"):
+		if mapped_resources.Texture.size() > 0:
+			var _arr = []
+			_arr.resize(mapped_resources.Texture.size())
+			_arr.fill(null)
+			edited_composite_material.set_shader_parameter("normal_map_textures", _arr)
+	
+	if mapped_resources.has("ColorRampTexture"):
+		if mapped_resources.ColorRampTexture.size() > 0:
+			var _arr = []
+			_arr.resize(mapped_resources.ColorRampTexture.size())
+			_arr.fill(null)
+			edited_composite_material.set_shader_parameter("color_ramp_textures", _arr)
 	
 	for key in mapped_resources.keys():
 		var _idx : int = 0
 		for resource : Resource in mapped_resources[key]:
 			if resource == null:
-				print("resource is null")
-				continue #
+				printerr("resource is null")
+				continue
 			
 			if resource.has_signal("value_changed"):
 				if resource.has_connections("value_changed"):
@@ -413,9 +357,8 @@ func build_material() -> void:
 			
 			for property in resource.get_property_list():
 				if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE or (property.hint & PROPERTY_HINT_RESOURCE_TYPE and property.hint_string == "Texture2D"):
-					#just set the value to what it was so that value_changed gets called on that resource
 					
-					#print("updating ", property.name, " on ", resource)
+					#just set the value to what it was so that value_changed gets called on that resource
 					resource.set(property.name, resource.get(property.name))
 				
 			_idx += 1
@@ -463,13 +406,14 @@ func build_material() -> void:
 	
 	var get_color_ramp_string : String = "switch (color_ramp_id) {"
 	
-	_idx = 0
-	for color_ramp_config : CPMB_ColorRampConfiguration in mapped_resources.ColorRampConfiguration:
-		get_color_ramp_string += "
-		case %s:
-			return texture(color_ramp_textures[%s], vec2(fac, 0.0));" % [_idx, mapped_resources.ColorRampTexture.find(color_ramp_config.gradient_texture)]
-		_idx += 1
-	
+	if mapped_resources.has("ColorRampConfiguration"):
+		_idx = 0
+		for color_ramp_config : CPMB_ColorRampConfiguration in mapped_resources.ColorRampConfiguration:
+			get_color_ramp_string += "
+			case %s:
+				return texture(color_ramp_textures[%s], vec2(fac, 0.0));" % [_idx, mapped_resources.ColorRampTexture.find(color_ramp_config.gradient_texture)]
+			_idx += 1
+		
 	get_color_ramp_string += "
 	}"
 	
@@ -486,9 +430,12 @@ func build_material() -> void:
 	edited_composite_material.shader = null
 	edited_composite_material.shader = _shader
 	
+	is_building_material = false
+	
 
 func request_rebuild_material() -> void:
-	build_material()
+	if !is_building_material:
+		build_material()
 
 func set_shader_property(value : Variant, shader_property_name : String, id : int) -> void:
 	edited_composite_material.get_property_list() #????? This line needs to be present or get_shader_parameter will return Nil
@@ -528,13 +475,6 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 	var decomposition_nodes : Dictionary[CPMB_Base, CompositeMaterialBuilderGraphNode] = {} #Map of decomposition nodes keyed by their source value resource
 	
 	var layer_nodes : Array[LayerNode] = []
-	
-	var simple_instantiation_map : Dictionary[String, Array] = {
-		"CPMB_TextureConfiguration":["uv"],
-		"CPMB_ColorRampConfiguration": ["fac"],
-		"CPMB_UVTransformConfiguration": ["base_uv", "scale", "offset"]
-	}
-	
 
 	for layer in material.layers:
 		nodes_to_add.append([layer, {"from_port": 0, "to_node": "output", "to_port": 0}])
@@ -543,7 +483,8 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 		var _tmp = nodes_to_add.pop_front()
 		var _resource : Resource = _tmp[0]
 		var _instructions : Dictionary = _tmp[1]
-		var _to_node = get_node(_instructions.to_node)
+		print("to node: ", _instructions.to_node)
+		var _to_node = get_node(String(_instructions.to_node))
 		
 		print("resource ", _resource)
 		
@@ -558,7 +499,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			print("resource already exists as a node")
 			_new_node = existing_resources[_resource as CPMB_Base]
 		
-		elif _resource is CompositeMaterialLayer:
+		if _resource is CompositeMaterialLayer:
 			_new_node = instantiate_node("LayerNode")
 			add_child(_new_node)
 			
@@ -567,14 +508,11 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			_new_subnode.linked_node = _new_node
 			connect_node(_new_node.name, 0, _new_subnode.name, 0)
 			
-			print(_resource.roughness_value)
-			print(_resource.mask)
-			
-			nodes_to_add.append([_resource.albedo,  {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.albedo.get_output_port_for_state()}])
-			#nodes_to_add[_resource.normal] = {"to_node": _new_node.name, "to_port": 1, "from_port": _resource.albedo.get_output_port_for_state()}
-			nodes_to_add.append([_resource.roughness_value,  {"to_node": String(_new_node.name), "to_port": 2, "from_port": _resource.roughness_value.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.metallic_value,  {"to_node": String(_new_node.name), "to_port": 3, "from_port": _resource.metallic_value.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.mask,  {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.albedo.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.albedo, {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.albedo.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.normal, {"to_node": _new_node.name, "to_port": 1, "from_port": _resource.normal.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.roughness_value, {"to_node": String(_new_node.name), "to_port": 2, "from_port": _resource.roughness_value.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.metallic_value, {"to_node": String(_new_node.name), "to_port": 3, "from_port": _resource.metallic_value.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.mask, {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.albedo.get_output_port_for_state()}])
 			
 			layer_nodes.append(_new_node)
 			
@@ -582,36 +520,17 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			_new_node.set_represented_object(_resource)
 			continue
 		
-		elif _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4:
-			_new_node = instantiate_node("utility/VectorOperationNode")
-			nodes_to_add.append([_resource.source_vector, {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.source_vector.get_output_port_for_state()}])
-		
-		elif _resource is CPMB_DirectionalMaskConfiguration:
-			_new_node = instantiate_node("masks/DirectionalMaskNode")
-		elif _resource is CPMB_TextureConfiguration:
-			_new_node = instantiate_node("TextureNode")
-			nodes_to_add.append([_resource.uv, {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.uv.get_output_port_for_state()}])
-		elif _resource is CPMB_UVMapConfiguration:
-			_new_node = instantiate_node("UVMapNode")
-		elif _resource is CPMB_UVTransformConfiguration:
-			_new_node = instantiate_node("UVTransformNode")
-			nodes_to_add.append([_resource.base_uv, {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.base_uv.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.scale.x, {"to_node": String(_new_node.name), "to_port": 1, "from_port": _resource.scale.x.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.scale.y, {"to_node": String(_new_node.name), "to_port": 2, "from_port": _resource.scale.y.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.offset.x, {"to_node": String(_new_node.name), "to_port": 3, "from_port": _resource.offset.x.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.offset.y, {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.offset.y.get_output_port_for_state()}])
-		elif _resource is CPMB_TriplanarUVConfiguration:
-			_new_node = instantiate_node("TriplanarMapNode")
-		elif _resource is CPMB_TimeConfig:
-			_new_node = instantiate_node("utility/TimeNode")
-		elif _resource is CPMB_Math:
-			_new_node = instantiate_node("utility/MathNode")
+		else:
+			_new_node = instantiate_node(_resource.get_node_name())
+			var _input_port_resources = _resource.get_input_port_resources()
+			for resource_to_add in _input_port_resources.keys():
+				nodes_to_add.append([resource_to_add, {"to_node": String(_new_node.name), "to_port": _input_port_resources[resource_to_add], "from_port": resource_to_add.get_output_port_for_state()}])
 		
 		if _new_node:
 			if !existing_resources.has(_resource):
 				add_child(_new_node)
 			connect_node(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
-			(get_node(_instructions.to_node) as CompositeMaterialBuilderGraphNode).call_deferred("connect_and_pass_object", _instructions.to_port, _resource)
+			_to_node.call_deferred("connect_and_pass_object", _instructions.to_port, _resource)
 			
 			#await get_tree().create_timer(0.1).timeout
 			_new_node.set_represented_object(_resource)

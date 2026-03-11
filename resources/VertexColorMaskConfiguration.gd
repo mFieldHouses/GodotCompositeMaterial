@@ -9,3 +9,6 @@ enum ColorType {RED, GREEN, BLUE, CUSTOM}
 
 func get_expression() -> String:
 	return "get_vertex_color_mask(%s, VERTEX.rgb)"
+
+func get_mapping_key() -> String:
+	return "VertexColorMaskConfiguration"

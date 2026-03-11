@@ -162,6 +162,7 @@ uniform sampler2D[NUM_TEXTURES] textures : source_color;
 #endif
 
 #if NUM_NORMAL_MAP_TEXTURES > 0
+uniform float[NUM_NORMAL_MAP_TEXTURES] normal_map_scales;
 uniform sampler2D[NUM_NORMAL_MAP_TEXTURES] normal_map_textures;
 #endif
 
@@ -301,7 +302,7 @@ void fragment() {
 	}
 	
 	ALBEDO = albedo_mix;
-	//NORMAL = normal_mix;
+	NORMAL_MAP = normal_mix;
 	ROUGHNESS = roughness_mix;
 	METALLIC = metallic_mix;
 	

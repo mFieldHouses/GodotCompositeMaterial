@@ -21,3 +21,23 @@ func get_expression() -> String:
 
 func _to_string() -> String:
 	return "TextureConfiguration:" + resource_scene_unique_id
+
+func get_mapping_key() -> String:
+	return "TextureConfiguration"
+
+func get_child_resources() -> Array[CPMB_Base]:
+	return [uv]
+
+func on_mapped(resource_map : Dictionary[String, Array]) -> void:
+	if !resource_map.has("Texture"):
+		resource_map["Texture"] = []
+	
+	resource_map.Texture.append(texture)
+
+func get_node_name() -> String:
+	return "textures/TextureNode"
+
+func get_input_port_resources() -> Dictionary[CPMB_Base, int]:
+	return {
+		uv: 0
+	}

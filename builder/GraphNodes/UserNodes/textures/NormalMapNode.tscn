@@ -1,0 +1,135 @@
+[gd_scene format=3 uid="uid://bol2fwi84argo"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_pklk5"]
+[ext_resource type="Script" uid="uid://cjcolj2quiwb6" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/textures/normal_map_node.gd" id="2_fsw7i"]
+
+[node name="NormalMapNode" type="GraphNode" unique_id=962352097]
+offset_right = 239.0
+offset_bottom = 126.0
+tooltip_text = "Loads in a texture and samples it according to the input UV."
+theme = ExtResource("1_pklk5")
+title = "Normal Map"
+slot/0/left_enabled = true
+slot/0/left_type = 4
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 4
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 4
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 2
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+slot/5/left_enabled = false
+slot/5/left_type = 4
+slot/5/left_color = Color(1, 1, 1, 1)
+slot/5/left_icon = null
+slot/5/right_enabled = false
+slot/5/right_type = 0
+slot/5/right_color = Color(1, 1, 1, 1)
+slot/5/right_icon = null
+slot/5/draw_stylebox = true
+slot/6/left_enabled = false
+slot/6/left_type = 0
+slot/6/left_color = Color(1, 1, 1, 1)
+slot/6/left_icon = null
+slot/6/right_enabled = false
+slot/6/right_type = 3
+slot/6/right_color = Color(1, 1, 1, 1)
+slot/6/right_icon = null
+slot/6/draw_stylebox = true
+slot/7/left_enabled = false
+slot/7/left_type = 0
+slot/7/left_color = Color(1, 1, 1, 1)
+slot/7/left_icon = null
+slot/7/right_enabled = false
+slot/7/right_type = 2
+slot/7/right_color = Color(1, 1, 1, 1)
+slot/7/right_icon = null
+slot/7/draw_stylebox = true
+slot/8/left_enabled = false
+slot/8/left_type = 0
+slot/8/left_color = Color(1, 1, 1, 1)
+slot/8/left_icon = null
+slot/8/right_enabled = true
+slot/8/right_type = 3
+slot/8/right_color = Color(1, 1, 1, 1)
+slot/8/right_icon = null
+slot/8/draw_stylebox = true
+script = ExtResource("2_fsw7i")
+represented_resource_variable_name = "represented_texture_config"
+metadata/_custom_type_script = "uid://th3iwfgyvayb"
+
+[node name="uv_in" type="Label" parent="." unique_id=408030845]
+layout_mode = 2
+text = "UV"
+
+[node name="load_texture" type="Button" parent="." unique_id=1704525423]
+layout_mode = 2
+text = "Load texture"
+
+[node name="Control" type="Control" parent="." unique_id=425155154]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="texture_view" type="TextureRect" parent="." unique_id=1004159057]
+layout_mode = 2
+expand_mode = 5
+stretch_mode = 4
+
+[node name="Control2" type="Control" parent="." unique_id=540154600]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="." unique_id=940598327]
+layout_mode = 2
+text = "Scale"
+
+[node name="scale" type="SpinBox" parent="." unique_id=388833047]
+layout_mode = 2
+min_value = -100.0
+step = 0.001
+value = 1.0
+
+[node name="export" type="CheckButton" parent="." unique_id=1791086357]
+layout_mode = 2
+text = "As export variable"
+
+[node name="albedo_out" type="Label" parent="." unique_id=1737254237]
+layout_mode = 2
+text = "Normal"
+horizontal_alignment = 2

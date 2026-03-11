@@ -16,6 +16,5 @@ func get_expression() -> String:
 func _to_string() -> String:
 	return "BoolValue:" + resource_scene_unique_id
 
-#func call_setters() -> void:
-	##print("Unoverridden call_setters on ", self)
-	#value = value
+func get_mapping_key() -> String:
+	return "BoolValue"

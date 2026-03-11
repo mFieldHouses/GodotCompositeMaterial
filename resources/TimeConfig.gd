@@ -15,3 +15,9 @@ func get_expression() -> String:
 
 func _to_string() -> String:
 	return "TimeConfig:" + resource_scene_unique_id
+
+func get_child_resources() -> Array[CPMB_Base]:
+	return [scale]
+
+func get_node_name() -> String:
+	return "utility/TimeNode"

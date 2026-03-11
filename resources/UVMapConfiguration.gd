@@ -9,3 +9,9 @@ func get_expression() -> String:
 
 func _to_string() -> String:
 	return "UVMapConfiguration:" + resource_scene_unique_id
+
+func get_mapping_key() -> String:
+	return "UVMapConfiguration"
+
+func get_node_name() -> String:
+	return "UVMapNode"

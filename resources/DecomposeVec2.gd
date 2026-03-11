@@ -22,3 +22,17 @@ func get_output_port_for_state() -> int:
 
 func _to_string() -> String:
 	return "DecomposeVector2:" + resource_scene_unique_id
+
+func get_mapping_key() -> String:
+	return "DecomposeVector2"
+
+func get_child_resources() -> Array[CPMB_Base]:
+	return [source_vector]
+
+func get_node_name() -> String:
+	return "utility/VectorOperationNode"
+
+func get_input_port_resources() -> Dictionary[CPMB_Base, int]:
+	return {
+		source_vector: 0
+	}

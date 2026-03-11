@@ -46,3 +46,9 @@ func get_expression() -> String:
 
 func _to_string() -> String:
 	return "Math:" + resource_scene_unique_id
+
+func get_child_resources() -> Array[CPMB_Base]:
+	return [value_A, value_B]
+
+func get_node_name() -> String:
+	return "utility/MathNode"

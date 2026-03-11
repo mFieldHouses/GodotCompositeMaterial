@@ -20,3 +20,21 @@ func get_output_port_for_state() -> int:
 
 func initialise_value(index : int = -1) -> void: ##Override this function
 	pass
+
+func get_mapping_key() -> String: ##Returns the key under which this resource will be appended in the resource map. If this is left unoverridden, nothing will be appended to the resource map.
+	return ""
+
+func get_node_name() -> String: ##Returns the path to the node that represents this resource relative to res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/
+	return ""
+
+func get_input_port_resources() -> Dictionary[CPMB_Base, int]: 
+	return {}
+
+func instantiate_representing_node(base_page : CompositeMaterialBuilderPage) -> void:
+	pass
+
+func get_child_resources() -> Array[CPMB_Base]: ##Returns an array of resources that this resource contains.
+	return []
+
+func on_mapped(resource_map : Dictionary[String, Array]) -> void: ##Optional. Gets called when the resource gets mapped.
+	pass

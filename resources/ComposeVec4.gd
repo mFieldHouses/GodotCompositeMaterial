@@ -28,3 +28,12 @@ func get_expression() -> String:
 
 func _to_string() -> String:
 	return "ComposeVector4:" + resource_scene_unique_id
+
+func get_mapping_key() -> String:
+	return "ComposeVector4"
+
+func get_child_resources() -> Array[CPMB_Base]:
+	return [x,y,z,w]
+
+func get_node_name() -> String:
+	return "utility/VectorOperationNode"

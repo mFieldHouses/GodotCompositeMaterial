@@ -12,3 +12,9 @@ func get_expression() -> String:
 
 func _to_string() -> String:
 	return "TriplanarUVConfiguration:" + resource_scene_unique_id
+
+func get_mapping_key() -> String:
+	return "TriplanarUVConfiguration"
+
+func get_node_name() -> String:
+	return "TriplanarMapNode"
