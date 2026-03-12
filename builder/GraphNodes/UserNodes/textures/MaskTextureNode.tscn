@@ -1,25 +1,14 @@
-[gd_scene format=3 uid="uid://bjf5nk1ipb353"]
+[gd_scene format=3 uid="uid://dcojt4qcep2wp"]
 
-[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_dmtf5"]
-[ext_resource type="Script" uid="uid://th3iwfgyvayb" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/textures/texture_node.gd" id="2_suxfi"]
-[ext_resource type="Script" uid="uid://b5gr64jphjmpw" path="res://addons/CompositeMaterial/resources/builder/TextureConfiguration.gd" id="3_suxfi"]
-[ext_resource type="Script" uid="uid://ceepdgj2ci30a" path="res://addons/CompositeMaterial/resources/builder/UVMapConfiguration.gd" id="5_wam4e"]
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_4xcvb"]
+[ext_resource type="Script" uid="uid://beipu61wn1aa1" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/textures/mask_texture_node.gd" id="2_qgqb1"]
 
-[sub_resource type="Resource" id="Resource_56gsk"]
-script = ExtResource("5_wam4e")
-value = Vector2(inf, inf)
-
-[sub_resource type="Resource" id="Resource_ey7x0"]
-script = ExtResource("3_suxfi")
-uv = SubResource("Resource_56gsk")
-value = Vector4(inf, inf, inf, inf)
-
-[node name="TextureNode" type="GraphNode" unique_id=962352097]
+[node name="MaskTextureNode" type="GraphNode" unique_id=962352097]
 offset_right = 239.0
 offset_bottom = 126.0
 tooltip_text = "Loads in a texture and samples it according to the input UV."
-theme = ExtResource("1_dmtf5")
-title = "Texture"
+theme = ExtResource("1_4xcvb")
+title = "Mask Texture"
 slot/0/left_enabled = true
 slot/0/left_type = 4
 slot/0/left_color = Color(1, 1, 1, 1)
@@ -78,32 +67,18 @@ slot/6/left_enabled = false
 slot/6/left_type = 0
 slot/6/left_color = Color(1, 1, 1, 1)
 slot/6/left_icon = null
-slot/6/right_enabled = false
-slot/6/right_type = 2
+slot/6/right_enabled = true
+slot/6/right_type = 5
 slot/6/right_color = Color(1, 1, 1, 1)
 slot/6/right_icon = null
 slot/6/draw_stylebox = true
-slot/7/left_enabled = false
-slot/7/left_type = 0
-slot/7/left_color = Color(1, 1, 1, 1)
-slot/7/left_icon = null
-slot/7/right_enabled = true
-slot/7/right_type = 2
-slot/7/right_color = Color(1, 1, 1, 1)
-slot/7/right_icon = null
-slot/7/draw_stylebox = true
-script = ExtResource("2_suxfi")
-respresented_texture_config = SubResource("Resource_ey7x0")
+script = ExtResource("2_qgqb1")
 represented_resource_variable_name = "represented_texture_config"
 metadata/_custom_type_script = "uid://th3iwfgyvayb"
 
 [node name="uv_in" type="Label" parent="." unique_id=408030845]
 layout_mode = 2
 text = "UV"
-
-[node name="load_texture" type="Button" parent="." unique_id=1704525423]
-layout_mode = 2
-text = "Load texture"
 
 [node name="Control" type="Control" parent="." unique_id=425155154]
 custom_minimum_size = Vector2(0, 10)
@@ -135,7 +110,7 @@ popup/item_3/id = 3
 layout_mode = 2
 text = "As export variable"
 
-[node name="albedo_out" type="Label" parent="." unique_id=1737254237]
+[node name="mask_out" type="Label" parent="." unique_id=1201916841]
 layout_mode = 2
-text = "Albedo"
+text = "Mask"
 horizontal_alignment = 2

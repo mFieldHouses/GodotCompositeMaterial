@@ -106,3 +106,5 @@ func get_represented_object(port_idx : int) -> Object:
 
 func set_represented_object(object : Object) -> void:
 	represented_layer = object
+	$roughness_in/value.value = represented_layer.roughness_value.value
+	$metallic_in/value.value = represented_layer.metallic_value.value

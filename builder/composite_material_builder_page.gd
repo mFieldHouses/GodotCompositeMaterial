@@ -6,13 +6,11 @@ var output_node : CompositeMaterialOutputNode
 
 var node_mappings : Array = [
 	["LayerNode", "VariableNode", "", "", "", "DistanceFadeNode"],
-	["textures/TextureNode", "textures/ColorRampNode", "textures/NormalMapNode", "textures/DepthMapNode", "textures/NoiseTextureNode"],
+	["textures/TextureNode", "textures/MaskTextureNode", "textures/ColorRampNode", "textures/NoiseTextureNode", "textures/NormalMapNode", "textures/DepthMapNode"],
 	["UVTransformNode","UVMapNode","TriplanarMapNode"],
 	["masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/VertexColorMaskNode", "masks/EffectShapeMaskNode", "masks/UVMaskNode", "masks/NormalMapMaskNode"],
 	["utility/TimeNode", "utility/MathNode", "utility/VectorOperationNode"]
 ]
-
-var dynamic_nodes : Array[GraphNode] = []
 
 var selected_node : GraphNode
 
@@ -105,6 +103,11 @@ func _gui_input(event: InputEvent) -> void:
 	elif event is InputEventKey:
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE and event.pressed:
 			if selected_node is not CompositeMaterialOutputNode:
+				
+				var _connections = get_connection_list_from_node(selected_node.name)
+				for _connection in _connections:
+					disconnect_node(_connection.from_node, _connection.from_port, _connection.to_node, _connection.to_port)
+				
 				selected_node.queue_free()
 				selected_node = null
 			
@@ -115,33 +118,10 @@ func add_node(idx1 : int, idx2 : int) -> void:
 	
 func instantiate_node_at_mouse(node_name : String) -> void:
 	var _node = load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_name + ".tscn").instantiate()
-	add_child(_node)
-	
-	if _node is LayerNode:
-		_node.name = "layer" + str(node_groups.layers.size())
-		add_node_to_group(_node, "layers")
-	elif _node is MaskNode:
-		add_node_to_group(_node, "masks")
 	
 	_node.position_offset = (scroll_offset / zoom) + (initial_mouse_position / zoom)
-
-func add_node_to_group(node : GraphNode, group_name : String) -> void:
-	if node_groups.has(group_name):
-		if !node_groups[group_name].has(node):
-			node_groups[group_name].append(node)
-
-func remove_node_from_groups(node : GraphNode) -> void:
-	for key in node_groups.keys():
-		if node_groups[key].has(node):
-			node_groups[key].erase(node)
-
-func register_dynamic_node(node : GraphNode) -> void:
-	if !dynamic_nodes.has(node):
-		dynamic_nodes.append(node)
-
-func deregister_dynamic_node(node : GraphNode) -> void:
-	if dynamic_nodes.has(node):
-		dynamic_nodes.erase(node)
+	
+	add_child(_node)
 
 func build_material() -> void:
 	
@@ -151,35 +131,7 @@ func build_material() -> void:
 	edited_composite_material.layers = [] as Array[CompositeMaterialLayer]
 	
 	#Map out all used resources
-	var mapped_resources : Dictionary[String, Array] = {
-		#"DirectionalMaskConfiguration": [],
-		#"PositionalMaskConfiguration": [],
-		#"VertexColorMaskConfiguration": [],
-		#"EffectShapeMaskConfiguration": [],
-		#
-		#"UVTransformConfiguration": [],
-		#"UVMapConfiguration": [],
-		#"TriplanarUVConfiguration": [],
-		#
-		#"ColorRampConfiguration": [],
-		#"ColorRampTexture": [], #need their own array for repeat_disable hint
-		#"TextureConfiguration": [],
-		#"Texture": [],
-		#
-		#"ComposeVector2": [],
-		#"ComposeVector3": [],
-		#"ComposeVector4": [],
-		#
-		#"DecomposeVector2": [],
-		#"DecomposeVector3": [],
-		#"DecomposeVector4": [],
-		#
-		#"IntValue": [],
-		#"FloatValue": [],
-		#"Vector2Value": [],
-		#"Vector3Value": [],
-		#"Vector4Value": []
-	}
+	var mapped_resources : Dictionary[String, Array] = {}
 	
 	var resources_to_check : Array[CPMB_Base] = []
 	
@@ -472,6 +424,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 	
 	var nodes_to_add : Array[Array] = [] #Map of what resources to add and which nodes and ports they should connect to
 	var existing_resources : Dictionary[CPMB_Base, CompositeMaterialBuilderGraphNode] = {} #Map of which resources have already been manifested as nodes
+	var identifiers : Dictionary[int, CompositeMaterialBuilderGraphNode] = {}
 	var decomposition_nodes : Dictionary[CPMB_Base, CompositeMaterialBuilderGraphNode] = {} #Map of decomposition nodes keyed by their source value resource
 	
 	var layer_nodes : Array[LayerNode] = []
@@ -498,8 +451,14 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 		if existing_resources.has(_resource as CPMB_Base):
 			print("resource already exists as a node")
 			_new_node = existing_resources[_resource as CPMB_Base]
+	
+		var _create_new_node : bool = true
+		if _resource is CPMB_ComposeVec2 or _resource is CPMB_ComposeVec3 or _resource is CPMB_ComposeVec4 or _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4:
+			if identifiers.has(_resource.source_identifier):
+				_new_node = identifiers[_resource.source_identifier]
+				_create_new_node = false
 		
-		if _resource is CompositeMaterialLayer:
+		elif _resource is CompositeMaterialLayer:
 			_new_node = instantiate_node("LayerNode")
 			add_child(_new_node)
 			
@@ -520,21 +479,28 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			_new_node.set_represented_object(_resource)
 			continue
 		
-		else:
+		if _resource.get_node_name() != "" and _create_new_node:
 			_new_node = instantiate_node(_resource.get_node_name())
 			var _input_port_resources = _resource.get_input_port_resources()
 			for resource_to_add in _input_port_resources.keys():
 				nodes_to_add.append([resource_to_add, {"to_node": String(_new_node.name), "to_port": _input_port_resources[resource_to_add], "from_port": resource_to_add.get_output_port_for_state()}])
 		
+		print(_new_node)
 		if _new_node:
+			if _resource is CPMB_ComposeVec2 or _resource is CPMB_ComposeVec3 or _resource is CPMB_ComposeVec4 or _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4:
+				identifiers[_resource.source_identifier] = _new_node
+			
 			if !existing_resources.has(_resource):
 				add_child(_new_node)
+			
 			connect_node(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
 			_to_node.call_deferred("connect_and_pass_object", _instructions.to_port, _resource)
 			
 			#await get_tree().create_timer(0.1).timeout
+			print("setting represented_object on ", _new_node)
 			_new_node.set_represented_object(_resource)
 			existing_resources[_resource as CPMB_Base] = _new_node
+				
 	
 	await get_tree().create_timer(0.1).timeout
 	

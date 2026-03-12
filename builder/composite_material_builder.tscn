@@ -112,19 +112,23 @@ item_6/text = "Distance Fade"
 item_6/id = 6
 
 [node name="textures" type="PopupMenu" parent="pages/template_page/context_menu/add_node" unique_id=2051621382]
-item_count = 6
+oversampling_override = 1.0
+size = Vector2i(182, 197)
+item_count = 7
 item_0/text = "Texture"
 item_0/id = 0
-item_1/text = "Color Ramp"
+item_1/text = "Mask Texture"
 item_1/id = 1
-item_2/text = "Normal Map"
+item_2/text = "Color Ramp"
 item_2/id = 2
-item_3/text = "Depth Map"
+item_3/text = "Noise Texture"
 item_3/id = 3
-item_4/text = "Noise Texture"
-item_4/id = 4
-item_5/text = "Gradient Texture"
-item_5/id = 3
+item_4/id = 41
+item_4/separator = true
+item_5/text = "Normal Map"
+item_5/id = 4
+item_6/text = "Depth To Normal"
+item_6/id = 5
 
 [node name="uv" type="PopupMenu" parent="pages/template_page/context_menu/add_node" unique_id=535191034]
 item_count = 3

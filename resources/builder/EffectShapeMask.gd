@@ -19,3 +19,6 @@ func _to_string() -> String:
 
 func get_mapping_key() -> String:
 	return "EffectShapeMaskConfiguration"
+
+func get_node_name() -> String:
+	return "masks/EffectShapeMaskNode"

@@ -19,15 +19,22 @@ enum OperationType {
 }
 @export var operation : OperationType = OperationType.ADD
 
+@export var identifier : int = 0
+
 func _init() -> void:
 	initialise_value()
+	identifier = ResourceUID.create_id()
 
 func initialise_value(index : int = -1) -> void:
 	if index == 0 or index == -1:
 		x_in = CPMB_FloatValue.new()
+		x_in.internal_to_node = true
 	if index == 1 or index == -1:
 		y_in = CPMB_FloatValue.new()
+		x_in.internal_to_node = true
 	if index == 2 or index == -1:
 		z_in = CPMB_FloatValue.new()
+		x_in.internal_to_node = true
 	if index == 3 or index == -1:
 		w_in = CPMB_FloatValue.new(1.0)
+		x_in.internal_to_node = true

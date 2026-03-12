@@ -12,3 +12,6 @@ func get_expression() -> String:
 
 func get_mapping_key() -> String:
 	return "VertexColorMaskConfiguration"
+
+func get_node_name() -> String:
+	return "masks/VertexColorMaskNode"

@@ -10,6 +10,7 @@ offset_bottom = 206.0
 tooltip_text = "The output for this material. Anything plugged in here will show up on meshes using this CompositeMaterial."
 mouse_filter = 1
 theme = ExtResource("1_2krc8")
+theme_override_constants/separation = 170
 position_offset = Vector2(640, 180)
 title = "CompositeMaterial Output"
 slot/0/left_enabled = true
@@ -43,7 +44,7 @@ metadata/is_slot = false
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 
-[node name="new_layer" type="Label" parent="." unique_id=1999499533]
+[node name="new_layer" type="Label" parent="." unique_id=309893681]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.36862746)
 text = "New layer..."

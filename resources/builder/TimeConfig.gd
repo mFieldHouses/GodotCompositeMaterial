@@ -9,6 +9,7 @@ func _init(value : float = 0.0) -> void:
 
 func initialise_value(index : int = -1) -> void:
 	scale = CPMB_FloatValue.new(1.0)
+	scale.internal_to_node = true
 
 func get_expression() -> String:
 	return "TIME * %s" % scale.get_expression()

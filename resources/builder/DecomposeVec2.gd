@@ -8,11 +8,14 @@ class_name CPMB_DecomposeVec2
 		output_channel = x
 		value_changed.emit(x, "vector2_decomposition_output_channels")
 
+@export var source_identifier : int
+
 func _init() -> void:
 	initialise_value()
 
 func initialise_value(index : int = -1) -> void:
 	source_vector = CPMB_Vector2Value.new()
+	source_vector.internal_to_node = true
 
 func get_expression() -> String:
 	return "decompose_vector2(%s, %s)" % [index, source_vector.get_expression()]

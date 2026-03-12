@@ -293,9 +293,9 @@ void fragment() {
 			vec4 albedo = get_layer_albedo(i);
 			albedo_mix = mix(albedo_mix, albedo.rgb, layer_masks[i] * albedo.a);
 			
-			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i] * albedo.a);
-			roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i] * albedo.a);
-			metallic_mix = mix(metallic_mix, get_layer_metallic(i), layer_masks[i] * albedo.a);
+			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i]);
+			roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i]);
+			metallic_mix = mix(metallic_mix, get_layer_metallic(i), layer_masks[i]);
 		}
 		
 		process_index += 1;

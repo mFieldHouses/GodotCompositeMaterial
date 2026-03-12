@@ -12,11 +12,8 @@ var index : int = 0: ##Index of this resource in the shader uniform arrays. Used
 func get_expression() -> String: ##Must be overridden. Returns an expression in GDShader syntax.
 	return ""
 
-func get_output_port_for_state() -> int:
+func get_output_port_for_state() -> int: ##Can be overridden
 	return 0
-
-#func call_setters() -> void: ##Override this in extending classes
-	#pass
 
 func initialise_value(index : int = -1) -> void: ##Override this function
 	pass

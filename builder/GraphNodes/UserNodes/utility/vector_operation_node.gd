@@ -13,7 +13,7 @@ var represented_config : CPMB_VectorOperationConfiguration
 var ports : Array[Array] = [] #Sub-arrays structure: [(int from -1 to 1), (non-signed int)]
 
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void:
+func _node_ready() -> void:
 	represented_config = CPMB_VectorOperationConfiguration.new()
 	
 	$configuration/type.item_selected.connect(select_vector_type)
@@ -66,6 +66,9 @@ func update_node() -> void:
 	
 	$configuration.visible = true
 	$vector_out.visible = true
+	
+	$configuration/operation.selected = represented_config.operation + 1
+	$configuration/type.selected = represented_config.vector_type
 	
 	ports.resize(5)
 	ports.fill([])
@@ -158,7 +161,8 @@ func get_represented_object(port_idx : int) -> Object:
 			_result.output_channel = port_idx
 			print("source: ", represented_config.source_vector)
 			_result.source_vector = represented_config.source_vector
-				
+	
+	_result.source_identifier = represented_config.identifier
 	return _result
 
 func set_represented_object(object : Object) -> void:
@@ -184,5 +188,5 @@ func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 				3:
 					represented_config.w_in = object
 		1:
-			print("connected new input: ", object)
+			#print("connected new input: ", object)
 			represented_config.source_vector = object

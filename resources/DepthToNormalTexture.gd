@@ -2,10 +2,9 @@
 extends ImageTexture
 class_name DepthToNormalTexture
 
-@export var source_depth_map : Texture2D:
-	set(x):
-		source_depth_map = x
-		update_image()
+@export var source_depth_map : Texture2D
+
+@export_tool_button("Reload", "Reload") var reload_action = update_image
 
 var _image : Image
 
