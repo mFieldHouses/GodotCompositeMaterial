@@ -29,8 +29,7 @@ func _load_texture() -> void:
 	var path : String = await _file_dialog.file_selected
 	var tex = load(path)
 	represented_normal_map_config.normal_map = tex
-	$FoldableContainer/texture_view.texture = tex
-	$FoldableContainer.folded = false
+	$texture_view.texture = tex
 
 func edit_texture() -> void:
 	EditorInterface.edit_resource(represented_normal_map_config)
@@ -40,7 +39,7 @@ func get_represented_object(port_idx : int) -> Object:
 
 func set_represented_object(object : Object) -> void:
 	represented_normal_map_config = object
-	$FoldableContainer/texture_view.texture = object.normal_map
+	$texture_view.texture = object.normal_map
 	$scale.value = object.scale
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:

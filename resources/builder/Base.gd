@@ -3,7 +3,7 @@ class_name CPMB_Base
 
 signal request_material_rebuild
 
-var internal_to_node : bool = false
+@export var internal_to_node : bool = false
 var index : int = 0: ##Index of this resource in the shader uniform arrays. Used to build the returned expression.
 	set(x):
 		index = x

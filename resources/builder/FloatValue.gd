@@ -7,7 +7,8 @@ class_name CPMB_FloatValue
 		#print("setter on ", resource_scene_unique_id, " for value")
 		value = x
 		#print("my index is ", index)
-		value_changed.emit(x, "float_values")
+		if value != INF:
+			value_changed.emit(x, "float_values")
 
 func _init(value : float = 0.0) -> void:
 	self.value = value

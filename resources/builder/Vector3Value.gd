@@ -4,9 +4,11 @@ class_name CPMB_Vector3Value
 
 @export var value : Vector3 = Vector3.ZERO:
 	set(x):
+		print('setting vec3 value to ', x)
 		value = x
 		
 		if x != Vector3.INF:
+			print("calling setter on object ", self, " with value ", x)
 			value_changed.emit(x, "vector3_values")
 
 func _init(value : Vector3 = Vector3.ZERO) -> void:

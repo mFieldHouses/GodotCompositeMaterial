@@ -5,7 +5,7 @@
 
 [node name="NormalMapNode" type="GraphNode" unique_id=962352097]
 offset_right = 239.0
-offset_bottom = 126.0
+offset_bottom = 241.0
 tooltip_text = "Loads in a texture and samples it according to the input UV."
 theme = ExtResource("1_pklk5")
 title = "Normal Map"
@@ -77,7 +77,7 @@ slot/7/left_type = 0
 slot/7/left_color = Color(1, 1, 1, 1)
 slot/7/left_icon = null
 slot/7/right_enabled = false
-slot/7/right_type = 2
+slot/7/right_type = 5
 slot/7/right_color = Color(1, 1, 1, 1)
 slot/7/right_icon = null
 slot/7/draw_stylebox = true
@@ -106,13 +106,7 @@ text = "Load texture"
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="FoldableContainer" type="FoldableContainer" parent="." unique_id=69738558]
-layout_mode = 2
-folded = true
-title = "Texture preview"
-
-[node name="texture_view" type="TextureRect" parent="FoldableContainer" unique_id=1004159057]
-visible = false
+[node name="texture_view" type="TextureRect" parent="." unique_id=1004159057]
 layout_mode = 2
 expand_mode = 5
 stretch_mode = 4

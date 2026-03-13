@@ -382,8 +382,16 @@ func build_material() -> void:
 	edited_composite_material.shader = null
 	edited_composite_material.shader = _shader
 	
-	is_building_material = false
+	#for child in get_children_recursive(self):
+		#child.owner = self
+	#
+	#var _scene : PackedScene = PackedScene.new()
+	#_scene.pack(self)
+	#edited_composite_material.node_page = _scene
+	#print('saved page as scene: ', edited_composite_material.node_page)
 	
+	is_building_material = false
+
 
 func request_rebuild_material() -> void:
 	if !is_building_material:
@@ -392,11 +400,11 @@ func request_rebuild_material() -> void:
 func set_shader_property(value : Variant, shader_property_name : String, id : int) -> void:
 	edited_composite_material.get_property_list() #????? This line needs to be present or get_shader_parameter will return Nil
 	
-	#print("setting ", shader_property_name, " for index ", id)
+	print("setting ", shader_property_name, " for index ", id)
 	
 	var _current_value : Array = edited_composite_material.get_shader_parameter(shader_property_name)
 	#print("Current value: ", _current_value, " id: ", id)
-	_current_value[id] = value
+	_current_value[id] = value #ALERT: if you get an error here, it's likely you've forgot to set the value of a <X>Value-extending resource to INF
 	edited_composite_material.set_shader_parameter(shader_property_name, _current_value)
 
 func edit_material(material : CompositeMaterial) -> void:
@@ -436,23 +444,25 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 		var _tmp = nodes_to_add.pop_front()
 		var _resource : Resource = _tmp[0]
 		var _instructions : Dictionary = _tmp[1]
-		print("to node: ", _instructions.to_node)
+		#print("to node: ", _instructions.to_node)
 		var _to_node = get_node(String(_instructions.to_node))
 		
-		print("resource ", _resource)
+		print("==========================\nresource ", _resource)
 		
-		if _resource is CPMB_Base:
+		if _resource is not CompositeMaterialLayer:
+			print(_resource.internal_to_node)
 			if _resource.internal_to_node:
 				print("resource is internal, skipping this one")
 				continue
 		
 		var _new_node : CompositeMaterialBuilderGraphNode
 		
+		var _create_new_node : bool = true	
 		if existing_resources.has(_resource as CPMB_Base):
 			print("resource already exists as a node")
 			_new_node = existing_resources[_resource as CPMB_Base]
+			_create_new_node = false
 	
-		var _create_new_node : bool = true
 		if _resource is CPMB_ComposeVec2 or _resource is CPMB_ComposeVec3 or _resource is CPMB_ComposeVec4 or _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4:
 			if identifiers.has(_resource.source_identifier):
 				_new_node = identifiers[_resource.source_identifier]
@@ -481,11 +491,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 		
 		if _resource.get_node_name() != "" and _create_new_node:
 			_new_node = instantiate_node(_resource.get_node_name())
-			var _input_port_resources = _resource.get_input_port_resources()
-			for resource_to_add in _input_port_resources.keys():
-				nodes_to_add.append([resource_to_add, {"to_node": String(_new_node.name), "to_port": _input_port_resources[resource_to_add], "from_port": resource_to_add.get_output_port_for_state()}])
 		
-		print(_new_node)
 		if _new_node:
 			if _resource is CPMB_ComposeVec2 or _resource is CPMB_ComposeVec3 or _resource is CPMB_ComposeVec4 or _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4:
 				identifiers[_resource.source_identifier] = _new_node
@@ -493,14 +499,23 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			if !existing_resources.has(_resource):
 				add_child(_new_node)
 			
+			if _create_new_node:
+				var _input_port_resources = _resource.get_input_port_resources()
+				for resource_to_add in _input_port_resources.keys():
+					print("adding resource ", resource_to_add, " to nodes_to_add")
+					nodes_to_add.append([resource_to_add, {"to_node": String(_new_node.name), "to_port": _input_port_resources[resource_to_add], "from_port": resource_to_add.get_output_port_for_state()}])
+			
+			print("connecting node ", _new_node.name, " to ", _instructions.to_node)
 			connect_node(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
 			_to_node.call_deferred("connect_and_pass_object", _instructions.to_port, _resource)
 			
 			#await get_tree().create_timer(0.1).timeout
 			print("setting represented_object on ", _new_node)
 			_new_node.set_represented_object(_resource)
+			print("adding as existing resource now")
 			existing_resources[_resource as CPMB_Base] = _new_node
-				
+			print(existing_resources.has(_resource))
+			
 	
 	await get_tree().create_timer(0.1).timeout
 	
@@ -511,3 +526,20 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 	output_node.position_offset.x = layer_nodes[0].position_offset.x + 350
 	
 	scroll_offset = (layer_nodes[0].position_offset + layer_nodes.back().position_offset) / 2.0
+
+#func get_children_recursive(node : Node) -> Array[Node]:
+	#var _result : Array[Node] = []
+	#var _children_to_be_checked : Array[Node] = []
+	#
+	#for _child in node.get_children():
+		#_children_to_be_checked.append(_child)
+	#
+	#while _children_to_be_checked.size() > 0:
+		#var _child_to_check : Node = _children_to_be_checked[0]
+		#for _subchild in _child_to_check.get_children():
+			#_children_to_be_checked.append(_subchild)
+		#
+		#_result.append(_child_to_check)
+		#_children_to_be_checked.erase(_child_to_check)
+	#
+	#return _result

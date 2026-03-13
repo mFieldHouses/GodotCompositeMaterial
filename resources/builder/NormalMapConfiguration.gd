@@ -13,6 +13,8 @@ class_name CPMB_NormalMapConfiguration
 		value_changed.emit(x, "normal_map_scales")
 
 func _init(value : Vector3 = Vector3.ZERO) -> void:
+	print("_init")
+	self.value = Vector3.INF
 	initialise_value()
 	
 func initialise_value(index : int = -1) -> void:
@@ -25,6 +27,9 @@ func get_expression() -> String:
 
 func get_mapping_key() -> String:
 	return "NormalMapConfiguration"
+
+func _to_string() -> String:
+	return "NormalMapConfiguration:" + resource_scene_unique_id
 
 func get_child_resources() -> Array[CPMB_Base]:
 	return [uv]

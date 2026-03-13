@@ -6,16 +6,19 @@ signal finish_building
 
 var requires_building : bool = false
 
-@export_multiline var material_notes : String
-
 @export var layers : Array[CompositeMaterialLayer] #Array of resources storing parameters of seperate layers
 
-@export var autolock_material : bool = true ##Prevents the material from rewriting and recompiling the shader code automatically, reducing lag upon startup significantly.
-
 @export_tool_button("Edit", "Edit") var edit_material = Callable(edit_self)
+
+@export_multiline var material_notes : String
+
+#@export var autolock_material : bool = true ##Prevents the material from rewriting and recompiling the shader code automatically, reducing lag upon startup significantly.
+
 #@export_tool_button("Rebuild material", "Reload") var rebuild_action = build_material
 #@export_tool_button("Freeze") var freeze_action = freeze
 #@export_tool_button("Unfreeze") var unfreeze_action = unfreeze
+
+#@export var node_page : PackedScene
 
 var frozen : bool = false
 var unfrozen_shader : Shader
