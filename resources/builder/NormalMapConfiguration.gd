@@ -13,7 +13,6 @@ class_name CPMB_NormalMapConfiguration
 		value_changed.emit(x, "normal_map_scales")
 
 func _init(value : Vector3 = Vector3.ZERO) -> void:
-	print("_init")
 	self.value = Vector3.INF
 	initialise_value()
 	

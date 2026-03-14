@@ -4,6 +4,9 @@ class_name CPMB_UVMapConfiguration
 
 @export var source : int = 0
 
+func _init() -> void:
+	self.value = Vector2.INF
+
 func get_expression() -> String:
 	return "float(uv_map_sources[%s] == 0) * uv + float(uv_map_sources[%s] == 1) * uv2" % [index, index]
 

@@ -25,6 +25,7 @@ shader_type spatial;
 #define NUM_VECTOR3_VALUES 0
 #define NUM_VECTOR4_VALUES 0
 
+#define NUM_HSV_TRANSFORMS 0
 
 //end definitions
 
@@ -94,10 +95,10 @@ global uniform int cpm_effect_shapes_num;
 
 float get_effect_shape_mask(int mask_id, vec3 global_position) {
 	
-	vec3 effect_shape_positions[100];
-	vec3 effect_shape_dimensions[100];
+	vec3 effect_shape_positions[10];
+	vec3 effect_shape_dimensions[10];
 	
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 10; i++) {
 		vec3 pos = (texture(cpm_effect_shape_textures, vec3((1.0/16384.0 * float(i)) + 0.5/16384.0, 0.5, 0)).rgb * 150000.0) - 75000.0;
 		vec3 dimensions = (texture(cpm_effect_shape_textures, vec3((1.0/16384.0 * float(i)) + 0.5/16384.0, 0.5, 2)).rgb * 150000.0);
 		
@@ -216,6 +217,56 @@ uniform vec4[NUM_VECTOR4_VALUES] vector4_values;
 
 
 
+
+#if NUM_HSV_TRANSFORMS > 0
+uniform vec3[NUM_HSV_TRANSFORMS] hsv_transforms;
+
+vec3 hue_to_rgb(float hue) {
+    hue = fract(hue);
+    float r = abs(hue * 6.0 - 3.0) - 1.0;
+    float g = 2.0 - abs(hue * 6.0 - 2.0);
+    float b = 2.0 - abs(hue * 6.0 - 4.0);
+    vec3 rgb = vec3(r,g,b);
+	rgb = clamp(rgb, vec3(0.0), vec3(1.0));
+    return rgb;
+}
+
+vec3 hsv_to_rgb(vec3 hsv) {
+    vec3 rgb = hue_to_rgb(hsv.x);
+	rgb = mix(vec3(1.0), rgb, hsv.y);
+    rgb = rgb * hsv.z;
+    return rgb;
+}
+
+vec3 rgb_to_hsv(vec3 rgb) {
+    float maxComponent = max(rgb.r, max(rgb.g, rgb.b));
+    float minComponent = min(rgb.r, min(rgb.g, rgb.b));
+    float diff = maxComponent - minComponent;
+    float hue = 0.0;
+    if(maxComponent == rgb.r) {
+        hue = 0.0 + (rgb.g - rgb.b) / diff;
+    } else if(maxComponent == rgb.g) {
+        hue = 2.0 + (rgb.b - rgb.r) / diff;
+    } else if(maxComponent == rgb.b) {
+        hue = 4.0 + (rgb.r - rgb.g) / diff;
+    }
+    hue = fract(hue / 6.0);
+    float saturation = diff / maxComponent;
+    float value = maxComponent;
+    return vec3(hue, saturation, value);
+}
+
+vec3 tune_hsv(int transform_id, vec3 rgb) {
+	
+	vec3 source_hsv = rgb_to_hsv(rgb);
+	vec3 new_hsv = source_hsv + hsv_transforms[transform_id];
+	
+	return hsv_to_rgb(new_hsv);
+}
+#endif
+
+
+
 varying vec3 local_vertex_normal;
 varying vec3 global_vertex_normal;
 varying vec3 global_vertex_pos;
@@ -234,9 +285,9 @@ vec4 get_color_ramp(int color_ramp_id, float fac) {
 }
 #endif
 
-vec4 get_layer_albedo(int layer_index) {
+vec3 get_layer_albedo(int layer_index) {
 	//get_albedo
-	return vec4(0.0);
+	return vec3(0.0);
 }
 
 vec3 get_layer_normal(int layer_index) {
@@ -282,16 +333,14 @@ void fragment() {
 	
 	for (int i = starting_index; i < NUM_LAYERS; i++) {
 		if (process_index == 0) {
-			vec4 albedo = get_layer_albedo(i);
-			albedo_mix = albedo.rgb;
+			albedo_mix = get_layer_albedo(i);
 			//ALPHA = albedo.a;
 			normal_mix = get_layer_normal(i);
 			roughness_mix = get_layer_roughness(i);
 			metallic_mix = get_layer_metallic(i);
 		}
 		else {
-			vec4 albedo = get_layer_albedo(i);
-			albedo_mix = mix(albedo_mix, albedo.rgb, layer_masks[i] * albedo.a);
+			albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i]);
 			
 			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i]);
 			roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i]);

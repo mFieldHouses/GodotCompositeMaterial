@@ -8,6 +8,8 @@ func _node_ready() -> void:
 	$load_texture.button_down.connect(_load_texture)
 	respresented_texture_config = CPMB_TextureConfiguration.new()
 	
+	print(respresented_texture_config.uv)
+	
 	if Engine.is_editor_hint():
 		node_selected.connect(edit_texture)
 		respresented_texture_config.texture_changed.connect(update_preview)
@@ -31,14 +33,19 @@ func _load_texture() -> void:
 	$texture_view.texture = tex
 
 func get_represented_object(port_idx : int) -> Object:
-	return respresented_texture_config
+	var _output_config := CPMB_TextureOutputConfiguration.new()
+	_output_config.source_texture_configuration = respresented_texture_config
+	_output_config.output_channel = port_idx
+	#respresented_texture_config.texture_changed.connect()
+	
+	return _output_config
 
 func set_represented_object(object : Object) -> void:
-	respresented_texture_config = object
-	update_preview()
+	respresented_texture_config = object.source_texture_configuration
+	update_preview(respresented_texture_config.texture)
 
-func update_preview() -> void:
-	$texture_view.texture = respresented_texture_config.texture
+func update_preview(new_texture : Texture2D) -> void:
+	$texture_view.texture = new_texture
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 	match input_port_id:

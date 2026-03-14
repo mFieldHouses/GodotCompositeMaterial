@@ -93,12 +93,14 @@ func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 		0:
 			represented_layer.albedo = object
 		1:
-			represented_layer.normal = object
+			represented_layer.alpha = object
 		2:
-			represented_layer.roughness_value = object
+			represented_layer.normal = object
 		3:
-			represented_layer.metallic_value = object
+			represented_layer.roughness_value = object
 		4:
+			represented_layer.metallic_value = object
+		5:
 			represented_layer.mask = object
 
 func get_represented_object(port_idx : int) -> Object:

@@ -10,6 +10,8 @@ class_name CPMB_ColorRampConfiguration
 #@export_enum("") var output_channel
 
 func _init() -> void:
+	self.value = Vector4.INF
+	
 	gradient_texture = GradientTexture1D.new()
 	gradient_texture.gradient = Gradient.new()
 	initialise_value()

@@ -8,10 +8,12 @@
 [sub_resource type="Resource" id="Resource_56gsk"]
 script = ExtResource("5_wam4e")
 value = Vector2(inf, inf)
+internal_to_node = true
 
 [sub_resource type="Resource" id="Resource_ey7x0"]
 script = ExtResource("3_suxfi")
 uv = SubResource("Resource_56gsk")
+identifier = null
 value = Vector4(inf, inf, inf, inf)
 
 [node name="TextureNode" type="GraphNode" unique_id=962352097]
@@ -88,10 +90,28 @@ slot/7/left_type = 0
 slot/7/left_color = Color(1, 1, 1, 1)
 slot/7/left_icon = null
 slot/7/right_enabled = true
-slot/7/right_type = 2
+slot/7/right_type = 3
 slot/7/right_color = Color(1, 1, 1, 1)
 slot/7/right_icon = null
 slot/7/draw_stylebox = true
+slot/8/left_enabled = false
+slot/8/left_type = 0
+slot/8/left_color = Color(1, 1, 1, 1)
+slot/8/left_icon = null
+slot/8/right_enabled = true
+slot/8/right_type = 5
+slot/8/right_color = Color(1, 1, 1, 1)
+slot/8/right_icon = null
+slot/8/draw_stylebox = true
+slot/9/left_enabled = false
+slot/9/left_type = 0
+slot/9/left_color = Color(1, 1, 1, 1)
+slot/9/left_icon = null
+slot/9/right_enabled = true
+slot/9/right_type = 5
+slot/9/right_color = Color(1, 1, 1, 1)
+slot/9/right_icon = null
+slot/9/draw_stylebox = true
 script = ExtResource("2_suxfi")
 respresented_texture_config = SubResource("Resource_ey7x0")
 represented_resource_variable_name = "represented_texture_config"
@@ -135,7 +155,17 @@ popup/item_3/id = 3
 layout_mode = 2
 text = "As export variable"
 
-[node name="albedo_out" type="Label" parent="." unique_id=1737254237]
+[node name="rgb_out" type="Label" parent="." unique_id=1737254237]
 layout_mode = 2
-text = "Albedo"
+text = "RGB / XYZ"
+horizontal_alignment = 2
+
+[node name="alpha_out" type="Label" parent="." unique_id=425968378]
+layout_mode = 2
+text = "Alpha"
+horizontal_alignment = 2
+
+[node name="mask_out" type="Label" parent="." unique_id=47526575]
+layout_mode = 2
+text = "Mask"
 horizontal_alignment = 2

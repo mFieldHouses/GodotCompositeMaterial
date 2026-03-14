@@ -10,6 +10,7 @@ class_name CPMB_ComposeVec4
 @export var source_identifier : int
 
 func _init() -> void:
+	self.value = Vector4.INF
 	initialise_value()
 
 func initialise_value(index : int = -1) -> void:

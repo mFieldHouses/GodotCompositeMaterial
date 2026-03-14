@@ -6,6 +6,7 @@ class_name CPMB_Vector4Value
 	set(x):
 		value = x
 		if x != Vector4.INF:
+			#print("setter on vec4: ", self)
 			value_changed.emit(x, "vector4_values")
 
 func _init(value : Vector4 = Vector4.ZERO) -> void:

@@ -2,11 +2,12 @@
 extends Resource
 class_name CompositeMaterialLayer
 
-@export var albedo : CPMB_Vector4Value
+@export var albedo : CPMB_Vector3Value
+@export var alpha : CPMB_NumericValue
 @export var normal : CPMB_Vector3Value
 @export var roughness_value : CPMB_NumericValue
 @export var metallic_value : CPMB_NumericValue = CPMB_FloatValue.new()
-@export var mask : CPMB_FloatValue
+@export var mask : CPMB_NumericValue
 @export var distance_fade_ni : String = "not implemented yet"
 
 func _init() -> void:
@@ -14,17 +15,20 @@ func _init() -> void:
 
 func initialise_value(index : int = -1) -> void:
 	if index == 0 or index == -1:
-		albedo = CPMB_Vector4Value.new(Vector4(0.0, 0.0, 0.0, 1.0))
+		albedo = CPMB_Vector3Value.new(Vector3(1.0, 0.0, 1.0))
 		albedo.internal_to_node = true
 	if index == 1 or index == -1:
+		alpha = CPMB_FloatValue.new(1.0)
+		alpha.internal_to_node = true
+	if index == 2 or index == -1:
 		normal = CPMB_Vector3Value.new(Vector3(0.5, 0.5, 1.0))
 		normal.internal_to_node = true
-	if index == 2 or index == -1:
+	if index == 3 or index == -1:
 		roughness_value = CPMB_FloatValue.new()
 		roughness_value.internal_to_node = true
-	if index == 3 or index == -1:
+	if index == 4 or index == -1:
 		metallic_value = CPMB_FloatValue.new()
 		metallic_value.internal_to_node = true
-	if index == 4 or index == -1:
-		mask = CPMB_FloatValue.new(1.0)
+	if index == 5 or index == -1:
+		mask = CPMB_FloatValue.new(0.5)
 		mask.internal_to_node = true

@@ -3,7 +3,8 @@ class_name CPMB_Base
 
 signal request_material_rebuild
 
-@export var internal_to_node : bool = false
+@export var is_descendant_resource : bool = false ##Set this to true on any resource that gets returned as the represented object on a node instead of the nodes actual represented object
+@export var internal_to_node : bool = false ##Set this to true on any resource that gets created as a placeholder for other input resources.
 var index : int = 0: ##Index of this resource in the shader uniform arrays. Used to build the returned expression.
 	set(x):
 		index = x

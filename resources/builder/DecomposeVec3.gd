@@ -11,6 +11,7 @@ class_name CPMB_DecomposeVec3
 @export var source_identifier : int
 
 func _init() -> void:
+	self.value = INF
 	initialise_value()
 
 func initialise_value(index : int = -1) -> void:

@@ -280,9 +280,9 @@ func build_material() -> void:
 			edited_composite_material.set_shader_parameter("textures", _arr)
 	
 	if mapped_resources.has("NormalMapTexture"):
-		if mapped_resources.Texture.size() > 0:
+		if mapped_resources.NormalMapTexture.size() > 0:
 			var _arr = []
-			_arr.resize(mapped_resources.Texture.size())
+			_arr.resize(mapped_resources.NormalMapTexture.size())
 			_arr.fill(null)
 			edited_composite_material.set_shader_parameter("normal_map_textures", _arr)
 	
@@ -315,6 +315,9 @@ func build_material() -> void:
 				
 			_idx += 1
 	
+	if mapped_resources.has("Texture"):
+		edited_composite_material.set_shader_parameter("textures", mapped_resources.Texture)
+	
 	var fragment_code : String = ""
 	var get_layer_albedo_string : String = "switch (layer_index) {"
 	var get_layer_normal_string : String = "switch (layer_index) {"
@@ -332,6 +335,8 @@ func build_material() -> void:
 		get_layer_albedo_string += "
 		case %s:
 			return %s;" % [_idx, layer.albedo.get_expression()]
+		
+		#layer_alpha_string
 		
 		get_layer_normal_string += "
 		case %s:
@@ -463,7 +468,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			_new_node = existing_resources[_resource as CPMB_Base]
 			_create_new_node = false
 	
-		if _resource is CPMB_ComposeVec2 or _resource is CPMB_ComposeVec3 or _resource is CPMB_ComposeVec4 or _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4:
+		if _resource is CPMB_ComposeVec2 or _resource is CPMB_ComposeVec3 or _resource is CPMB_ComposeVec4 or _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4 or _resource is CPMB_TextureOutputConfiguration:
 			if identifiers.has(_resource.source_identifier):
 				_new_node = identifiers[_resource.source_identifier]
 				_create_new_node = false

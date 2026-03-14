@@ -7,6 +7,9 @@ class_name CPMB_TriplanarUVConfiguration
 		space = x
 		value_changed.emit(x, "triplanar_map_spaces")
 
+func _init() -> void:
+	self.value = Vector2.INF
+
 func get_expression() -> String:
 	return "get_triplanar_uv(%s, local_vertex_normal, global_vertex_normal, local_vertex_pos, global_vertex_pos)" % index
 
