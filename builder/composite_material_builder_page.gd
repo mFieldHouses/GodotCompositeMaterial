@@ -467,11 +467,18 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			print("resource already exists as a node")
 			_new_node = existing_resources[_resource as CPMB_Base]
 			_create_new_node = false
-	
-		if _resource is CPMB_ComposeVec2 or _resource is CPMB_ComposeVec3 or _resource is CPMB_ComposeVec4 or _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4 or _resource is CPMB_TextureOutputConfiguration:
-			if identifiers.has(_resource.source_identifier):
-				_new_node = identifiers[_resource.source_identifier]
-				_create_new_node = false
+		
+		if _resource is CPMB_Base:
+			if _resource.is_descendant_resource:
+				var _source = _resource.get_source_resource()
+				if existing_resources.has(_source):
+					_new_node = existing_resources[_source]
+					_create_new_node = false
+		
+		#if _resource is CPMB_ComposeVec2 or _resource is CPMB_ComposeVec3 or _resource is CPMB_ComposeVec4 or _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4 or _resource is CPMB_TextureOutputConfiguration:
+			#if identifiers.has(_resource.source_identifier):
+				#_new_node = identifiers[_resource.source_identifier]
+				#_create_new_node = false
 		
 		elif _resource is CompositeMaterialLayer:
 			_new_node = instantiate_node("LayerNode")
@@ -483,10 +490,11 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			connect_node(_new_node.name, 0, _new_subnode.name, 0)
 			
 			nodes_to_add.append([_resource.albedo, {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.albedo.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.normal, {"to_node": _new_node.name, "to_port": 1, "from_port": _resource.normal.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.roughness_value, {"to_node": String(_new_node.name), "to_port": 2, "from_port": _resource.roughness_value.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.metallic_value, {"to_node": String(_new_node.name), "to_port": 3, "from_port": _resource.metallic_value.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.mask, {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.albedo.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.alpha, {"to_node": _new_node.name, "to_port": 1, "from_port": _resource.alpha.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.normal, {"to_node": _new_node.name, "to_port": 2, "from_port": _resource.normal.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.roughness_value, {"to_node": String(_new_node.name), "to_port": 3, "from_port": _resource.roughness_value.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.metallic_value, {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.metallic_value.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.mask, {"to_node": String(_new_node.name), "to_port": 5, "from_port": _resource.mask.get_output_port_for_state()}])
 			
 			layer_nodes.append(_new_node)
 			
@@ -515,11 +523,13 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			_to_node.call_deferred("connect_and_pass_object", _instructions.to_port, _resource)
 			
 			#await get_tree().create_timer(0.1).timeout
-			print("setting represented_object on ", _new_node)
+			#print("setting represented_object on ", _new_node)
 			_new_node.set_represented_object(_resource)
-			print("adding as existing resource now")
-			existing_resources[_resource as CPMB_Base] = _new_node
-			print(existing_resources.has(_resource))
+			#print("adding as existing resource now")
+			if _resource.is_descendant_resource:
+				existing_resources[_resource.get_source_resource()] = _new_node
+			else:
+				existing_resources[_resource as CPMB_Base] = _new_node
 			
 	
 	await get_tree().create_timer(0.1).timeout

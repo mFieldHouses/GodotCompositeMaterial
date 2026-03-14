@@ -9,7 +9,10 @@ var index : int = 0: ##Index of this resource in the shader uniform arrays. Used
 	set(x):
 		index = x
 		#print("index got set to ", x, " for ", self)
-		
+
+func get_source_resource() -> CPMB_Base: ##Is only called on descendant resources.
+	return null
+
 func get_expression() -> String: ##Must be overridden. Returns an expression in GDShader syntax.
 	return ""
 

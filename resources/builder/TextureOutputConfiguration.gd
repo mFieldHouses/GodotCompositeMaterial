@@ -21,7 +21,9 @@ func get_expression() -> String:
 		_:
 			return "texture(textures[%s], %s).rgb" % [source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
 		
-		
+func get_source_resource() -> CPMB_Base:
+	return source_texture_configuration
+
 func _to_string() -> String:
 	return "TextureOutputConfiguration:" + resource_scene_unique_id
 
@@ -41,3 +43,6 @@ func get_input_port_resources() -> Dictionary[CPMB_Base, int]:
 	return {
 		source_texture_configuration.uv: 0
 	}
+
+func get_output_port_for_state() -> int:
+	return output_channel
