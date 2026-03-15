@@ -12,6 +12,8 @@ var requires_building : bool = false
 
 @export_multiline var material_notes : String
 
+@export var variable_resources : Array[CPMB_Base]
+
 #@export var autolock_material : bool = true ##Prevents the material from rewriting and recompiling the shader code automatically, reducing lag upon startup significantly.
 
 #@export_tool_button("Rebuild material", "Reload") var rebuild_action = build_material

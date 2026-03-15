@@ -36,6 +36,9 @@ func get_child_resources() -> Array[CPMB_Base]:
 	return [x,y]
 
 func get_node_name() -> String:
+	if is_variable:
+		return "ValueNode"
+	
 	return "utility/VectorOperationNode"
 
 func get_input_port_resources() -> Dictionary[CPMB_Base, int]:

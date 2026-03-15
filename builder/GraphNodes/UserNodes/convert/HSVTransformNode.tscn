@@ -2,6 +2,17 @@
 
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_chqpi"]
 [ext_resource type="Script" uid="uid://cxods4tiba3rw" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/convert/hsv_transform_node.gd" id="2_b32h0"]
+[ext_resource type="Script" uid="uid://b5n0boakvw24k" path="res://addons/CompositeMaterial/resources/builder/Vector3Value.gd" id="3_6k0yq"]
+[ext_resource type="Script" uid="uid://ei2cgb65homn" path="res://addons/CompositeMaterial/resources/builder/HSVTransformConfig.gd" id="4_f52pg"]
+
+[sub_resource type="Resource" id="Resource_apgc7"]
+script = ExtResource("3_6k0yq")
+internal_to_node = true
+
+[sub_resource type="Resource" id="Resource_tae87"]
+script = ExtResource("4_f52pg")
+input_rgb = SubResource("Resource_apgc7")
+value = Vector3(inf, inf, inf)
 
 [node name="HSVTransformNode" type="GraphNode" unique_id=1174472716]
 offset_right = 220.0
@@ -56,6 +67,7 @@ slot/4/right_color = Color(1, 1, 1, 1)
 slot/4/right_icon = null
 slot/4/draw_stylebox = true
 script = ExtResource("2_b32h0")
+represented_config = SubResource("Resource_tae87")
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 metadata/renamable = false
 

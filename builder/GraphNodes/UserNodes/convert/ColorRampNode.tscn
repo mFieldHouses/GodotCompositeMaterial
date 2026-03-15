@@ -3,10 +3,10 @@
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_bul4y"]
 [ext_resource type="Script" uid="uid://bt8u8gtit7bxa" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/convert/color_ramp_node.gd" id="2_bul4y"]
 
-[sub_resource type="Gradient" id="Gradient_s3v8v"]
+[sub_resource type="Gradient" id="Gradient_yhj6c"]
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_21een"]
-gradient = SubResource("Gradient_s3v8v")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_5krvj"]
+gradient = SubResource("Gradient_yhj6c")
 
 [node name="ColorRampNode" type="GraphNode" unique_id=1174472716]
 offset_right = 7.0
@@ -36,7 +36,7 @@ slot/2/left_enabled = false
 slot/2/left_type = 0
 slot/2/left_color = Color(1, 1, 1, 1)
 slot/2/left_icon = null
-slot/2/right_enabled = true
+slot/2/right_enabled = false
 slot/2/right_type = 3
 slot/2/right_color = Color(1, 1, 1, 1)
 slot/2/right_icon = null
@@ -46,7 +46,7 @@ slot/3/left_type = 0
 slot/3/left_color = Color(1, 1, 1, 1)
 slot/3/left_icon = null
 slot/3/right_enabled = true
-slot/3/right_type = 5
+slot/3/right_type = 3
 slot/3/right_color = Color(1, 1, 1, 1)
 slot/3/right_icon = null
 slot/3/draw_stylebox = true
@@ -59,6 +59,15 @@ slot/4/right_type = 5
 slot/4/right_color = Color(1, 1, 1, 1)
 slot/4/right_icon = null
 slot/4/draw_stylebox = true
+slot/5/left_enabled = false
+slot/5/left_type = 0
+slot/5/left_color = Color(1, 1, 1, 1)
+slot/5/left_icon = null
+slot/5/right_enabled = true
+slot/5/right_type = 5
+slot/5/right_color = Color(1, 1, 1, 1)
+slot/5/right_icon = null
+slot/5/draw_stylebox = true
 script = ExtResource("2_bul4y")
 represented_resource_variable_name = "represented_configuration"
 metadata/_custom_type_script = "uid://s0jc3oianx85"
@@ -66,12 +75,16 @@ metadata/_custom_type_script = "uid://s0jc3oianx85"
 [node name="color_ramp_preview" type="TextureRect" parent="." unique_id=664028114]
 custom_minimum_size = Vector2(250, 30)
 layout_mode = 2
-texture = SubResource("GradientTexture1D_21een")
+texture = SubResource("GradientTexture1D_5krvj")
 expand_mode = 1
 
 [node name="factor_in" type="Label" parent="." unique_id=1008759771]
 layout_mode = 2
 text = "Factor"
+
+[node name="is_variable" type="CheckButton" parent="." unique_id=64514031]
+layout_mode = 2
+text = "Is variable"
 
 [node name="albedo_out" type="Label" parent="." unique_id=365735895]
 layout_mode = 2

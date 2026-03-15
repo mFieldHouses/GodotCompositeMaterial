@@ -8,7 +8,8 @@ func _node_ready() -> void:
 	$load_texture.button_down.connect(_load_texture)
 	respresented_texture_config = CPMB_TextureConfiguration.new()
 	
-	print(respresented_texture_config.uv)
+	$filter.item_selected.connect(func(x): respresented_texture_config.filtering = x; print("prompt rebuild"))
+	$is_variable.toggled.connect(func(x): respresented_texture_config.is_variable = x)
 	
 	if Engine.is_editor_hint():
 		node_selected.connect(edit_texture)

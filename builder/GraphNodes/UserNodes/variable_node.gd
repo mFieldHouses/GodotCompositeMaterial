@@ -1,44 +1,150 @@
 @tool
 extends CompositeMaterialBuilderGraphNode
+class_name VariableNode
 
 var type : Variant.Type
+
+var represented_value : CPMB_Base
+
+const OUTPUT_PORT_INDEX : int = 4
 
 func _node_ready() -> void:
 	$type.item_selected.connect(_type_chosen)
 	
-func get_value() -> Variant:
-	match type:
-		TYPE_INT:
-			return $int_field/value.value
-		TYPE_FLOAT:
-			return $float_field/value.value
-		TYPE_BOOL:
-			return $bool_field/value.value
-		TYPE_COLOR:
-			return $color_field/color.color
+	$name.text_changed.connect(func(text): represented_value.variable_name = text)
 	
-	return null
+	$is_variable.toggled.connect(set_variable)
+	
+	$int_field/value.value_changed.connect(func(x): represented_value.value = x)
+	$float_field/value.value_changed.connect(func(x): represented_value.value = x)
+	
+	$bool_field/value.toggled.connect(func(x): represented_value.value = x)
+	
+	$color_field/color.color_changed.connect(func(x): represented_value.value = Vector3(x.r, x.g, x.b))
+	
+	$vector2_field/x/value.value_changed.connect(func(x): represented_value.x.value = x)
+	$vector2_field/y/value.value_changed.connect(func(x): represented_value.y.value = x)
+	
+	$vector3_field/x/value.value_changed.connect(func(x): represented_value.x.value = x)
+	$vector3_field/y/value.value_changed.connect(func(x): represented_value.y.value = x)
+	$vector3_field/y/value.value_changed.connect(func(x): represented_value.z.value = x)
+
+
+func set_variable(state : bool) -> void:
+	represented_value.is_variable = state
+	update_name_field_visibility()
+
+func update_name_field_visibility() -> void:
+	$name.visible = $is_variable.button_pressed and represented_value != null
 
 func _type_chosen(id : int) -> void:
+	
+	request_disconnect_self.emit()
+	
+	$is_variable.disabled = false
+	
 	$bool_field.visible = false
 	$float_field.visible = false
 	$int_field.visible = false
 	$color_field.visible = false
+	$vector2_field.visible = false
+	$vector3_field.visible = false
+	
+	set_slot_enabled_right(OUTPUT_PORT_INDEX, true)
 	
 	match id:
 		1:
 			type = TYPE_INT
 			$int_field.visible = true
-			set_slot_type_right(3, 5)
+			set_slot_type_right(OUTPUT_PORT_INDEX, 5)
+			represented_value = CPMB_IntValue.new()
 		2:
 			type = TYPE_FLOAT
 			$float_field.visible = true
-			set_slot_type_right(3, 5)
+			set_slot_type_right(OUTPUT_PORT_INDEX, 5)
+			represented_value = CPMB_FloatValue.new()
 		3:
 			type = TYPE_BOOL
 			$bool_field.visible = true
-			set_slot_type_right(3, 8)
+			set_slot_type_right(OUTPUT_PORT_INDEX, 8)
+			represented_value = CPMB_BoolValue.new()
 		4:
 			type = TYPE_COLOR
 			$color_field.visible = true
-			set_slot_type_right(3, 2)
+			set_slot_type_right(OUTPUT_PORT_INDEX, 3)
+			represented_value = CPMB_Vector3Value.new()
+			represented_value.as_color = true
+		5:
+			type = TYPE_VECTOR2
+			$vector2_field.visible = true
+			set_slot_type_right(OUTPUT_PORT_INDEX, 4)
+			represented_value = CPMB_ComposeVec2.new()
+			represented_value.x = CPMB_FloatValue.new()
+			represented_value.y = CPMB_FloatValue.new()
+		6:
+			type = TYPE_VECTOR3
+			$vector3_field.visible = true
+			set_slot_type_right(OUTPUT_PORT_INDEX, 3)
+			represented_value = CPMB_ComposeVec3.new()
+			represented_value.x = CPMB_FloatValue.new()
+			represented_value.y = CPMB_FloatValue.new()
+			represented_value.z = CPMB_FloatValue.new()
+	
+	#represented_value.internal_to_node = true
+	represented_value.variable_name = $name.text
+	size.y = 0
+	
+	update_name_field_visibility()
+	
+func get_represented_object(port_idx : int) -> Object:
+	return represented_value
+
+func set_represented_object(object : Object) -> void:
+	represented_value = object
+	
+	#print("set represented object on valuenode")
+	
+	if object is CPMB_IntValue:
+		_type_chosen(1)
+		$type.selected = 1
+		
+		$int_field/value.value = object.value
+		
+	elif object is CPMB_FloatValue:
+		_type_chosen(2)
+		$type.selected = 2
+		
+		$float_field/value.value = object.value
+		
+	elif object is CPMB_BoolValue:
+		_type_chosen(3)
+		$type.selected = 3
+		
+		$bool_field/value.value = object.value
+		
+	elif object is CPMB_ComposeVec3:
+		_type_chosen(5)
+		$type.selected = 5
+			
+		$vector3_field/x/value.value = object.x.value
+		$vector3_field/y/value.value = object.y.value
+		$vector3_field/z/value.value = object.z.value
+	
+	elif object is CPMB_Vector3Value:
+		_type_chosen(4)
+		$type.selected = 4
+			
+		$color_field/color.color = Color(object.value.x, object.value.y, object.value.z)
+	
+	elif object is CPMB_ComposeVec2:
+		_type_chosen(6)
+		$type.selected = 6
+		
+		$vector3_field/x/value.value = object.x.value
+		$vector3_field/y/value.value = object.y.value
+		$vector3_field/z/value.value = object.z.value
+	
+	$is_variable.button_pressed = object.is_variable
+	$name.text = object.variable_name
+	
+	update_name_field_visibility()

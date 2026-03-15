@@ -159,7 +159,8 @@ vec2 get_triplanar_uv(int uv_index, vec3 local_normal, vec3 global_normal, vec3 
 
 
 #if NUM_TEXTURES > 0
-uniform sampler2D[NUM_TEXTURES] textures : source_color;
+uniform sampler2D[NUM_TEXTURES] nearest_neighbor_textures : source_color, filter_nearest_mipmap;
+uniform sampler2D[NUM_TEXTURES] linear_textures : source_color, filter_linear_mipmap;
 #endif
 
 #if NUM_NORMAL_MAP_TEXTURES > 0

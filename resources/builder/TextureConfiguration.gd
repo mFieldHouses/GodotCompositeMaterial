@@ -7,12 +7,17 @@ signal texture_changed(new_texture : Texture2D)
 @export var uv : CPMB_Vector2Value
 @export var texture : Texture2D:
 	set(x):
-		print("setter on source texture")
 		texture = x
 		texture_changed.emit(x)
-		value_changed.emit(x, "textures")
+		value_changed.emit(x, "linear_textures")
+		value_changed.emit(x, "nearest_neighbor_textures")
 
 @export var texture_index : int = 0
+@export_enum("Linear", "Nearest Neighbor") var filtering : int = 0:
+	set(x):
+		print("setter on texture")
+		filtering = x
+		request_material_rebuild.emit()
 
 func _init() -> void:
 	initialise_value()

@@ -7,6 +7,8 @@ class_name CompositeMaterialBuilderGraphNode
 
 @export var title_bar_color : Color = Color.DARK_KHAKI
 
+signal request_disconnect_self
+
 func _node_ready() -> void: ##Called after _ready() by [CompositeMaterialBuilderGraphNode] to allow extending classes to extend _ready() functionality without overriding base behavior.
 	pass
 

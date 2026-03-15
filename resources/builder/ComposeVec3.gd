@@ -22,9 +22,6 @@ func initialise_value(index : int = -1) -> void:
 		z = CPMB_FloatValue.new()
 		z.internal_to_node = true
 
-func get_value() -> Vector3:
-	return Vector3(x.value, y.value, z.value)
-
 func get_expression() -> String:
 	return "vec3(%s, %s, %s)" % [x.get_expression(), y.get_expression(), z.get_expression()]
 
@@ -38,6 +35,9 @@ func get_child_resources() -> Array[CPMB_Base]:
 	return [x,y,z]
 
 func get_node_name() -> String:
+	if is_variable:
+		return "ValueNode"
+	
 	return "utility/VectorOperationNode"
 
 func get_input_port_resources() -> Dictionary[CPMB_Base, int]:

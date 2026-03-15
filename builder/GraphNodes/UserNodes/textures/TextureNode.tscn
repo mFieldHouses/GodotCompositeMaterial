@@ -8,13 +8,16 @@
 [sub_resource type="Resource" id="Resource_56gsk"]
 script = ExtResource("5_wam4e")
 value = Vector2(inf, inf)
+is_variable = null
 internal_to_node = true
 
 [sub_resource type="Resource" id="Resource_ey7x0"]
 script = ExtResource("3_suxfi")
 uv = SubResource("Resource_56gsk")
-identifier = null
-value = Vector4(inf, inf, inf, inf)
+texture = Vector3(inf, inf, inf)
+as_color = null
+value = 0
+is_variable = null
 
 [node name="TextureNode" type="GraphNode" unique_id=962352097]
 offset_right = 239.0
@@ -89,7 +92,7 @@ slot/7/left_enabled = false
 slot/7/left_type = 0
 slot/7/left_color = Color(1, 1, 1, 1)
 slot/7/left_icon = null
-slot/7/right_enabled = true
+slot/7/right_enabled = false
 slot/7/right_type = 3
 slot/7/right_color = Color(1, 1, 1, 1)
 slot/7/right_icon = null
@@ -99,7 +102,7 @@ slot/8/left_type = 0
 slot/8/left_color = Color(1, 1, 1, 1)
 slot/8/left_icon = null
 slot/8/right_enabled = true
-slot/8/right_type = 5
+slot/8/right_type = 3
 slot/8/right_color = Color(1, 1, 1, 1)
 slot/8/right_icon = null
 slot/8/draw_stylebox = true
@@ -112,6 +115,15 @@ slot/9/right_type = 5
 slot/9/right_color = Color(1, 1, 1, 1)
 slot/9/right_icon = null
 slot/9/draw_stylebox = true
+slot/10/left_enabled = false
+slot/10/left_type = 0
+slot/10/left_color = Color(1, 1, 1, 1)
+slot/10/left_icon = null
+slot/10/right_enabled = true
+slot/10/right_type = 5
+slot/10/right_color = Color(1, 1, 1, 1)
+slot/10/right_icon = null
+slot/10/draw_stylebox = true
 script = ExtResource("2_suxfi")
 respresented_texture_config = SubResource("Resource_ey7x0")
 represented_resource_variable_name = "represented_texture_config"
@@ -138,22 +150,22 @@ stretch_mode = 4
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
+[node name="Label" type="Label" parent="." unique_id=1937862682]
+layout_mode = 2
+text = "Filtering"
+
 [node name="filter" type="OptionButton" parent="." unique_id=567650387]
 layout_mode = 2
-selected = 1
-item_count = 4
+selected = 0
+item_count = 2
 popup/item_0/text = "Linear"
 popup/item_0/id = 0
-popup/item_1/text = "Linear Mipmap"
-popup/item_1/id = 1
-popup/item_2/text = "Nearest Neighbor"
-popup/item_2/id = 2
-popup/item_3/text = "Nearest Neighbor Mipmap"
-popup/item_3/id = 3
+popup/item_1/text = "Nearest Neighbor"
+popup/item_1/id = 2
 
-[node name="export" type="CheckButton" parent="." unique_id=1791086357]
+[node name="is_variable" type="CheckButton" parent="." unique_id=1791086357]
 layout_mode = 2
-text = "As export variable"
+text = "Is variable"
 
 [node name="rgb_out" type="Label" parent="." unique_id=1737254237]
 layout_mode = 2

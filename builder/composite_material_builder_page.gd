@@ -5,7 +5,7 @@ class_name CompositeMaterialBuilderPage
 var output_node : CompositeMaterialOutputNode
 
 var node_mappings : Array = [
-	["LayerNode", "VariableNode", "", "", "", "DistanceFadeNode"],
+	["LayerNode", "ValueNode", "", "", "", "DistanceFadeNode"],
 	["textures/TextureNode", "textures/NoiseTextureNode", "textures/NormalMapNode"],
 	["convert/ColorRampNode", "convert/HSVTransformNode"],
 	["UVTransformNode","UVMapNode","TriplanarMapNode"],
@@ -91,7 +91,6 @@ func _disconnection_request(from_node: StringName, from_port: int, to_node: Stri
 	
 	build_material()
 
-
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if !event.pressed:
@@ -105,24 +104,33 @@ func _gui_input(event: InputEvent) -> void:
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE and event.pressed:
 			if selected_node is not CompositeMaterialOutputNode:
 				
-				var _connections = get_connection_list_from_node(selected_node.name)
-				for _connection in _connections:
-					disconnect_node(_connection.from_node, _connection.from_port, _connection.to_node, _connection.to_port)
+				disconnect_all_from_node(selected_node)
 				
 				selected_node.queue_free()
 				selected_node = null
+				
+				build_material()
 			
+
+func disconnect_all_from_node(node : CompositeMaterialBuilderGraphNode) -> void:
+	var _connections = get_connection_list_from_node(node.name)
+	for _connection in _connections:
+		disconnect_node(_connection.from_node, _connection.from_port, _connection.to_node, _connection.to_port)
+	
 
 func add_node(idx1 : int, idx2 : int) -> void:
 	var _node_name = node_mappings[idx1][idx2]
-	instantiate_node_at_mouse(_node_name)
+	var _node = instantiate_node_at_mouse(_node_name)
+	_node.request_disconnect_self.connect(disconnect_all_from_node.bind(_node))
 	
-func instantiate_node_at_mouse(node_name : String) -> void:
+func instantiate_node_at_mouse(node_name : String) -> CompositeMaterialBuilderGraphNode:
 	var _node = load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_name + ".tscn").instantiate()
 	
 	_node.position_offset = (scroll_offset / zoom) + (initial_mouse_position / zoom)
 	
 	add_child(_node)
+	
+	return _node
 
 func build_material() -> void:
 	
@@ -130,6 +138,7 @@ func build_material() -> void:
 	
 	#Clear out material
 	edited_composite_material.layers = [] as Array[CompositeMaterialLayer]
+	edited_composite_material.variable_resources = []
 	
 	#Map out all used resources
 	var mapped_resources : Dictionary[String, Array] = {}
@@ -158,6 +167,12 @@ func build_material() -> void:
 		var resource_to_check : CPMB_Base = resources_to_check.pop_front()
 		var resource_mapping_key : String = resource_to_check.get_mapping_key()
 		print("mapping ", resource_to_check)
+		
+		
+		if resource_to_check.is_variable and !edited_composite_material.variable_resources.has(resource_to_check):
+			#var _new_declaration = CPM_VariableDeclaration.new()
+			#_new_declaration.setup_from_resource(resource_to_check)
+			edited_composite_material.variable_resources.append(resource_to_check)
 		
 		if resource_mapping_key != "":
 			if !mapped_resources.has(resource_mapping_key):
@@ -318,7 +333,8 @@ func build_material() -> void:
 			_idx += 1
 	
 	if mapped_resources.has("Texture"):
-		edited_composite_material.set_shader_parameter("textures", mapped_resources.Texture)
+		edited_composite_material.set_shader_parameter("linear_textures", mapped_resources.Texture)
+		edited_composite_material.set_shader_parameter("nearest_neighbor_textures", mapped_resources.Texture)
 	
 	if mapped_resources.has("ColorRampTexture"):
 		edited_composite_material.set_shader_parameter("color_ramp_textures", mapped_resources.ColorRampTexture)
@@ -404,6 +420,7 @@ func build_material() -> void:
 
 
 func request_rebuild_material() -> void:
+	print("request received")
 	if !is_building_material:
 		build_material()
 

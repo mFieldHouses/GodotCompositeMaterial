@@ -20,3 +20,9 @@ func _to_string() -> String:
 
 func get_mapping_key() -> String:
 	return "IntValue"
+
+func get_node_name() -> String:
+	if is_variable:
+		return "ValueNode"
+	
+	return "whoops (IntValue.gd)"
