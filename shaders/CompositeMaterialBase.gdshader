@@ -251,7 +251,13 @@ vec3 rgb_to_hsv(vec3 rgb) {
         hue = 4.0 + (rgb.r - rgb.g) / diff;
     }
     hue = fract(hue / 6.0);
-    float saturation = diff / maxComponent;
+    float saturation;
+	if (maxComponent > 0.0) {
+		saturation = diff / maxComponent;
+	}
+	else {
+		saturation = 0.0;
+	}
     float value = maxComponent;
     return vec3(hue, saturation, value);
 }

@@ -43,7 +43,6 @@ func on_mapped(resource_map : Dictionary[String, Array]) -> void:
 		resource_map.Texture.append(texture)
 		texture_index = resource_map.Texture.size() - 1
 	else:
-		print("already have texture, just assign index")
 		texture_index = _idx
 
 func get_node_name() -> String:

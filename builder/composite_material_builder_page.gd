@@ -6,7 +6,8 @@ var output_node : CompositeMaterialOutputNode
 
 var node_mappings : Array = [
 	["LayerNode", "VariableNode", "", "", "", "DistanceFadeNode"],
-	["textures/TextureNode", "textures/MaskTextureNode", "textures/ColorRampNode", "textures/NoiseTextureNode", "textures/NormalMapNode", "textures/DepthMapNode"],
+	["textures/TextureNode", "textures/NoiseTextureNode", "textures/NormalMapNode"],
+	["convert/ColorRampNode", "convert/HSVTransformNode"],
 	["UVTransformNode","UVMapNode","TriplanarMapNode"],
 	["masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/VertexColorMaskNode", "masks/EffectShapeMaskNode", "masks/UVMaskNode", "masks/NormalMapMaskNode"],
 	["utility/TimeNode", "utility/MathNode", "utility/VectorOperationNode"]
@@ -197,7 +198,8 @@ func build_material() -> void:
 		"DecomposeVector4" : "NUM_VECTOR4_DECOMPOSITIONS",
 		"Vector2Value" : "NUM_VECTOR2_VALUES",
 		"Vector3Value" : "NUM_VECTOR3_VALUES",
-		"Vector4Value" : "NUM_VECTOR4_VALUES"
+		"Vector4Value" : "NUM_VECTOR4_VALUES",
+		"HSVTransformConfiguration": "NUM_HSV_TRANSFORMS"
 	}
 	
 	#print(mapped_resources)
@@ -318,6 +320,9 @@ func build_material() -> void:
 	if mapped_resources.has("Texture"):
 		edited_composite_material.set_shader_parameter("textures", mapped_resources.Texture)
 	
+	if mapped_resources.has("ColorRampTexture"):
+		edited_composite_material.set_shader_parameter("color_ramp_textures", mapped_resources.ColorRampTexture)
+	
 	var fragment_code : String = ""
 	var get_layer_albedo_string : String = "switch (layer_index) {"
 	var get_layer_normal_string : String = "switch (layer_index) {"
@@ -363,12 +368,12 @@ func build_material() -> void:
 	
 	var get_color_ramp_string : String = "switch (color_ramp_id) {"
 	
-	if mapped_resources.has("ColorRampConfiguration"):
+	if mapped_resources.has("ColorRampOutputConfiguration"):
 		_idx = 0
-		for color_ramp_config : CPMB_ColorRampConfiguration in mapped_resources.ColorRampConfiguration:
+		for color_ramp_config : CPMB_ColorRampOutputConfiguration in mapped_resources.ColorRampOutputConfiguration:
 			get_color_ramp_string += "
 			case %s:
-				return texture(color_ramp_textures[%s], vec2(fac, 0.0));" % [_idx, mapped_resources.ColorRampTexture.find(color_ramp_config.gradient_texture)]
+				return texture(color_ramp_textures[%s], vec2(fac, 0.0));" % [_idx, mapped_resources.ColorRampTexture.find(color_ramp_config.source_color_ramp_configuration.gradient_texture)]
 			_idx += 1
 		
 	get_color_ramp_string += "

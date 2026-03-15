@@ -15,10 +15,14 @@ func edit_gradient() -> void:
 	EditorInterface.edit_resource(represented_configuration.gradient_texture)
 
 func get_represented_object(port_idx : int) -> Object:
-	return represented_configuration
+	var _output_config := CPMB_ColorRampOutputConfiguration.new()
+	_output_config.source_color_ramp_configuration = represented_configuration
+	_output_config.output_channel = port_idx
+	
+	return _output_config
 
 func set_represented_object(object : Object) -> void:
-	represented_configuration = object
+	represented_configuration = object.source_color_ramp_configuration
 	$color_ramp_preview.texture = represented_configuration.gradient_texture
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:

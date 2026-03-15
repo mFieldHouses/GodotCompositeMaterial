@@ -1,14 +1,14 @@
 [gd_scene format=3 uid="uid://41andv6scw11"]
 
-[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_ug5v1"]
-[ext_resource type="Script" uid="uid://b4afb66lmnxic" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/triplanar_map_node.gd" id="2_hvncj"]
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_chqpi"]
+[ext_resource type="Script" uid="uid://cxods4tiba3rw" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/convert/hsv_transform_node.gd" id="2_b32h0"]
 
-[node name="TweakHSVNode" type="GraphNode" unique_id=1174472716]
+[node name="HSVTransformNode" type="GraphNode" unique_id=1174472716]
 offset_right = 220.0
 offset_bottom = 99.0
 tooltip_text = "Generates a UV map based on the XYZ coordinates and normals of vertices."
-theme = ExtResource("1_ug5v1")
-title = "Tweak HSV"
+theme = ExtResource("1_chqpi")
+title = "Tune HSV"
 ignore_invalid_connection_type = true
 slot/0/left_enabled = true
 slot/0/left_type = 3
@@ -55,8 +55,7 @@ slot/4/right_type = 3
 slot/4/right_color = Color(1, 1, 1, 1)
 slot/4/right_icon = null
 slot/4/draw_stylebox = true
-script = ExtResource("2_hvncj")
-represented_resource_variable_name = "represented_configuration"
+script = ExtResource("2_b32h0")
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 metadata/renamable = false
 

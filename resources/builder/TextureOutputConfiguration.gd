@@ -17,7 +17,7 @@ func get_expression() -> String:
 		1:
 			return "texture(textures[%s], %s).a" % [source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
 		2:
-			return "length(texture(textures[%s], %s)) / 1.73205" % [source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
+			return "texture(textures[%s], %s).r" % [source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
 		_:
 			return "texture(textures[%s], %s).rgb" % [source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
 		
