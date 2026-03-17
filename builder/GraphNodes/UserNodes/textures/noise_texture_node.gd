@@ -11,7 +11,7 @@ func _ready() -> void:
 	
 	var _config = CPMB_TextureConfiguration.new()
 	_config.texture = _tex
-	$TextureNode.set_represented_object(_config)
+	$TextureNode.call_deferred("set_represented_object", _config)
 	
 	print(position_offset)
 	$TextureNode.position_offset = position_offset

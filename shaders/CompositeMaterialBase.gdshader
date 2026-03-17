@@ -81,7 +81,16 @@ uniform vec3[NUM_VERTEX_COLOR_MASKS] vertex_color_custom_colors;
 uniform float[NUM_VERTEX_COLOR_MASKS] vertex_color_custom_margins;
 
 float get_vertex_color_mask(int mask_id, vec3 vertex_color) {
-	return 0.0
+	switch (vertex_color_mask_modes[mask_id]) {
+		case 0:
+			return vertex_color.r;
+		case 1:
+			return vertex_color.g;
+		case 2:
+			return vertex_color.b;
+		default:
+			return 0.0;
+	}
 }
 #endif
 
@@ -278,7 +287,6 @@ varying vec3 local_vertex_normal;
 varying vec3 global_vertex_normal;
 varying vec3 global_vertex_pos;
 varying vec3 local_vertex_pos;
-varying vec3 vertex_color;
 varying vec3 global_camera_pos;
 
 varying vec2 uv;
@@ -297,6 +305,11 @@ vec3 get_layer_albedo(int layer_index) {
 	return vec3(0.0);
 }
 
+vec3 get_layer_alpha(int layer_index) {
+	//get_alpha
+	return vec3(1.0);
+}
+
 vec3 get_layer_normal(int layer_index) {
 	//get_normal
 	return vec3(0.0);
@@ -309,6 +322,11 @@ float get_layer_roughness(int layer_index) {
 
 float get_layer_metallic(int layer_index) {
 	//get_metallic
+	return 0.0;
+}
+
+float get_layer_occlusion(int layer_index) {
+	//get_occlusion
 	return 0.0;
 }
 
@@ -330,6 +348,7 @@ void fragment() {
 	vec3 normal_mix;
 	float roughness_mix;
 	float metallic_mix;
+	float occlusion_mix;
 	
 	int starting_index = 0;
 	int process_index = 0;
@@ -341,17 +360,18 @@ void fragment() {
 	for (int i = starting_index; i < NUM_LAYERS; i++) {
 		if (process_index == 0) {
 			albedo_mix = get_layer_albedo(i);
-			//ALPHA = albedo.a;
 			normal_mix = get_layer_normal(i);
 			roughness_mix = get_layer_roughness(i);
 			metallic_mix = get_layer_metallic(i);
+			occlusion_mix = get_layer_occlusion(i);
 		}
 		else {
-			albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i]);
+			albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i] * get_layer_alpha(i));
 			
 			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i]);
 			roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i]);
 			metallic_mix = mix(metallic_mix, get_layer_metallic(i), layer_masks[i]);
+			occlusion_mix = mix(occlusion_mix, get_layer_occlusion(i), layer_masks[i]);
 		}
 		
 		process_index += 1;
@@ -361,5 +381,6 @@ void fragment() {
 	NORMAL_MAP = normal_mix;
 	ROUGHNESS = roughness_mix;
 	METALLIC = metallic_mix;
+	//AO = occlusion_mix;
 	
 }

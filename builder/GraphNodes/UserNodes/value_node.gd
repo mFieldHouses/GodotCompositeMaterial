@@ -6,14 +6,14 @@ var type : Variant.Type
 
 var represented_value : CPMB_Base
 
-const OUTPUT_PORT_INDEX : int = 4
+const OUTPUT_PORT_INDEX : int = 3
 
 func _node_ready() -> void:
 	$type.item_selected.connect(_type_chosen)
 	
-	$name.text_changed.connect(func(text): represented_value.variable_name = text)
+	$variable/name.text_changed.connect(func(text): represented_value.variable_name = text)
 	
-	$is_variable.toggled.connect(set_variable)
+	$variable/is_variable.toggled.connect(set_variable)
 	
 	$int_field/value.value_changed.connect(func(x): represented_value.value = x)
 	$float_field/value.value_changed.connect(func(x): represented_value.value = x)
@@ -35,13 +35,13 @@ func set_variable(state : bool) -> void:
 	update_name_field_visibility()
 
 func update_name_field_visibility() -> void:
-	$name.visible = $is_variable.button_pressed and represented_value != null
+	$variable/name.visible = $variable/is_variable.button_pressed and represented_value != null
 
 func _type_chosen(id : int) -> void:
 	
 	request_disconnect_self.emit()
 	
-	$is_variable.disabled = false
+	$variable/is_variable.disabled = false
 	
 	$bool_field.visible = false
 	$float_field.visible = false
@@ -91,7 +91,7 @@ func _type_chosen(id : int) -> void:
 			represented_value.z = CPMB_FloatValue.new()
 	
 	#represented_value.internal_to_node = true
-	represented_value.variable_name = $name.text
+	represented_value.variable_name = $variable/name.text
 	size.y = 0
 	
 	update_name_field_visibility()

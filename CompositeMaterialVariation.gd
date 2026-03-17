@@ -15,6 +15,7 @@ class_name CompositeMaterialVariation
 @export var update_automatically : bool = true ##Whether this variation automatically updates when the source material is rebuilt.
 
 @export var displayed_variables : Dictionary[String, Dictionary] = {}
+@export var cached_values : Dictionary[String, Variant] = {}
 
 func update_all() -> void:
 	print("updating all")
@@ -22,31 +23,20 @@ func update_all() -> void:
 	emit_changed()
 
 func update_shader() -> void:
-	print("updating")
+	print("updating shader")
 	var _base_shader : Shader = base_composite_material.shader
 	
 	shader = _base_shader.duplicate()
-	
+
 	for uniform in _base_shader.get_shader_uniform_list():
 		var _uniform_name : String = uniform.name
-		set_shader_parameter(_uniform_name, base_composite_material.get_shader_parameter(_uniform_name))
-		print('set ', _uniform_name, " to ", base_composite_material.get_shader_parameter(_uniform_name))
+		#print("set ", _uniform_name, " to ", base_composite_material.get_shader_parameter(_uniform_name))
+		#print(base_composite_material.get_shader_parameter(_uniform_name))
+		set_shader_parameter(_uniform_name, base_composite_material.get_shader_parameter(_uniform_name).duplicate())
+	
 	
 	print('all shader uniforms have been set')
 	
-func _get_property_list() -> Array[Dictionary]:
-	print("get property list")
-	var _property_list : Array[Dictionary] = [
-		{
-			"name": "Material Variables",
-			"type": TYPE_NIL,
-			"usage": PROPERTY_USAGE_GROUP
-		}
-	]
-	
-	displayed_variables = {}
-	
-	#print(base_composite_material.variable_resources)
 	for variable_resource : CPMB_Base in base_composite_material.variable_resources:
 		
 		var variable_type : Variant.Type = 0
@@ -69,18 +59,21 @@ func _get_property_list() -> Array[Dictionary]:
 			variable_type = TYPE_COLOR
 			uniform_name = "vector3_values"
 			
+			var _c = get_shader_parameter(uniform_name)[variable_resource.index]
+			var color : Color
+			if _c is Vector3:
+				color = Color(_c.x, _c.y, _c.z)
+			elif _c is Color:
+				color = _c
+			
 			displayed_variables[variable_resource.variable_name] = {
 				"resource": variable_resource,
 				"uniform_name": uniform_name,
-				"value": get_shader_parameter(uniform_name)[variable_resource.index],
+				"value": color,
 				"type": variable_type,
-				"index_in_uniform": variable_resource.index
+				"index_in_uniform": variable_resource.index,
+				"variable_name": variable_resource.variable_name
 			}
-			
-			_property_list.append({
-				"name": variable_resource.variable_name,
-				"type": variable_type
-			})
 			
 			continue
 			
@@ -94,14 +87,33 @@ func _get_property_list() -> Array[Dictionary]:
 			"uniform_name": uniform_name,
 			"value": get_shader_parameter(uniform_name)[variable_resource.index],
 			"type": variable_type,
-			"index_in_uniform": variable_resource.index
+			"index_in_uniform": variable_resource.index,
+			"variable_name": variable_resource.variable_name
 		}
 		
-		#print("resource", variable_resource, " has index ", variable_resource.index)
-		
+		if cached_values.has(variable_resource.variable_name):
+			displayed_variables[variable_resource.variable_name].value = cached_values[variable_resource.variable_name]
+	
+	for value_name in cached_values:
+		set(value_name, cached_values[value_name])
+	
+	print("generated displayed_variables")
+	
+	
+func _get_property_list() -> Array[Dictionary]:
+	print("get property list")
+	var _property_list : Array[Dictionary] = [
+		{
+			"name": "Material Variables",
+			"type": TYPE_NIL,
+			"usage": PROPERTY_USAGE_GROUP
+		}
+	]
+	
+	for variable in displayed_variables:
 		_property_list.append({
-			"name": variable_resource.variable_name,
-			"type": variable_type
+			"name": displayed_variables[variable].variable_name,
+			"type": displayed_variables[variable].type
 		})
 	
 	return _property_list
@@ -117,6 +129,8 @@ func _set(property: StringName, value: Variant) -> bool:
 		array[displayed_variables[property].index_in_uniform] = value
 		#print(array)
 		set_shader_parameter(displayed_variables[property].uniform_name, array)
+		
+		cached_values[property] = value
 		
 		return true
 	

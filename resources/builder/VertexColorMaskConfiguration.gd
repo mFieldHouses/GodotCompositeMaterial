@@ -8,7 +8,7 @@ enum ColorType {RED, GREEN, BLUE, CUSTOM}
 @export var custom_color_margin : float = 0.005
 
 func get_expression() -> String:
-	return "get_vertex_color_mask(%s, VERTEX.rgb)"
+	return "get_vertex_color_mask(%s, COLOR.rgb)" % index
 
 func get_mapping_key() -> String:
 	return "VertexColorMaskConfiguration"

@@ -64,9 +64,9 @@ func _connection_requested(from_node: StringName, from_port: int, to_node: Strin
 		build_material()
 		return
 	elif _to_node is LayerNode:
-		if to_port == 2:
+		if to_port == 3:
 			_to_node.enable_value(0, false)
-		elif to_port == 3:
+		elif to_port == 4:
 			_to_node.enable_value(1, false)
 	
 	connect_node(from_node, from_port, to_node, to_port)
@@ -80,9 +80,9 @@ func _disconnection_request(from_node: StringName, from_port: int, to_node: Stri
 	var _to_node : CompositeMaterialBuilderGraphNode = get_node(String(to_node))
 	
 	if _to_node is LayerNode:
-		if to_port == 2:
+		if to_port == 3:
 			_to_node.enable_value(0, true)
-		elif to_port == 3:
+		elif to_port == 4:
 			_to_node.enable_value(1, true)
 	
 	disconnect_node(from_node, from_port, to_node, to_port)

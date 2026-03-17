@@ -89,25 +89,19 @@ slot/8/right_type = 0
 slot/8/right_color = Color(1, 1, 1, 1)
 slot/8/right_icon = null
 slot/8/draw_stylebox = true
-slot/9/left_enabled = false
-slot/9/left_type = 0
-slot/9/left_color = Color(1, 1, 1, 1)
-slot/9/left_icon = null
-slot/9/right_enabled = false
-slot/9/right_type = 0
-slot/9/right_color = Color(1, 1, 1, 1)
-slot/9/right_icon = null
-slot/9/draw_stylebox = true
 script = ExtResource("2_3wm8x")
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 metadata/renamable = false
 
-[node name="is_variable" type="CheckButton" parent="." unique_id=1438061230]
+[node name="variable" type="VBoxContainer" parent="." unique_id=1721180847]
+layout_mode = 2
+
+[node name="is_variable" type="CheckButton" parent="variable" unique_id=1438061230]
 layout_mode = 2
 disabled = true
 text = "Is variable"
 
-[node name="name" type="LineEdit" parent="." unique_id=1357609543]
+[node name="name" type="LineEdit" parent="variable" unique_id=1357609543]
 visible = false
 layout_mode = 2
 placeholder_text = "Variable name..."
