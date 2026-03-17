@@ -7,7 +7,7 @@ func _ready() -> void:
 	
 	$add_node.clear()
 	$add_node.add_item("Layer")
-	$add_node.add_item("Variable")
+	$add_node.add_item("Value")
 	$add_node.add_submenu_node_item("Textures", $add_node/textures)
 	$add_node.add_submenu_node_item("Convert", $add_node/convert)
 	$add_node.add_submenu_node_item("UV", $add_node/uv)

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dxijauslrlyy3"]
 
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_8rl0g"]
-[ext_resource type="Script" uid="uid://dbbda2f5v2iu7" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/variable_node.gd" id="2_3wm8x"]
+[ext_resource type="Script" uid="uid://dbbda2f5v2iu7" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/value_node.gd" id="2_3wm8x"]
 
 [node name="ValueNode" type="GraphNode" unique_id=1174472716]
 offset_right = 7.0
@@ -39,7 +39,7 @@ slot/3/left_enabled = false
 slot/3/left_type = 0
 slot/3/left_color = Color(1, 1, 1, 1)
 slot/3/left_icon = null
-slot/3/right_enabled = true
+slot/3/right_enabled = false
 slot/3/right_type = 0
 slot/3/right_color = Color(1, 1, 1, 1)
 slot/3/right_icon = null
@@ -57,7 +57,7 @@ slot/5/left_enabled = false
 slot/5/left_type = 0
 slot/5/left_color = Color(1, 1, 1, 1)
 slot/5/left_icon = null
-slot/5/right_enabled = true
+slot/5/right_enabled = false
 slot/5/right_type = 0
 slot/5/right_color = Color(1, 1, 1, 1)
 slot/5/right_icon = null
@@ -150,7 +150,6 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="float_field" type="VBoxContainer" parent="." unique_id=361879452]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

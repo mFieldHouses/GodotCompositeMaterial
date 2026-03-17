@@ -417,6 +417,8 @@ func build_material() -> void:
 	#print('saved page as scene: ', edited_composite_material.node_page)
 	
 	is_building_material = false
+	
+	edited_composite_material.finish_building.emit()
 
 
 func request_rebuild_material() -> void:
