@@ -20,7 +20,8 @@ var large_offset : bool = false:
 			size.y = 0
 
 func _node_ready() -> void:
-	get_parent().output_node = self
+	
+	get_parent().set_deferred("output_node", self)
 	
 	represented_composite_material = CompositeMaterial.new()
 	

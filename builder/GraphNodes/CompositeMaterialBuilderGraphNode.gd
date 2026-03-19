@@ -9,16 +9,49 @@ class_name CompositeMaterialBuilderGraphNode
 
 signal request_disconnect_self
 
+var _rename_button : Button
+var _confirm_button : Button
+signal request_edit_title
+signal request_stop_editing_title
+
 func _node_ready() -> void: ##Called after _ready() by [CompositeMaterialBuilderGraphNode] to allow extending classes to extend _ready() functionality without overriding base behavior.
 	pass
 
 func _ready() -> void:
 	theme = preload("res://addons/CompositeMaterial/builder/graph_node_default_theme.tres")
+	
+	_rename_button = Button.new()
+	_rename_button.flat = true
+	_rename_button.icon = EditorInterface.get_base_control().get_theme_icon("Edit", "EditorIcons")
+	get_titlebar_hbox().add_child(_rename_button)
+	
+	_confirm_button = Button.new()
+	_confirm_button.flat = true
+	_confirm_button.icon = EditorInterface.get_base_control().get_theme_icon("ImportCheck", "EditorIcons")
+	get_titlebar_hbox().add_child(_confirm_button)
+	_confirm_button.visible = false
+	
+	if !_confirm_button.is_connected("button_down", request_stop_editing_title.emit): #just for preventing errors when the template page gets loaded in
+		_confirm_button.button_down.connect(request_stop_editing_title.emit)
+		_rename_button.button_down.connect(start_capturing_keyboard)
+	
 	_node_ready()
 
-#func _gui_input(event: InputEvent) -> void:
-	#if event is InputEventMouseButton:
-		#print("clicked on node")
+
+func start_capturing_keyboard() -> void:
+	title = ""
+	
+	_rename_button.release_focus()
+	_rename_button.visible = false
+	_confirm_button.visible = true
+	selected = false
+	
+	request_edit_title.emit()
+
+func stop_capturing_keyboard() -> void:
+	_confirm_button.release_focus()
+	_rename_button.visible = true
+	_confirm_button.visible = false
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void: ##Override this method to be able to process connections.
 	pass

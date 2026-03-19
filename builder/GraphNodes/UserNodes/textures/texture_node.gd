@@ -16,6 +16,7 @@ func _node_ready() -> void:
 		respresented_texture_config.texture_changed.connect(update_preview)
 
 func edit_texture() -> void:
+	print("edit texture")
 	EditorInterface.edit_resource(respresented_texture_config)
 
 func _load_texture() -> void:

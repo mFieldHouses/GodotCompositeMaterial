@@ -27,6 +27,18 @@ var node_groups : Dictionary[String, Array] = {
 
 var initial_mouse_position : Vector2 #value used for storing where the user opened the context menu in case the user wants to add a node
 
+
+var capturing_keyboard : bool = false:
+	set(x):
+		capturing_keyboard = x
+		if x == false:
+			if edited_node:
+				edited_node.stop_capturing_keyboard()
+			edited_node = null
+			
+var edited_node : CompositeMaterialBuilderGraphNode
+
+
 var is_building_material : bool = false
 
 func _ready() -> void:
@@ -38,6 +50,15 @@ func _ready() -> void:
 	
 	output_node = $output
 	output_node.request_rebuild.connect(build_material)
+
+
+func _edit_title_request(node : CompositeMaterialBuilderGraphNode) -> void:
+	edited_node = node
+	capturing_keyboard = true
+
+func _stop_editing_title_request(node : CompositeMaterialBuilderGraphNode) -> void:
+	if node == edited_node:
+		capturing_keyboard = false
 
 
 func _connection_requested(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
@@ -93,6 +114,7 @@ func _gui_input(event: InputEvent) -> void:
 			$context_menu.popup(Rect2i(get_global_mouse_position() + Vector2(0, 50), Vector2i(100,100)))
 	
 	elif event is InputEventKey:
+		print("key input")
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE and event.pressed:
 			if selected_node is not CompositeMaterialOutputNode:
 				
@@ -102,6 +124,27 @@ func _gui_input(event: InputEvent) -> void:
 				selected_node = null
 				
 				build_material()
+		
+		elif capturing_keyboard and edited_node:
+			print("capture key")
+			if event.pressed:
+				
+				var _ignored_keys = [KEY_SHIFT, KEY_CTRL, KEY_TAB, KEY_CAPSLOCK]
+				
+				if event.keycode in _ignored_keys:
+					return
+				
+				if event.keycode == KEY_ENTER:
+					capturing_keyboard = false
+				elif event.keycode == KEY_SPACE:
+					edited_node.title += " "
+				elif event.keycode == KEY_BACKSPACE:
+					edited_node.title = edited_node.title.left(edited_node.title.length() - 1)
+				else:
+					if Input.is_key_pressed(KEY_SHIFT):
+						edited_node.title += event.as_text_key_label().trim_prefix("Shift+")
+					else:
+						edited_node.title += event.as_text_key_label().to_lower()
 			
 
 func disconnect_all_from_node(node : CompositeMaterialBuilderGraphNode) -> void:
@@ -114,6 +157,8 @@ func add_node(idx1 : int, idx2 : int) -> void:
 	var _node_name = node_mappings[idx1][idx2]
 	var _node = instantiate_node_at_mouse(_node_name)
 	_node.request_disconnect_self.connect(disconnect_all_from_node.bind(_node))
+	_node.request_edit_title.connect(_edit_title_request.bind(_node))
+	_node.request_stop_editing_title.connect(_stop_editing_title_request.bind(_node))
 	
 func instantiate_node_at_mouse(node_name : String) -> CompositeMaterialBuilderGraphNode:
 	var _node = load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_name + ".tscn").instantiate()
@@ -171,6 +216,7 @@ func build_material() -> void:
 		
 		if !resource_to_check.is_connected("request_material_rebuild", request_rebuild_material):
 			resource_to_check.request_material_rebuild.connect(request_rebuild_material)
+		
 		
 		resource_to_check.on_mapped(mapped_resources)
 	

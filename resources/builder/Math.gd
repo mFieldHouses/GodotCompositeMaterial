@@ -7,7 +7,10 @@ enum OperationType {
 	POWER, ROOT, LOGARITHM, NATURAL_LOGARITHM
 }
 
-@export var value_A : CPMB_NumericValue
+@export var value_A : CPMB_NumericValue:
+	set(x):
+		value_A = x
+		print("Setter on value_A")
 
 var operation : OperationType = 0:
 	set(x):
@@ -51,6 +54,12 @@ func _to_string() -> String:
 
 func get_child_resources() -> Array[CPMB_Base]:
 	return [value_A, value_B]
+
+func get_input_port_resources() -> Dictionary[CPMB_Base, int]:
+	return {
+		value_A: 0,
+		value_B: 1
+	}
 
 func get_node_name() -> String:
 	return "utility/MathNode"
