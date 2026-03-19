@@ -10,7 +10,6 @@ offset_bottom = 206.0
 tooltip_text = "The output for this material. Anything plugged in here will show up on meshes using this CompositeMaterial."
 mouse_filter = 1
 theme = ExtResource("1_2krc8")
-theme_override_constants/separation = 170
 position_offset = Vector2(640, 180)
 title = "CompositeMaterial Output"
 slot/0/left_enabled = true

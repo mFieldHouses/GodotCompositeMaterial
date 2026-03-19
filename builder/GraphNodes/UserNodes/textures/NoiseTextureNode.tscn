@@ -8,14 +8,26 @@
 [sub_resource type="Resource" id="Resource_ukebk"]
 script = ExtResource("4_v384q")
 value = Vector2(inf, inf)
+internal_to_node = true
 
 [sub_resource type="Resource" id="Resource_503x2"]
 script = ExtResource("3_b1gof")
 uv = SubResource("Resource_ukebk")
-value = Vector4(inf, inf, inf, inf)
+value = Vector3(inf, inf, inf)
 
-[node name="NoiseTextureNode" type="Node" unique_id=1968927465]
+[node name="NoiseTextureNode" type="GraphNode" unique_id=1705817962]
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
 script = ExtResource("1_bth5l")
+metadata/_custom_type_script = "uid://s0jc3oianx85"
 
 [node name="TextureNode" parent="." unique_id=962352097 instance=ExtResource("2_ukebk")]
+layout_mode = 2
 respresented_texture_config = SubResource("Resource_503x2")

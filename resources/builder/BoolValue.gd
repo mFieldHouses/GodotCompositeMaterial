@@ -20,7 +20,4 @@ func get_mapping_key() -> String:
 	return "BoolValue"
 
 func get_node_name() -> String:
-	if is_variable:
-		return "ValueNode"
-	
-	return "whoops (BoolValue.gd)"
+	return "ValueNode"

@@ -48,6 +48,7 @@ func _initialize_rendering() -> void:
 	
 func _exit_tree() -> void:
 	RenderingServer.global_shader_parameter_remove("cpm_effect_shape_textures")
+	RenderingServer.global_shader_parameter_remove("cpm_effect_shapes_num")
 
 
 func initialize_arrays() -> void:

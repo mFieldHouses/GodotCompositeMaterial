@@ -61,35 +61,27 @@ func _connection_requested(from_node: StringName, from_port: int, to_node: Strin
 		_new_node.linked_node = get_node(String(from_node))
 		connect_node(from_node, from_port, _new_node.name, 0)
 		_to_node.connect_and_pass_object(to_port, _from_node.get_represented_object(from_port))
-		build_material()
+		request_rebuild_material()
 		return
-	elif _to_node is LayerNode:
-		if to_port == 3:
-			_to_node.enable_value(0, false)
-		elif to_port == 4:
-			_to_node.enable_value(1, false)
 	
 	connect_node(from_node, from_port, to_node, to_port)
 	_to_node.connect_and_pass_object(to_port, _from_node.get_represented_object(from_port))
 	
-	build_material()
+	request_rebuild_material()
 
 
 func _disconnection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
 	var _from_node : CompositeMaterialBuilderGraphNode = get_node(String(from_node))
 	var _to_node : CompositeMaterialBuilderGraphNode = get_node(String(to_node))
 	
-	if _to_node is LayerNode:
-		if to_port == 3:
-			_to_node.enable_value(0, true)
-		elif to_port == 4:
-			_to_node.enable_value(1, true)
-	
 	disconnect_node(from_node, from_port, to_node, to_port)
 	
 	_to_node.disconnected(to_port)
 	
-	build_material()
+	print(_from_node.represented_resource_variable_name)
+	_from_node.get(_from_node.represented_resource_variable_name).value_changed.disconnect(set_shader_property)
+	
+	request_rebuild_material()
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -149,17 +141,8 @@ func build_material() -> void:
 	for subnode : SubNode in $output.get_connected_layers():
 		var represented_layer : CompositeMaterialLayer = subnode.linked_node.represented_layer
 		edited_composite_material.layers.append(represented_layer)
-		
-		if represented_layer.albedo:
-			resources_to_check.append(represented_layer.albedo)
-		if represented_layer.normal:
-			resources_to_check.append(represented_layer.normal)
-		if represented_layer.roughness_value:
-			resources_to_check.append(represented_layer.roughness_value)
-		if represented_layer.metallic_value:
-			resources_to_check.append(represented_layer.metallic_value)
-		if represented_layer.mask:
-			resources_to_check.append(represented_layer.mask)
+	
+		resources_to_check.append_array(represented_layer.get_child_resources())
 	
 	
 	#Go through resources_to_check and expand where neccesary until all resources have been checked and/or mapped.
@@ -320,7 +303,7 @@ func build_material() -> void:
 			if resource.has_signal("value_changed"):
 				if resource.has_connections("value_changed"):
 					resource.disconnect("value_changed", set_shader_property)
-				#print("connecting resource ", resource, " to index ", _idx)
+				print("connecting resource ", resource, " to index ", _idx)
 				resource.connect("value_changed", set_shader_property.bind(_idx))
 				
 			
@@ -341,6 +324,7 @@ func build_material() -> void:
 	
 	var fragment_code : String = ""
 	var get_layer_albedo_string : String = "switch (layer_index) {"
+	var get_layer_alpha_string : String = "switch (layer_index) {"
 	var get_layer_normal_string : String = "switch (layer_index) {"
 	var get_layer_roughness_string : String = "switch (layer_index) {"
 	var get_layer_metallic_string : String = "switch (layer_index) {"
@@ -351,13 +335,15 @@ func build_material() -> void:
 	for layer : CompositeMaterialLayer in edited_composite_material.layers:
 		fragment_code +=\
 	"layer_masks[%s] = %s;
-	if (layer_masks[%s] >= 0.995) starting_index = %s;\n" % [_idx, layer.mask.get_expression(), _idx, _idx]
+	if (layer_masks[%s] * get_layer_alpha(%s) >= 0.997) starting_index = %s;\n" % [_idx, layer.mask.get_expression(), _idx, _idx, _idx]
 	
 		get_layer_albedo_string += "
 		case %s:
 			return %s;" % [_idx, layer.albedo.get_expression()]
 		
-		#layer_alpha_string
+		get_layer_alpha_string += "
+		case %s:
+			return %s;" % [_idx, layer.alpha.get_expression()]
 		
 		get_layer_normal_string += "
 		case %s:
@@ -374,6 +360,8 @@ func build_material() -> void:
 		_idx += 1
 	
 	get_layer_albedo_string += "
+	}"
+	get_layer_alpha_string += "
 	}"
 	get_layer_normal_string += "
 	}"
@@ -396,6 +384,7 @@ func build_material() -> void:
 	}"
 	
 	_shader.code = _shader.code.replace("//get_albedo", get_layer_albedo_string)
+	_shader.code = _shader.code.replace("//get_alpha", get_layer_alpha_string)
 	_shader.code = _shader.code.replace("//get_normal", get_layer_normal_string)
 	_shader.code = _shader.code.replace("//get_roughness", get_layer_roughness_string)
 	_shader.code = _shader.code.replace("//get_metallic", get_layer_metallic_string)
@@ -456,6 +445,7 @@ func instantiate_node(node_id : String) -> GraphNode:
 func reconstruct_material_graph(material : CompositeMaterial) -> void:
 	
 	print("reconstructing material ", material.layers)
+	is_building_material = true
 	
 	clear_graph()
 	
@@ -479,7 +469,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 		print("==========================\nresource ", _resource)
 		
 		if _resource is not CompositeMaterialLayer:
-			print(_resource.internal_to_node)
+			print("internal: ", _resource.internal_to_node)
 			if _resource.internal_to_node:
 				print("resource is internal, skipping this one")
 				continue
@@ -494,6 +484,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 		
 		if _resource is CPMB_Base:
 			if _resource.is_descendant_resource:
+				print("resource is a descendant resource")
 				var _source = _resource.get_source_resource()
 				if existing_resources.has(_source):
 					_new_node = existing_resources[_source]
@@ -505,6 +496,9 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 				#_create_new_node = false
 		
 		elif _resource is CompositeMaterialLayer:
+			print("found layer resource")
+			print("albedo is ", _resource.albedo)
+			print("roughness is ", _resource.roughness_value)
 			_new_node = instantiate_node("LayerNode")
 			add_child(_new_node)
 			
@@ -522,11 +516,12 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			
 			layer_nodes.append(_new_node)
 			
-			#await get_tree().create_timer(0.1).timeout
+			print("set represented layer")
 			_new_node.set_represented_object(_resource)
 			continue
 		
 		if _resource.get_node_name() != "" and _create_new_node:
+			print("Instantiating new node for this resource")
 			_new_node = instantiate_node(_resource.get_node_name())
 		
 		if _new_node:
@@ -534,6 +529,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 				identifiers[_resource.source_identifier] = _new_node
 			
 			if !existing_resources.has(_resource):
+				print("Resource doesnt have a node yet, adding new node as child")
 				add_child(_new_node)
 			
 			if _create_new_node:
@@ -543,11 +539,10 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 					nodes_to_add.append([resource_to_add, {"to_node": String(_new_node.name), "to_port": _input_port_resources[resource_to_add], "from_port": resource_to_add.get_output_port_for_state()}])
 			
 			print("connecting node ", _new_node.name, " to ", _instructions.to_node)
-			connect_node(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
-			_to_node.call_deferred("connect_and_pass_object", _instructions.to_port, _resource)
-			
+			call_deferred("_connection_requested", _new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
+
 			#await get_tree().create_timer(0.1).timeout
-			#print("setting represented_object on ", _new_node)
+			print("setting represented_object on ", _new_node, " with ", _resource)
 			_new_node.set_represented_object(_resource)
 			#print("adding as existing resource now")
 			if _resource.is_descendant_resource:
@@ -565,7 +560,9 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 	output_node.position_offset.x = layer_nodes[0].position_offset.x + 350
 	
 	scroll_offset = (layer_nodes[0].position_offset + layer_nodes.back().position_offset) / 2.0
-
+	
+	is_building_material = false
+	
 #func get_children_recursive(node : Node) -> Array[Node]:
 	#var _result : Array[Node] = []
 	#var _children_to_be_checked : Array[Node] = []

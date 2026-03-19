@@ -42,7 +42,11 @@ func get_represented_object(port_idx : int) -> Object:
 	return _output_config
 
 func set_represented_object(object : Object) -> void:
-	respresented_texture_config = object.source_texture_configuration
+	if object is CPMB_TextureOutputConfiguration:
+		respresented_texture_config = object.source_texture_configuration
+	elif object is CPMB_TextureConfiguration:
+		respresented_texture_config = object
+	
 	update_preview(respresented_texture_config.texture)
 
 func update_preview(new_texture : Texture2D) -> void:

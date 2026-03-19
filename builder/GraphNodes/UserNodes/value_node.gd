@@ -11,23 +11,7 @@ const OUTPUT_PORT_INDEX : int = 3
 func _node_ready() -> void:
 	$type.item_selected.connect(_type_chosen)
 	
-	$variable/name.text_changed.connect(func(text): represented_value.variable_name = text)
-	
 	$variable/is_variable.toggled.connect(set_variable)
-	
-	$int_field/value.value_changed.connect(func(x): represented_value.value = x)
-	$float_field/value.value_changed.connect(func(x): represented_value.value = x)
-	
-	$bool_field/value.toggled.connect(func(x): represented_value.value = x)
-	
-	$color_field/color.color_changed.connect(func(x): represented_value.value = Vector3(x.r, x.g, x.b))
-	
-	$vector2_field/x/value.value_changed.connect(func(x): represented_value.x.value = x)
-	$vector2_field/y/value.value_changed.connect(func(x): represented_value.y.value = x)
-	
-	$vector3_field/x/value.value_changed.connect(func(x): represented_value.x.value = x)
-	$vector3_field/y/value.value_changed.connect(func(x): represented_value.y.value = x)
-	$vector3_field/y/value.value_changed.connect(func(x): represented_value.z.value = x)
 
 
 func set_variable(state : bool) -> void:
@@ -57,12 +41,12 @@ func _type_chosen(id : int) -> void:
 			type = TYPE_INT
 			$int_field.visible = true
 			set_slot_type_right(OUTPUT_PORT_INDEX, 5)
-			represented_value = CPMB_IntValue.new()
+			represented_value = CPMB_IntValue.new(1)
 		2:
 			type = TYPE_FLOAT
 			$float_field.visible = true
 			set_slot_type_right(OUTPUT_PORT_INDEX, 5)
-			represented_value = CPMB_FloatValue.new()
+			represented_value = CPMB_FloatValue.new(1.0)
 		3:
 			type = TYPE_BOOL
 			$bool_field.visible = true
@@ -72,27 +56,38 @@ func _type_chosen(id : int) -> void:
 			type = TYPE_COLOR
 			$color_field.visible = true
 			set_slot_type_right(OUTPUT_PORT_INDEX, 3)
-			represented_value = CPMB_Vector3Value.new()
+			represented_value = CPMB_Vector3Value.new(Vector3(1.0, 0.0, 0.0))
 			represented_value.as_color = true
 		5:
 			type = TYPE_VECTOR2
 			$vector2_field.visible = true
 			set_slot_type_right(OUTPUT_PORT_INDEX, 4)
 			represented_value = CPMB_ComposeVec2.new()
-			represented_value.x = CPMB_FloatValue.new()
-			represented_value.y = CPMB_FloatValue.new()
 		6:
 			type = TYPE_VECTOR3
 			$vector3_field.visible = true
 			set_slot_type_right(OUTPUT_PORT_INDEX, 3)
 			represented_value = CPMB_ComposeVec3.new()
-			represented_value.x = CPMB_FloatValue.new()
-			represented_value.y = CPMB_FloatValue.new()
-			represented_value.z = CPMB_FloatValue.new()
 	
 	#represented_value.internal_to_node = true
 	represented_value.variable_name = $variable/name.text
 	size.y = 0
+	
+	$variable/name.text_changed.connect(func(text): represented_value.variable_name = text)
+	
+	$int_field/value.value_changed.connect(func(x): represented_value.value = x)
+	$float_field/value.value_changed.connect(func(x): represented_value.value = x)
+	
+	$bool_field/value.toggled.connect(func(x): represented_value.value = x)
+	
+	$color_field/color.color_changed.connect(func(x): represented_value.value = Vector3(x.r, x.g, x.b))
+	
+	$vector2_field/x/value.value_changed.connect(func(x): represented_value.x.value = x)
+	$vector2_field/y/value.value_changed.connect(func(x): represented_value.y.value = x)
+	
+	$vector3_field/x/value.value_changed.connect(func(x): represented_value.x.value = x)
+	$vector3_field/y/value.value_changed.connect(func(x): represented_value.y.value = x)
+	$vector3_field/y/value.value_changed.connect(func(x): represented_value.z.value = x)
 	
 	update_name_field_visibility()
 	
@@ -102,7 +97,7 @@ func get_represented_object(port_idx : int) -> Object:
 func set_represented_object(object : Object) -> void:
 	represented_value = object
 	
-	#print("set represented object on valuenode")
+	print("set represented object on valuenode to ", object)
 	
 	if object is CPMB_IntValue:
 		_type_chosen(1)
@@ -144,7 +139,7 @@ func set_represented_object(object : Object) -> void:
 		$vector3_field/y/value.value = object.y.value
 		$vector3_field/z/value.value = object.z.value
 	
-	$is_variable.button_pressed = object.is_variable
-	$name.text = object.variable_name
+	$variable/is_variable.button_pressed = object.is_variable
+	$variable/name.text = object.variable_name
 	
 	update_name_field_visibility()

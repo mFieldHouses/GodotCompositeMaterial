@@ -305,9 +305,9 @@ vec3 get_layer_albedo(int layer_index) {
 	return vec3(0.0);
 }
 
-vec3 get_layer_alpha(int layer_index) {
+float get_layer_alpha(int layer_index) {
 	//get_alpha
-	return vec3(1.0);
+	return 1.0;
 }
 
 vec3 get_layer_normal(int layer_index) {

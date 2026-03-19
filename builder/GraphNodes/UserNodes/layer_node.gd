@@ -32,6 +32,7 @@ func _node_ready() -> void:
 	_confirm_button.button_down.connect(stop_capturing_keyboard)
 	_confirm_button.visible = false
 	
+	$alpha_in/value.value_changed.connect(func(x): represented_layer.alpha.value = x)
 	$roughness_in/value.value_changed.connect(func(x): represented_layer.roughness_value.value = x)
 	$metallic_in/value.value_changed.connect(func(x): represented_layer.metallic_value.value = x)
 
@@ -84,29 +85,57 @@ func _input(event: InputEvent) -> void:
 func enable_value(idx : int, state : bool = true) -> void:
 	match idx:
 		0:
-			$roughness_in/value.editable = state
+			$alpha_in/value.editable = state
 		1:
+			$roughness_in/value.editable = state
+		2:
 			$metallic_in/value.editable = state
 			
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
+	print("before setting the alpha, it was ", represented_layer.alpha)
+	print("layernode: connect and pass object ", object, " on port ", input_port_id)
 	match input_port_id:
 		0:
 			represented_layer.albedo = object
 		1:
+			#print("before setting the alpha, it was ", represented_layer.alpha)
 			represented_layer.alpha = object
+			enable_value(0, false)
+			#print('set layer alpha, it is now ', represented_layer.alpha)
 		2:
 			represented_layer.normal = object
 		3:
 			represented_layer.roughness_value = object
+			enable_value(1, false)
 		4:
 			represented_layer.metallic_value = object
+			enable_value(2, false)
 		5:
+			#print("before setting the mask, it is ", represented_layer.alpha)
 			represented_layer.mask = object
+			#print('set layer mask, it is now ', represented_layer.alpha)
+
+func disconnected(input_port_id : int) -> void:
+	get(represented_resource_variable_name).initialise_value(input_port_id)
+	
+	match input_port_id:
+		1:
+			enable_value(0, true)
+			represented_layer.alpha.value = $alpha_in/value.value
+		3:
+			enable_value(1, true)
+			represented_layer.metallic_value.value = $metallic_in/value.value
+		4:
+			enable_value(2, true)
+			represented_layer.roughness_value.value = $roughness_in/value.value
 
 func get_represented_object(port_idx : int) -> Object:
 	return represented_layer
 
 func set_represented_object(object : Object) -> void:
+	print("represented layer got set to ", object)
+	#print("alpha is currently ", object.alpha)
 	represented_layer = object
+	$alpha_in/value.value = represented_layer.alpha.value
 	$roughness_in/value.value = represented_layer.roughness_value.value
 	$metallic_in/value.value = represented_layer.metallic_value.value

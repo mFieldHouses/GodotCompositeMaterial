@@ -3,7 +3,10 @@ extends Resource
 class_name CompositeMaterialLayer
 
 @export var albedo : CPMB_Vector3Value
-@export var alpha : CPMB_NumericValue
+@export var alpha : CPMB_NumericValue:
+	set(x):
+		alpha = x
+		print("setter on ", self, " alpha: set to ", x)
 @export var normal : CPMB_Vector3Value
 @export var roughness_value : CPMB_NumericValue
 @export var metallic_value : CPMB_NumericValue = CPMB_FloatValue.new()
@@ -34,3 +37,16 @@ func initialise_value(index : int = -1) -> void:
 	if index == 5 or index == -1:
 		mask = CPMB_FloatValue.new(0.5)
 		mask.internal_to_node = true
+
+func get_child_resources() -> Array[CPMB_Base]:
+	return [albedo, alpha, normal, roughness_value, metallic_value, mask]
+
+func get_input_port_resources() -> Dictionary[CPMB_Base, int]:
+	return {
+		albedo: 0,
+		alpha: 1,
+		normal: 2,
+		roughness_value: 3,
+		metallic_value: 4,
+		mask: 5
+	}

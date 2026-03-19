@@ -3,6 +3,8 @@ class_name CPMB_Base
 
 signal request_material_rebuild
 
+@export var source_node_offset : Vector2 = Vector2.INF
+
 @export var is_descendant_resource : bool = false ##Set this to true on any resource that gets returned as the represented object on a node instead of the nodes actual represented object
 
 @export var is_variable : bool = false ##Set to true when this value needs to be exposed to the inspector in CompositeMaterialVariations.

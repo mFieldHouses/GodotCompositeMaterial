@@ -1,10 +1,9 @@
-[gd_scene load_steps=19 format=3 uid="uid://ddg8cw7bww7sv"]
+[gd_scene format=3 uid="uid://ddg8cw7bww7sv"]
 
 [ext_resource type="Script" uid="uid://dh2qybav5agab" path="res://addons/CompositeMaterial/studio/main_scene.gd" id="1_lfrno"]
 [ext_resource type="Script" uid="uid://cop36pp6nbsr3" path="res://addons/CompositeMaterial/studio/camera.gd" id="2_l4ul5"]
 [ext_resource type="Script" uid="uid://ch48q06fetyx1" path="res://addons/CompositeMaterial/studio/toolbar.gd" id="2_whta4"]
 [ext_resource type="Shader" uid="uid://2dh83rsrewy8" path="res://addons/CompositeMaterial/studio/floor_grid.gdshader" id="3_f60qu"]
-[ext_resource type="Texture2D" uid="uid://b0qk5jcgbuiu3" path="res://assets/textures/hdri/free hdr_map_808.jpg" id="4_4xuos"]
 [ext_resource type="Texture2D" uid="uid://52hc2kiwdedv" path="res://addons/CompositeMaterial/studio/grid.png" id="4_whta4"]
 [ext_resource type="Script" uid="uid://m46rks1gp5no" path="res://addons/CompositeMaterial/studio/grid_settings.gd" id="6_nxdy4"]
 [ext_resource type="Script" uid="uid://c01mmlfu4wmc6" path="res://addons/CompositeMaterial/studio/material_list.gd" id="7_l3rff"]
@@ -25,7 +24,6 @@ texture = SubResource("GradientTexture2D_ekmql")
 [sub_resource type="SphereMesh" id="SphereMesh_lfrno"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_l3rff"]
-panorama = ExtResource("4_4xuos")
 
 [sub_resource type="Sky" id="Sky_mh6i6"]
 sky_material = SubResource("PanoramaSkyMaterial_l3rff")
@@ -50,7 +48,7 @@ border_width_top = 1
 border_width_bottom = 1
 expand_margin_bottom = 2.0
 
-[node name="MainScene" type="Control" groups=["root_control"]]
+[node name="MainScene" type="Control" unique_id=302314505 groups=["root_control"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -59,35 +57,35 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lfrno")
 
-[node name="VBox" type="VBoxContainer" parent="."]
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1086688585]
 layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 size_flags_vertical = 3
 
-[node name="Toolbar" type="HBoxContainer" parent="VBox"]
+[node name="Toolbar" type="HBoxContainer" parent="VBox" unique_id=1811695233]
 layout_mode = 2
 script = ExtResource("2_whta4")
 
-[node name="Load" type="Button" parent="VBox/Toolbar"]
+[node name="Load" type="Button" parent="VBox/Toolbar" unique_id=771429104]
 layout_mode = 2
 text = "Open..."
 flat = true
 
-[node name="Bake" type="Button" parent="VBox/Toolbar"]
+[node name="Bake" type="Button" parent="VBox/Toolbar" unique_id=452165522]
 visible = false
 layout_mode = 2
 text = "Bake"
 flat = true
 
-[node name="View" type="MenuButton" parent="VBox/Toolbar"]
+[node name="View" type="MenuButton" parent="VBox/Toolbar" unique_id=773662488]
 layout_mode = 2
 text = "View"
 item_count = 1
 popup/item_0/text = "Grid options..."
 popup/item_0/id = 0
 
-[node name="Lighting" type="MenuButton" parent="VBox/Toolbar"]
+[node name="Lighting" type="MenuButton" parent="VBox/Toolbar" unique_id=2126033922]
 layout_mode = 2
 text = "Lighting & Environment"
 item_count = 6
@@ -107,7 +105,7 @@ popup/item_5/text = "Relative to camera"
 popup/item_5/checkable = 1
 popup/item_5/id = 4
 
-[node name="Environment" type="MenuButton" parent="VBox/Toolbar"]
+[node name="Environment" type="MenuButton" parent="VBox/Toolbar" unique_id=693759594]
 layout_mode = 2
 text = "Environment"
 item_count = 5
@@ -127,15 +125,15 @@ popup/item_4/text = "Overcast"
 popup/item_4/checkable = 2
 popup/item_4/id = 4
 
-[node name="TabBar" type="TabBar" parent="VBox"]
+[node name="TabBar" type="TabBar" parent="VBox" unique_id=1106677092]
 layout_mode = 2
 
-[node name="Viewport" type="Control" parent="VBox"]
+[node name="Viewport" type="Control" parent="VBox" unique_id=1604501335]
 clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Panel" type="Panel" parent="VBox/Viewport"]
+[node name="Panel" type="Panel" parent="VBox/Viewport" unique_id=1730753630]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -144,7 +142,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_f60qu")
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="VBox/Viewport"]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="VBox/Viewport" unique_id=901849778]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -153,38 +151,38 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="VBox/Viewport/SubViewportContainer"]
+[node name="SubViewport" type="SubViewport" parent="VBox/Viewport/SubViewportContainer" unique_id=2112393420]
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1152, 609)
 render_target_update_mode = 4
 
-[node name="camera_pivot" type="Node3D" parent="VBox/Viewport/SubViewportContainer/SubViewport"]
+[node name="camera_pivot" type="Node3D" parent="VBox/Viewport/SubViewportContainer/SubViewport" unique_id=577021811]
 transform = Transform3D(1, 0, 0, 0, 0.85165375, 0.52410483, 0, -0.52410483, 0.85165375, 0, 0, 0)
 
-[node name="camera" type="Camera3D" parent="VBox/Viewport/SubViewportContainer/SubViewport/camera_pivot"]
+[node name="camera" type="Camera3D" parent="VBox/Viewport/SubViewportContainer/SubViewport/camera_pivot" unique_id=673917118]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 script = ExtResource("2_l4ul5")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="VBox/Viewport/SubViewportContainer/SubViewport"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="VBox/Viewport/SubViewportContainer/SubViewport" unique_id=1759887314]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 visible = false
 mesh = SubResource("SphereMesh_lfrno")
 
-[node name="environment" type="WorldEnvironment" parent="VBox/Viewport/SubViewportContainer/SubViewport"]
+[node name="environment" type="WorldEnvironment" parent="VBox/Viewport/SubViewportContainer/SubViewport" unique_id=1004447045]
 unique_name_in_owner = true
 environment = SubResource("Environment_lfrno")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="VBox/Viewport/SubViewportContainer/SubViewport"]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="VBox/Viewport/SubViewportContainer/SubViewport" unique_id=677294193]
 transform = Transform3D(-0.9680735, 0.17223032, -0.18212849, 0, 0.7265747, 0.68708754, 0.2506673, 0.66515106, -0.7033776, 0, 0, 0)
 shadow_enabled = true
 
-[node name="ground_plane" type="MeshInstance3D" parent="VBox/Viewport/SubViewportContainer/SubViewport"]
+[node name="ground_plane" type="MeshInstance3D" parent="VBox/Viewport/SubViewportContainer/SubViewport" unique_id=1232622796]
 unique_name_in_owner = true
 mesh = SubResource("PlaneMesh_l4ul5")
 
-[node name="close_model" type="Button" parent="VBox/Viewport"]
+[node name="close_model" type="Button" parent="VBox/Viewport" unique_id=1173020021]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -196,7 +194,7 @@ offset_bottom = 39.0
 grow_horizontal = 0
 text = "Close"
 
-[node name="toolbar" type="MarginContainer" parent="VBox/Viewport"]
+[node name="toolbar" type="MarginContainer" parent="VBox/Viewport" unique_id=83936870]
 layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 41.0
@@ -206,18 +204,18 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBox/Viewport/toolbar"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBox/Viewport/toolbar" unique_id=1724439833]
 layout_mode = 2
 
-[node name="bake" type="Button" parent="VBox/Viewport/toolbar/HBoxContainer"]
+[node name="bake" type="Button" parent="VBox/Viewport/toolbar/HBoxContainer" unique_id=1769818842]
 layout_mode = 2
 text = "Bake Model"
 
-[node name="highlight_file" type="Button" parent="VBox/Viewport/toolbar/HBoxContainer"]
+[node name="highlight_file" type="Button" parent="VBox/Viewport/toolbar/HBoxContainer" unique_id=2139653959]
 layout_mode = 2
 text = "Highlight in Filesystem"
 
-[node name="reference_model" type="MenuButton" parent="VBox/Viewport/toolbar/HBoxContainer"]
+[node name="reference_model" type="MenuButton" parent="VBox/Viewport/toolbar/HBoxContainer" unique_id=1383129862]
 layout_mode = 2
 text = "Reference Model..."
 item_count = 2
@@ -227,7 +225,7 @@ popup/item_1/text = "Recent models"
 popup/item_1/id = 1
 popup/item_1/separator = true
 
-[node name="material_list" type="Control" parent="VBox/Viewport"]
+[node name="material_list" type="Control" parent="VBox/Viewport" unique_id=1460266205]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 1
 anchors_preset = 0
@@ -237,20 +235,20 @@ offset_right = 207.0
 offset_bottom = 157.0
 script = ExtResource("7_l3rff")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBox/Viewport/material_list"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBox/Viewport/material_list" unique_id=81682014]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 1
 offset_right = 200.0
 offset_bottom = 65.0
 mouse_behavior_recursive = 2
 
-[node name="drag" type="Panel" parent="VBox/Viewport/material_list/VBoxContainer"]
+[node name="drag" type="Panel" parent="VBox/Viewport/material_list/VBoxContainer" unique_id=1164011873]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 mouse_behavior_recursive = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_l3rff")
 
-[node name="Label" type="Label" parent="VBox/Viewport/material_list/VBoxContainer/drag"]
+[node name="Label" type="Label" parent="VBox/Viewport/material_list/VBoxContainer/drag" unique_id=1107556988]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -261,17 +259,17 @@ text = "Material List"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="material_list" type="VBoxContainer" parent="VBox/Viewport/material_list/VBoxContainer"]
+[node name="material_list" type="VBoxContainer" parent="VBox/Viewport/material_list/VBoxContainer" unique_id=1748451416]
 layout_mode = 2
 
-[node name="grid_settings" type="Window" parent="."]
+[node name="grid_settings" type="Window" parent="." unique_id=1762722606]
 unique_name_in_owner = true
 oversampling_override = 1.0
 size = Vector2i(300, 200)
 visible = false
 script = ExtResource("6_nxdy4")
 
-[node name="MarginContainer" type="MarginContainer" parent="grid_settings"]
+[node name="MarginContainer" type="MarginContainer" parent="grid_settings" unique_id=114440731]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -282,32 +280,32 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="VBox" type="VBoxContainer" parent="grid_settings/MarginContainer"]
+[node name="VBox" type="VBoxContainer" parent="grid_settings/MarginContainer" unique_id=729100350]
 layout_mode = 2
 
-[node name="visible" type="CheckBox" parent="grid_settings/MarginContainer/VBox"]
+[node name="visible" type="CheckBox" parent="grid_settings/MarginContainer/VBox" unique_id=1307027857]
 layout_mode = 2
 button_pressed = true
 text = "Grid Visible"
 
-[node name="HSeparator" type="HSeparator" parent="grid_settings/MarginContainer/VBox"]
+[node name="HSeparator" type="HSeparator" parent="grid_settings/MarginContainer/VBox" unique_id=1208116358]
 layout_mode = 2
 
-[node name="opacity_lbl" type="Label" parent="grid_settings/MarginContainer/VBox"]
+[node name="opacity_lbl" type="Label" parent="grid_settings/MarginContainer/VBox" unique_id=398101751]
 layout_mode = 2
 text = "Grid Opacity"
 
-[node name="opacity" type="HSlider" parent="grid_settings/MarginContainer/VBox"]
+[node name="opacity" type="HSlider" parent="grid_settings/MarginContainer/VBox" unique_id=766732444]
 layout_mode = 2
 max_value = 1.0
 step = 0.01
 value = 0.5
 
-[node name="size_lbl" type="Label" parent="grid_settings/MarginContainer/VBox"]
+[node name="size_lbl" type="Label" parent="grid_settings/MarginContainer/VBox" unique_id=2117914175]
 layout_mode = 2
 text = "Grid Size"
 
-[node name="size" type="HSlider" parent="grid_settings/MarginContainer/VBox"]
+[node name="size" type="HSlider" parent="grid_settings/MarginContainer/VBox" unique_id=283410027]
 layout_mode = 2
 value = 10.0
 
