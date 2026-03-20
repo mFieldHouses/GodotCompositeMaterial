@@ -16,6 +16,7 @@ func _node_ready() -> void:
 
 func set_variable(state : bool) -> void:
 	represented_value.is_variable = state
+	represented_value.variable_name = title
 	update_name_field_visibility()
 
 func update_name_field_visibility() -> void:
@@ -142,5 +143,7 @@ func set_represented_object(object : Object) -> void:
 	$variable/name.text = object.variable_name
 	
 	represented_value = object
+	
+	$variable/is_variable.button_pressed = represented_value.is_variable
 	
 	update_name_field_visibility()

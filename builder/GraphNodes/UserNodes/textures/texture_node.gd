@@ -9,7 +9,7 @@ func _node_ready() -> void:
 	respresented_texture_config = CPMB_TextureConfiguration.new()
 	
 	$filter.item_selected.connect(func(x): respresented_texture_config.filtering = x; print("prompt rebuild"))
-	$is_variable.toggled.connect(func(x): respresented_texture_config.is_variable = x)
+	$is_variable.toggled.connect(func(x): respresented_texture_config.is_variable = x; respresented_texture_config.variable_name = title)
 	
 	if Engine.is_editor_hint():
 		node_selected.connect(edit_texture)
@@ -47,6 +47,8 @@ func set_represented_object(object : Object) -> void:
 		respresented_texture_config = object.source_texture_configuration
 	elif object is CPMB_TextureConfiguration:
 		respresented_texture_config = object
+	
+	$is_variable.button_pressed = respresented_texture_config.is_variable
 	
 	update_preview(respresented_texture_config.texture)
 

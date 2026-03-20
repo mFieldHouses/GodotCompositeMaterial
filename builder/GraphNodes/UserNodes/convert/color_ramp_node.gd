@@ -7,7 +7,7 @@ func _node_ready() -> void:
 	represented_configuration = CPMB_ColorRampConfiguration.new()
 	
 	$color_ramp_preview.texture = represented_configuration.gradient_texture
-	$is_variable.toggled.connect(func(x): represented_configuration.is_variable = x)
+	$is_variable.toggled.connect(func(x): represented_configuration.is_variable = x; represented_configuration.variable_name = title)
 	
 	if Engine.is_editor_hint():
 		node_selected.connect(edit_gradient)
@@ -24,6 +24,9 @@ func get_represented_object(port_idx : int) -> Object:
 
 func set_represented_object(object : Object) -> void:
 	represented_configuration = object.source_color_ramp_configuration
+	
+	$is_variable.button_pressed = represented_configuration.is_variable
+	
 	$color_ramp_preview.texture = represented_configuration.gradient_texture
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
