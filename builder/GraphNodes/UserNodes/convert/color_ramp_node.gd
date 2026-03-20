@@ -7,6 +7,7 @@ func _node_ready() -> void:
 	represented_configuration = CPMB_ColorRampConfiguration.new()
 	
 	$color_ramp_preview.texture = represented_configuration.gradient_texture
+	$is_variable.toggled.connect(func(x): represented_configuration.is_variable = x)
 	
 	if Engine.is_editor_hint():
 		node_selected.connect(edit_gradient)

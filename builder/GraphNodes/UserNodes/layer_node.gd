@@ -83,6 +83,9 @@ func set_represented_object(object : Object) -> void:
 	print("represented layer got set to ", object)
 	#print("alpha is currently ", object.alpha)
 	represented_layer = object
-	$alpha_in/value.value = represented_layer.alpha.value
-	$roughness_in/value.value = represented_layer.roughness_value.value
-	$metallic_in/value.value = represented_layer.metallic_value.value
+	if represented_layer.alpha.internal_to_node:
+		$alpha_in/value.value = represented_layer.alpha.value
+	if represented_layer.roughness_value.internal_to_node:
+		$roughness_in/value.value = represented_layer.roughness_value.value
+	if represented_layer.metallic_value.internal_to_node:
+		$metallic_in/value.value = represented_layer.metallic_value.value

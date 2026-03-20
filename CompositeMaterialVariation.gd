@@ -32,7 +32,17 @@ func update_shader() -> void:
 		var _uniform_name : String = uniform.name
 		#print("set ", _uniform_name, " to ", base_composite_material.get_shader_parameter(_uniform_name))
 		#print(base_composite_material.get_shader_parameter(_uniform_name))
-		set_shader_parameter(_uniform_name, base_composite_material.get_shader_parameter(_uniform_name).duplicate())
+		var _val : Array = base_composite_material.get_shader_parameter(_uniform_name).duplicate()
+		
+		if _val[0] is GradientTexture1D: #duplicate color ramps so we can edit those independently
+			var _tmp_val : Array = []
+			
+			for _color_ramp : GradientTexture1D in _val:
+				_tmp_val.append(_color_ramp.duplicate_deep(Resource.DEEP_DUPLICATE_ALL))
+			
+			_val = _tmp_val
+		
+		set_shader_parameter(_uniform_name, _val)
 	
 	
 	print('all shader uniforms have been set')
@@ -52,10 +62,17 @@ func update_shader() -> void:
 			continue
 		
 		if variable_resource is CPMB_TextureConfiguration:
+			print("found a texture")
 			variable_type = TYPE_OBJECT
 			uniform_name = "linear_textures"
 			hint = PROPERTY_HINT_RESOURCE_TYPE
 			hint_string = "Texture2D"
+		elif variable_resource is CPMB_ColorRampConfiguration:
+			print("found a color ramp")
+			variable_type = TYPE_OBJECT
+			uniform_name = "color_ramp_textures"
+			hint = PROPERTY_HINT_RESOURCE_TYPE
+			hint_string = "GradientTexture1D"
 		elif variable_resource is CPMB_IntValue:
 			variable_type = TYPE_INT
 			uniform_name = "int_values"
@@ -93,6 +110,9 @@ func update_shader() -> void:
 			variable_type = TYPE_VECTOR3
 		elif variable_resource is CPMB_ComposeVec2:
 			variable_type = TYPE_VECTOR2
+		
+		print("uniform name: ", uniform_name)
+		print("value: ", get_shader_parameter(uniform_name)[variable_resource.index])
 		
 		displayed_variables[variable_resource.variable_name] = {
 			"resource": variable_resource,
