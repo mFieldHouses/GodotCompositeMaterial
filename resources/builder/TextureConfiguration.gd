@@ -15,8 +15,9 @@ signal texture_changed(new_texture : Texture2D)
 @export var texture_index : int = 0
 @export_enum("Linear", "Nearest Neighbor") var filtering : int = 0:
 	set(x):
-		print("setter on texture")
+		print("setter on texture filtering")
 		filtering = x
+		print("request rebuild")
 		request_material_rebuild.emit()
 
 func _init() -> void:

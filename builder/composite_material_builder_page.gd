@@ -200,7 +200,12 @@ func build_material() -> void:
 		if resource_to_check.is_variable and !edited_composite_material.variable_resources.has(resource_to_check):
 			#var _new_declaration = CPM_VariableDeclaration.new()
 			#_new_declaration.setup_from_resource(resource_to_check)
-			edited_composite_material.variable_resources.append(resource_to_check)
+			print("added ", resource_to_check, " to variables")
+			
+			if resource_to_check.is_descendant_resource:
+				edited_composite_material.variable_resources.append(resource_to_check.get_source_resource())
+			else:
+				edited_composite_material.variable_resources.append(resource_to_check)
 		
 		if resource_mapping_key != "":
 			if !mapped_resources.has(resource_mapping_key):
@@ -216,6 +221,10 @@ func build_material() -> void:
 		
 		if !resource_to_check.is_connected("request_material_rebuild", request_rebuild_material):
 			resource_to_check.request_material_rebuild.connect(request_rebuild_material)
+		
+		if resource_to_check.is_descendant_resource:
+			if !resource_to_check.get_source_resource().is_connected("request_material_rebuild", request_rebuild_material):
+				resource_to_check.get_source_resource().request_material_rebuild.connect(request_rebuild_material)
 		
 		
 		resource_to_check.on_mapped(mapped_resources)

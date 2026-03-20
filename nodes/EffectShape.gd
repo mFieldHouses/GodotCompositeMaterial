@@ -19,6 +19,9 @@ func _process(delta: float) -> void:
 	shape = _forced_shape
 	
 	if global_position != _previous_pos:
-		CPMEffectShapeManager.notify_moved(self)
+		if EditorInterface.is_plugin_enabled("CompositeMaterial"):
+			CPMEffectShapeManager.notify_moved(self)
+		else:
+			printerr("Moving this EffectShape will have no effect because the CompositeMaterial plugin has been disabled.")
 	
 	_previous_pos = global_position

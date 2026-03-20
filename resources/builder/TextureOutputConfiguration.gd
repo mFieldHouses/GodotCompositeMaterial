@@ -2,7 +2,14 @@
 extends CPMB_Vector3Value
 class_name CPMB_TextureOutputConfiguration
 
-@export var source_texture_configuration : CPMB_TextureConfiguration
+@export var source_texture_configuration : CPMB_TextureConfiguration:
+	set(x):
+		source_texture_configuration = x
+		
+		is_variable = x.is_variable
+		if !x.is_connected("is_variable_changed", _update_is_variable):
+			x.is_variable_changed.connect(_update_is_variable)
+		
 
 @export_enum("RGB", "Alpha", "Mask") var output_channel : int = 0
 
@@ -10,6 +17,9 @@ func _init() -> void:
 	#initialise_value()
 	self.value = Vector3.INF
 	is_descendant_resource = true
+
+func _update_is_variable(state : bool) -> void:
+	is_variable = state
 
 func get_expression() -> String:
 	print("get expression for channel ", output_channel)

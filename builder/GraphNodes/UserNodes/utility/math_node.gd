@@ -25,7 +25,10 @@ func get_represented_object(port_idx : int) -> Object:
 	return represented_config
 
 func set_represented_object(object : Object) -> void:
+	print("set represented object on mathnode: ", object)
+	print("object has operation ", object.operation)
 	represented_config = object
+	print("I now have operation ", represented_config.operation)
 	
 	$operation.selected = $operation.get_item_index(represented_config.operation)
 	#$value_1/value.value = represented_config.value_A.value

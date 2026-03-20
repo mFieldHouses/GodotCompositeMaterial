@@ -95,7 +95,6 @@ func get_represented_object(port_idx : int) -> Object:
 	return represented_value
 
 func set_represented_object(object : Object) -> void:
-	represented_value = object
 	
 	print("set represented object on valuenode to ", object)
 	
@@ -141,5 +140,7 @@ func set_represented_object(object : Object) -> void:
 	
 	$variable/is_variable.button_pressed = object.is_variable
 	$variable/name.text = object.variable_name
+	
+	represented_value = object
 	
 	update_name_field_visibility()

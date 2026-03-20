@@ -8,14 +8,12 @@
 [sub_resource type="Resource" id="Resource_56gsk"]
 script = ExtResource("5_wam4e")
 value = Vector2(inf, inf)
-source_node_offset = null
 internal_to_node = true
 
 [sub_resource type="Resource" id="Resource_ey7x0"]
 script = ExtResource("3_suxfi")
 uv = SubResource("Resource_56gsk")
 value = Vector3(inf, inf, inf)
-source_node_offset = null
 
 [node name="TextureNode" type="GraphNode" unique_id=962352097]
 offset_right = 239.0

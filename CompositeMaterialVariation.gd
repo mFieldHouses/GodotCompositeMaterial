@@ -39,14 +39,24 @@ func update_shader() -> void:
 	
 	for variable_resource : CPMB_Base in base_composite_material.variable_resources:
 		
+		
+		
 		var variable_type : Variant.Type = 0
 		var uniform_name : String = ""
+		
+		var hint : int = 0
+		var hint_string : String = ""
 		
 		if variable_resource.variable_name == "":
 			printerr("Found empty variable, continuing")
 			continue
 		
-		if variable_resource is CPMB_IntValue:
+		if variable_resource is CPMB_TextureConfiguration:
+			variable_type = TYPE_OBJECT
+			uniform_name = "linear_textures"
+			hint = PROPERTY_HINT_RESOURCE_TYPE
+			hint_string = "Texture2D"
+		elif variable_resource is CPMB_IntValue:
 			variable_type = TYPE_INT
 			uniform_name = "int_values"
 		elif variable_resource is CPMB_FloatValue:
@@ -71,6 +81,8 @@ func update_shader() -> void:
 				"uniform_name": uniform_name,
 				"value": color,
 				"type": variable_type,
+				"hint": hint,
+				"hint_string": hint_string,
 				"index_in_uniform": variable_resource.index,
 				"variable_name": variable_resource.variable_name
 			}
@@ -87,6 +99,8 @@ func update_shader() -> void:
 			"uniform_name": uniform_name,
 			"value": get_shader_parameter(uniform_name)[variable_resource.index],
 			"type": variable_type,
+			"hint": hint,
+			"hint_string": hint_string,
 			"index_in_uniform": variable_resource.index,
 			"variable_name": variable_resource.variable_name
 		}
@@ -113,7 +127,9 @@ func _get_property_list() -> Array[Dictionary]:
 	for variable in displayed_variables:
 		_property_list.append({
 			"name": displayed_variables[variable].variable_name,
-			"type": displayed_variables[variable].type
+			"type": displayed_variables[variable].type,
+			"hint": displayed_variables[variable].hint,
+			"hint_string": displayed_variables[variable].hint_string
 		})
 	
 	return _property_list
@@ -129,6 +145,9 @@ func _set(property: StringName, value: Variant) -> bool:
 		array[displayed_variables[property].index_in_uniform] = value
 		#print(array)
 		set_shader_parameter(displayed_variables[property].uniform_name, array)
+		
+		if displayed_variables[property].uniform_name == "linear_textures":
+			set_shader_parameter("nearest_neighbor_textures", array)
 		
 		cached_values[property] = value
 		

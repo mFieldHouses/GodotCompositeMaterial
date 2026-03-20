@@ -12,7 +12,7 @@ enum OperationType {
 		value_A = x
 		print("Setter on value_A")
 
-var operation : OperationType = 0:
+@export var operation : OperationType = 0:
 	set(x):
 		operation = x
 		request_material_rebuild.emit()
