@@ -48,11 +48,13 @@ text = "Space"
 [node name="mode" type="OptionButton" parent="." unique_id=450175118]
 layout_mode = 2
 selected = 0
-item_count = 2
+item_count = 3
 popup/item_0/text = "Local"
 popup/item_0/id = 0
 popup/item_1/text = "Global"
 popup/item_1/id = 1
+popup/item_2/text = "Hybrid"
+popup/item_2/id = 2
 
 [node name="output" type="Label" parent="." unique_id=2060507470]
 layout_mode = 2

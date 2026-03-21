@@ -3,6 +3,8 @@ extends CompositeMaterialBuilderGraphNode
 
 @onready var represented_configuration : CPMB_ColorRampConfiguration
 
+var input_ports : Array = []
+
 func _node_ready() -> void:
 	represented_configuration = CPMB_ColorRampConfiguration.new()
 	
@@ -28,6 +30,7 @@ func set_represented_object(object : Object) -> void:
 	$is_variable.button_pressed = represented_configuration.is_variable
 	
 	$color_ramp_preview.texture = represented_configuration.gradient_texture
+
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 	represented_configuration.fac = object

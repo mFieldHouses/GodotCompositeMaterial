@@ -136,11 +136,11 @@ uniform int[NUM_UV_MAPS] uv_map_sources;
 #if NUM_TRIPLANAR_MAPS > 0
 uniform int[NUM_TRIPLANAR_MAPS] triplanar_map_spaces;
 
-vec2 get_triplanar_uv(int uv_index, vec3 local_normal, vec3 global_normal, vec3 local_pos, vec3 global_pos) {
-	vec3 normal = local_normal * float(triplanar_map_spaces[uv_index] == 0) + global_normal * float(triplanar_map_spaces[uv_index] == 1);
+vec2 get_triplanar_uv(int uv_index, vec3 local_normal, vec3 global_normal, vec3 hybrid_normal, vec3 local_pos, vec3 global_pos, vec3 hybrid_pos) {
+	vec3 normal = local_normal * float(triplanar_map_spaces[uv_index] == 0) + global_normal * float(triplanar_map_spaces[uv_index] == 1) + hybrid_normal * float(triplanar_map_spaces[uv_index] == 2);
 	normal = abs(normal);
 	
-	vec3 pos = local_pos * float(triplanar_map_spaces[uv_index] == 0) + global_pos * float(triplanar_map_spaces[uv_index] == 1);
+	vec3 pos = local_pos * float(triplanar_map_spaces[uv_index] == 0) + global_pos * float(triplanar_map_spaces[uv_index] == 1) + hybrid_pos * float(triplanar_map_spaces[uv_index] == 2);
 	
 	int direction = 0;
 	//0=x, 1=y, 2=z
@@ -285,7 +285,9 @@ vec3 tune_hsv(int transform_id, vec3 rgb) {
 varying vec3 vertex_color;
 varying vec3 local_vertex_normal;
 varying vec3 global_vertex_normal;
+varying vec3 hybrid_vertex_normal;
 varying vec3 global_vertex_pos;
+varying vec3 hybrid_vertex_pos;
 varying vec3 local_vertex_pos;
 varying vec3 global_camera_pos;
 
@@ -333,9 +335,23 @@ float get_layer_occlusion(int layer_index) {
 
 void vertex() {
 	local_vertex_normal = NORMAL.rgb;
+	vec3 normal_scale = vec3(
+    	length(MODEL_NORMAL_MATRIX[0].xyz),
+    	length(MODEL_NORMAL_MATRIX[1].xyz),
+    	length(MODEL_NORMAL_MATRIX[2].xyz)
+	);
+	hybrid_vertex_normal = local_vertex_normal * normal_scale;
 	global_vertex_normal = local_vertex_normal * MODEL_NORMAL_MATRIX;
+	
 	local_vertex_pos = VERTEX.xyz;
 	global_vertex_pos = (MODEL_MATRIX * vec4(local_vertex_pos, 1.0)).xyz;
+	vec3 scale = vec3(
+    	length(MODEL_MATRIX[0].xyz),
+    	length(MODEL_MATRIX[1].xyz),
+    	length(MODEL_MATRIX[2].xyz)
+	);
+	hybrid_vertex_pos = local_vertex_pos * scale;
+	
 	global_camera_pos = CAMERA_POSITION_WORLD;
 	vertex_color = COLOR.rgb;
 }

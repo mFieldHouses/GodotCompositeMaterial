@@ -11,7 +11,7 @@ func _init() -> void:
 	self.value = Vector2.INF
 
 func get_expression() -> String:
-	return "get_triplanar_uv(%s, local_vertex_normal, global_vertex_normal, local_vertex_pos, global_vertex_pos)" % index
+	return "get_triplanar_uv(%s, local_vertex_normal, global_vertex_normal, hybrid_vertex_normal, local_vertex_pos, global_vertex_pos, hybrid_vertex_pos)" % index
 
 func _to_string() -> String:
 	return "TriplanarUVConfiguration:" + resource_scene_unique_id
