@@ -94,18 +94,10 @@ represented_resource_variable_name = "represented_value"
 metadata/_custom_type_script = "uid://s0jc3oianx85"
 metadata/renamable = false
 
-[node name="variable" type="VBoxContainer" parent="." unique_id=1721180847]
-layout_mode = 2
-
-[node name="is_variable" type="CheckButton" parent="variable" unique_id=1438061230]
+[node name="is_variable" type="CheckButton" parent="." unique_id=1438061230]
 layout_mode = 2
 disabled = true
 text = "Is variable"
-
-[node name="name" type="LineEdit" parent="variable" unique_id=1357609543]
-visible = false
-layout_mode = 2
-placeholder_text = "Variable name..."
 
 [node name="type" type="OptionButton" parent="." unique_id=340746523]
 layout_mode = 2

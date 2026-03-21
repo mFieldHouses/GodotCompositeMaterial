@@ -14,7 +14,7 @@ func _ready() -> void:
 	$operation.item_selected.connect(change_operation)
 	
 	$value_1/value.value_changed.connect(func(x): if represented_config.value_A.internal_to_node: represented_config.value_A.value = x)
-	$value_2/value.value_changed.connect(func(x): if represented_config.value_A.internal_to_node: represented_config.value_B.value = x)
+	$value_2/value.value_changed.connect(func(x): if represented_config.value_B.internal_to_node: represented_config.value_B.value = x)
 
 
 func change_operation(idx : int) -> void:

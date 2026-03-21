@@ -11,22 +11,18 @@ const OUTPUT_PORT_INDEX : int = 3
 func _node_ready() -> void:
 	$type.item_selected.connect(_type_chosen)
 	
-	$variable/is_variable.toggled.connect(set_variable)
+	$is_variable.toggled.connect(set_variable)
 
 
 func set_variable(state : bool) -> void:
 	represented_value.is_variable = state
 	represented_value.variable_name = title
-	update_name_field_visibility()
-
-func update_name_field_visibility() -> void:
-	$variable/name.visible = $variable/is_variable.button_pressed and represented_value != null
 
 func _type_chosen(id : int) -> void:
 	
 	request_disconnect_self.emit()
 	
-	$variable/is_variable.disabled = false
+	$is_variable.disabled = false
 	
 	$bool_field.visible = false
 	$float_field.visible = false
@@ -71,10 +67,8 @@ func _type_chosen(id : int) -> void:
 			represented_value = CPMB_ComposeVec3.new()
 	
 	#represented_value.internal_to_node = true
-	represented_value.variable_name = $variable/name.text
+	represented_value.variable_name = title
 	size.y = 0
-	
-	$variable/name.text_changed.connect(func(text): represented_value.variable_name = text)
 	
 	$int_field/value.value_changed.connect(func(x): represented_value.value = x)
 	$float_field/value.value_changed.connect(func(x): represented_value.value = x)
@@ -89,8 +83,6 @@ func _type_chosen(id : int) -> void:
 	$vector3_field/x/value.value_changed.connect(func(x): represented_value.x.value = x)
 	$vector3_field/y/value.value_changed.connect(func(x): represented_value.y.value = x)
 	$vector3_field/y/value.value_changed.connect(func(x): represented_value.z.value = x)
-	
-	update_name_field_visibility()
 	
 func get_represented_object(port_idx : int) -> Object:
 	return represented_value
@@ -139,11 +131,10 @@ func set_represented_object(object : Object) -> void:
 		$vector3_field/y/value.value = object.y.value
 		$vector3_field/z/value.value = object.z.value
 	
-	$variable/is_variable.button_pressed = object.is_variable
-	$variable/name.text = object.variable_name
+	$is_variable.button_pressed = object.is_variable
+	if object.is_variable:
+		title = object.variable_name
 	
 	represented_value = object
 	
-	$variable/is_variable.button_pressed = represented_value.is_variable
-	
-	update_name_field_visibility()
+	$is_variable.button_pressed = represented_value.is_variable

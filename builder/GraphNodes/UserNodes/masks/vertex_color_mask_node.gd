@@ -6,6 +6,10 @@ var represented_config : CPMB_VertexColorMaskConfiguration
 # Called when the node enters the scene tree for the first time.
 func _node_ready() -> void:
 	represented_config = CPMB_VertexColorMaskConfiguration.new()
+	
+	$channel/HBoxContainer/r.pressed.connect(func(): represented_config.color = represented_config.ColorType.RED)
+	$channel/HBoxContainer/g.pressed.connect(func(): represented_config.color = represented_config.ColorType.GREEN)
+	$channel/HBoxContainer/b.pressed.connect(func(): represented_config.color = represented_config.ColorType.BLUE)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

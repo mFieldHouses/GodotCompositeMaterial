@@ -282,7 +282,7 @@ vec3 tune_hsv(int transform_id, vec3 rgb) {
 #endif
 
 
-
+varying vec3 vertex_color;
 varying vec3 local_vertex_normal;
 varying vec3 global_vertex_normal;
 varying vec3 global_vertex_pos;
@@ -337,6 +337,7 @@ void vertex() {
 	local_vertex_pos = VERTEX.xyz;
 	global_vertex_pos = (MODEL_MATRIX * vec4(local_vertex_pos, 1.0)).xyz;
 	global_camera_pos = CAMERA_POSITION_WORLD;
+	vertex_color = COLOR.rgb;
 }
 
 void fragment() {
