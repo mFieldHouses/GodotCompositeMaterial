@@ -30,6 +30,7 @@ var initial_mouse_position : Vector2 #value used for storing where the user open
 
 var capturing_keyboard : bool = false:
 	set(x):
+		print('set capturing to ', x)
 		capturing_keyboard = x
 		if x == false:
 			if edited_node:
@@ -53,10 +54,13 @@ func _ready() -> void:
 
 
 func _edit_title_request(node : CompositeMaterialBuilderGraphNode) -> void:
+	print("request edit title from ", node)
 	edited_node = node
 	capturing_keyboard = true
 
+
 func _stop_editing_title_request(node : CompositeMaterialBuilderGraphNode) -> void:
+	print("request stop editing title from node, ", node)
 	if node == edited_node:
 		capturing_keyboard = false
 
@@ -113,8 +117,10 @@ func _gui_input(event: InputEvent) -> void:
 			initial_mouse_position = get_local_mouse_position()
 			$context_menu.popup(Rect2i(get_global_mouse_position() + Vector2(0, 50), Vector2i(100,100)))
 	
-	elif event is InputEventKey:
-		print("key input")
+	if event is InputEventKey:
+		#print("key input")
+		#print(edited_node)
+		#print(capturing_keyboard)
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE and event.pressed:
 			if selected_node is not CompositeMaterialOutputNode:
 				
@@ -125,8 +131,10 @@ func _gui_input(event: InputEvent) -> void:
 				
 				build_material()
 		
-		elif capturing_keyboard and edited_node:
-			print("capture key")
+		if capturing_keyboard and edited_node:
+			#print("capture key")
+			#print("edited node is ", edited_node)
+			#print('capturing keyboard is ', capturing_keyboard)
 			if event.pressed:
 				
 				var _ignored_keys = [KEY_SHIFT, KEY_CTRL, KEY_TAB, KEY_CAPSLOCK]
@@ -137,14 +145,14 @@ func _gui_input(event: InputEvent) -> void:
 				if event.keycode == KEY_ENTER:
 					capturing_keyboard = false
 				elif event.keycode == KEY_SPACE:
-					edited_node.title += " "
+					edited_node.update_title(edited_node.title + " ")
 				elif event.keycode == KEY_BACKSPACE:
-					edited_node.title = edited_node.title.left(edited_node.title.length() - 1)
+					edited_node.update_title(edited_node.title.left(edited_node.title.length() - 1))
 				else:
 					if Input.is_key_pressed(KEY_SHIFT):
-						edited_node.title += event.as_text_key_label().trim_prefix("Shift+")
+						edited_node.update_title(edited_node.title + event.as_text_key_label().trim_prefix("Shift+"))
 					else:
-						edited_node.title += event.as_text_key_label().to_lower()
+						edited_node.update_title(edited_node.title + event.as_text_key_label().to_lower())
 			
 
 func disconnect_all_from_node(node : CompositeMaterialBuilderGraphNode) -> void:
@@ -156,6 +164,8 @@ func disconnect_all_from_node(node : CompositeMaterialBuilderGraphNode) -> void:
 func add_node(idx1 : int, idx2 : int) -> void:
 	var _node_name = node_mappings[idx1][idx2]
 	var _node = instantiate_node_at_mouse(_node_name)
+	
+	#print()
 	_node.request_disconnect_self.connect(disconnect_all_from_node.bind(_node))
 	_node.request_edit_title.connect(_edit_title_request.bind(_node))
 	_node.request_stop_editing_title.connect(_stop_editing_title_request.bind(_node))
@@ -585,6 +595,10 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			
 			if !existing_resources.has(_resource):
 				print("Resource doesnt have a node yet, adding new node as child")
+				
+				_new_node.request_edit_title.connect(_edit_title_request.bind(_new_node))
+				_new_node.request_stop_editing_title.connect(_stop_editing_title_request.bind(_new_node))
+				
 				add_child(_new_node)
 			
 			if _create_new_node:

@@ -7,6 +7,11 @@ class_name CompositeMaterialVariation
 @export var base_composite_material : CompositeMaterial: ##The CompositeMaterial on which this variation is based.
 	set(x):
 		base_composite_material = x
+		
+		used_names = {}
+		displayed_variables = {}
+		cached_values = {}
+		
 		if base_composite_material != null:
 			update_shader()
 			base_composite_material.finish_building.connect(func(): if update_automatically: update_all())
