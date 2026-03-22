@@ -8,7 +8,7 @@ func _init() -> void:
 	self.value = Vector2.INF
 
 func get_expression() -> String:
-	return "float(uv_map_sources[%s] == 0) * uv + float(uv_map_sources[%s] == 1) * uv2" % [index, index]
+	return "get_uv_map(%s, create_uv_map(uv), create_uv_map(uv2))" % index
 
 func _to_string() -> String:
 	return "UVMapConfiguration:" + resource_scene_unique_id

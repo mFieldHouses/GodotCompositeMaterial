@@ -25,18 +25,22 @@ func get_expression() -> String:
 	print("get expression for channel ", output_channel)
 	
 	var _uniform_name : String
+	var _suffix : String = ""
 	if source_texture_configuration.filtering == 1:
 		_uniform_name = "nearest_neighbor_textures"
+		_suffix = "_nn"
 	else:
 		_uniform_name = "linear_textures"
+		_suffix = "_ln"
+	
 	
 	match output_channel:
 		1:
-			return "texture(%s[%s], %s).a" % [_uniform_name, source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
+			return "sample_texture%s(%s[%s], %s).a" % [_suffix, _uniform_name, source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
 		2:
-			return "texture(%s[%s], %s).r" % [_uniform_name, source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
+			return "sample_texture%s(%s[%s], %s).r" % [_suffix, _uniform_name, source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
 		_:
-			return "texture(%s[%s], %s).rgb" % [_uniform_name, source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
+			return "sample_texture%s(%s[%s], %s).rgb" % [_suffix, _uniform_name, source_texture_configuration.texture_index, source_texture_configuration.uv.get_expression()]
 		
 func get_source_resource() -> CPMB_Base:
 	return source_texture_configuration

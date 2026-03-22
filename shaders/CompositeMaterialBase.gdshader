@@ -30,6 +30,41 @@ shader_type spatial;
 //end definitions
 
 
+
+
+struct uv_map {
+	bool is_triplanar;
+	
+	vec2 uv1;
+	float uv1_fac;
+	
+	vec2 uv2;
+	float uv2_fac;
+	
+	vec2 uv3;
+	float uv3_fac;
+};
+
+
+
+
+
+varying vec3 vertex_color;
+varying vec3 local_vertex_normal;
+varying vec3 global_vertex_normal;
+varying vec3 hybrid_vertex_normal;
+varying vec3 global_vertex_pos;
+varying vec3 hybrid_vertex_pos;
+varying vec3 local_vertex_pos;
+varying vec3 global_camera_pos;
+
+varying vec2 uv;
+varying vec2 uv2;
+
+
+
+
+
 #if NUM_DIRECTIONAL_MASKS > 0
 uniform vec3[NUM_DIRECTIONAL_MASKS] directional_mask_directions;
 uniform int[NUM_DIRECTIONAL_MASKS] directional_mask_polarities;
@@ -80,14 +115,14 @@ uniform int[NUM_VERTEX_COLOR_MASKS] vertex_color_mask_modes;
 uniform vec3[NUM_VERTEX_COLOR_MASKS] vertex_color_custom_colors;
 uniform float[NUM_VERTEX_COLOR_MASKS] vertex_color_custom_margins;
 
-float get_vertex_color_mask(int mask_id, vec3 vertex_color) {
+float get_vertex_color_mask(int mask_id, vec3 vertex_col) {
 	switch (vertex_color_mask_modes[mask_id]) {
 		case 0:
-			return vertex_color.r;
+			return vertex_col.r;
 		case 1:
-			return vertex_color.g;
+			return vertex_col.g;
 		case 2:
-			return vertex_color.b;
+			return vertex_col.b;
 		default:
 			return 0.0;
 	}
@@ -131,35 +166,50 @@ float get_effect_shape_mask(int mask_id, vec3 global_position) {
 
 #if NUM_UV_MAPS > 0
 uniform int[NUM_UV_MAPS] uv_map_sources;
+
+uv_map get_uv_map(int uv_index, uv_map uv1_in, uv_map uv2_in) {
+	if (uv_map_sources[uv_index] == 0) {
+		return uv1_in;
+	}
+	else {
+		return uv2_in;
+	}
+}
+
+uv_map transform_uv(uv_map base_uv, vec2 offset, vec2 scale) {
+	base_uv.uv1 += offset;
+	base_uv.uv2 += offset;
+	base_uv.uv3 += offset;
+	
+	base_uv.uv1 *= scale;
+	base_uv.uv2 *= scale;
+	base_uv.uv3 *= scale;
+	
+	return base_uv;
+}
 #endif
 
 #if NUM_TRIPLANAR_MAPS > 0
 uniform int[NUM_TRIPLANAR_MAPS] triplanar_map_spaces;
+uniform float[NUM_TRIPLANAR_MAPS] triplanar_map_blends;
 
-vec2 get_triplanar_uv(int uv_index, vec3 local_normal, vec3 global_normal, vec3 hybrid_normal, vec3 local_pos, vec3 global_pos, vec3 hybrid_pos) {
-	vec3 normal = local_normal * float(triplanar_map_spaces[uv_index] == 0) + global_normal * float(triplanar_map_spaces[uv_index] == 1) + hybrid_normal * float(triplanar_map_spaces[uv_index] == 2);
-	normal = abs(normal);
+uv_map get_triplanar_uv(int uv_index) {
+	vec3 normal = local_vertex_normal * float(triplanar_map_spaces[uv_index] == 0) + global_vertex_normal * float(triplanar_map_spaces[uv_index] == 1) + hybrid_vertex_normal * float(triplanar_map_spaces[uv_index] == 2);
+	vec3 pos = local_vertex_pos * float(triplanar_map_spaces[uv_index] == 0) + global_vertex_pos * float(triplanar_map_spaces[uv_index] == 1) + hybrid_vertex_pos * float(triplanar_map_spaces[uv_index] == 2);
 	
-	vec3 pos = local_pos * float(triplanar_map_spaces[uv_index] == 0) + global_pos * float(triplanar_map_spaces[uv_index] == 1) + hybrid_pos * float(triplanar_map_spaces[uv_index] == 2);
+	uv_map result;
 	
-	int direction = 0;
-	//0=x, 1=y, 2=z
-	float largest_comp = 0.0;
+	normal = pow(abs(normal), vec3(10.0 / clamp(triplanar_map_blends[uv_index], 0.063, 10.0)));
+	normal = normal / (normal.x + normal.y + normal.z);
+	
+	result.uv1 = vec2(pos.z, pos.y);
+	result.uv1_fac = normal.x;
+	result.uv2 = vec2(pos.x, pos.z);
+	result.uv2_fac = normal.y;
+	result.uv3 = vec2(pos.x, pos.y);
+	result.uv3_fac = normal.z;
 
-	if (normal.x > largest_comp) {
-		direction = 0;
-		largest_comp = normal.x;
-	}
-	if (normal.y > largest_comp) {
-		direction = 1;
-		largest_comp = normal.y;
-	}
-	if (normal.z > largest_comp) {
-		direction = 2;
-	}
-
-	return vec2(pos.z, pos.y) * float(direction == 0) + vec2(pos.x, pos.z) * float(direction == 1) + vec2(pos.x, pos.y) * float(direction == 2);
-
+	return result;
 }
 #endif
 
@@ -281,19 +331,6 @@ vec3 tune_hsv(int transform_id, vec3 rgb) {
 }
 #endif
 
-
-varying vec3 vertex_color;
-varying vec3 local_vertex_normal;
-varying vec3 global_vertex_normal;
-varying vec3 hybrid_vertex_normal;
-varying vec3 global_vertex_pos;
-varying vec3 hybrid_vertex_pos;
-varying vec3 local_vertex_pos;
-varying vec3 global_camera_pos;
-
-varying vec2 uv;
-varying vec2 uv2;
-
 #if NUM_COLOR_RAMPS > 0
 uniform sampler2D[NUM_COLOR_RAMPS] color_ramp_textures : source_color, repeat_disable;
 vec4 get_color_ramp(int color_ramp_id, float fac) {
@@ -301,6 +338,78 @@ vec4 get_color_ramp(int color_ramp_id, float fac) {
 	return vec4(0.0);
 }
 #endif
+
+vec4 sample_texture_ln(sampler2D input_tex, uv_map input_uv) { //for linear filtering textures
+	if (input_uv.is_triplanar) {
+		vec4 result = vec4(0.0);
+		
+		if (input_uv.uv1_fac > 0.005) {
+        	result += texture(input_tex, input_uv.uv1) * input_uv.uv1_fac;
+   		}
+    	if (input_uv.uv2_fac > 0.005) {
+        	result += texture(input_tex, input_uv.uv2) * input_uv.uv2_fac;
+    	}
+    	if (input_uv.uv3_fac > 0.005) {
+        	result += texture(input_tex, input_uv.uv3) * input_uv.uv3_fac;
+    	}
+		
+		return result;
+	}
+	else {
+		return texture(input_tex, input_uv.uv1);
+	}
+}
+
+vec4 sample_texture_nn(sampler2D input_tex, uv_map input_uv) { //for nearest neighbor textures
+	if (input_uv.is_triplanar) {
+		vec4 result = vec4(0.0);
+		
+		if (input_uv.uv1_fac > 0.005) {
+        	result += texture(input_tex, input_uv.uv1) * input_uv.uv1_fac;
+   		}
+    	if (input_uv.uv2_fac > 0.005) {
+        	result += texture(input_tex, input_uv.uv2) * input_uv.uv2_fac;
+    	}
+    	if (input_uv.uv3_fac > 0.005) {
+        	result += texture(input_tex, input_uv.uv3) * input_uv.uv3_fac;
+    	}
+		
+		return result;
+	}
+	else {
+		return texture(input_tex, input_uv.uv1);
+	}
+}
+
+vec4 sample_texture_nm(sampler2D input_tex, uv_map input_uv) { //for normal maps
+	if (input_uv.is_triplanar) {
+		vec4 result = vec4(0.0);
+		
+		if (input_uv.uv1_fac > 0.005) {
+        	result += texture(input_tex, input_uv.uv1) * input_uv.uv1_fac;
+   		}
+    	if (input_uv.uv2_fac > 0.005) {
+        	result += texture(input_tex, input_uv.uv2) * input_uv.uv2_fac;
+    	}
+    	if (input_uv.uv3_fac > 0.005) {
+        	result += texture(input_tex, input_uv.uv3) * input_uv.uv3_fac;
+    	}
+		
+		return result;
+	}
+	else {
+		return texture(input_tex, input_uv.uv1);
+	}
+}
+
+uv_map create_uv_map(vec2 input_uv) {
+	uv_map result;
+	
+	result.uv1 = input_uv;
+	result.is_triplanar = false;
+	
+	return result;
+}
 
 vec3 get_layer_albedo(int layer_index) {
 	//get_albedo
@@ -331,7 +440,6 @@ float get_layer_occlusion(int layer_index) {
 	//get_occlusion
 	return 0.0;
 }
-
 
 void vertex() {
 	local_vertex_normal = NORMAL.rgb;

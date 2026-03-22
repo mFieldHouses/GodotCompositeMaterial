@@ -37,7 +37,7 @@ func _to_string() -> String:
 	return "UVTransformConfiguration:" + resource_scene_unique_id
 
 func get_expression() -> String:
-	return "((%s) + %s) * %s" % [base_uv.get_expression(), offset.get_expression(), scale.get_expression()]
+	return "transform_uv(%s, %s, %s)" % [base_uv.get_expression(), offset.get_expression(), scale.get_expression()]
 
 func get_mapping_key() -> String:
 	return "UVTransformConfiguration"

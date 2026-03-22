@@ -7,11 +7,16 @@ class_name CPMB_TriplanarUVConfiguration
 		space = x
 		value_changed.emit(x, "triplanar_map_spaces")
 
+@export var blend : float = 1.0:
+	set(x):
+		blend = x
+		value_changed.emit(x, "triplanar_map_blends")
+
 func _init() -> void:
 	self.value = Vector2.INF
 
 func get_expression() -> String:
-	return "get_triplanar_uv(%s, local_vertex_normal, global_vertex_normal, hybrid_vertex_normal, local_vertex_pos, global_vertex_pos, hybrid_vertex_pos)" % index
+	return "get_triplanar_uv(%s)" % index
 
 func _to_string() -> String:
 	return "TriplanarUVConfiguration:" + resource_scene_unique_id
