@@ -176,17 +176,6 @@ uv_map get_uv_map(int uv_index, uv_map uv1_in, uv_map uv2_in) {
 	}
 }
 
-uv_map transform_uv(uv_map base_uv, vec2 offset, vec2 scale) {
-	base_uv.uv1 += offset;
-	base_uv.uv2 += offset;
-	base_uv.uv3 += offset;
-	
-	base_uv.uv1 *= scale;
-	base_uv.uv2 *= scale;
-	base_uv.uv3 *= scale;
-	
-	return base_uv;
-}
 #endif
 
 #if NUM_TRIPLANAR_MAPS > 0
@@ -199,6 +188,7 @@ uv_map get_triplanar_uv(int uv_index) {
 	
 	uv_map result;
 	
+	normal = normalize(normal);
 	normal = pow(abs(normal), vec3(10.0 / clamp(triplanar_map_blends[uv_index], 0.063, 10.0)));
 	normal = normal / (normal.x + normal.y + normal.z);
 	
@@ -409,6 +399,18 @@ uv_map create_uv_map(vec2 input_uv) {
 	result.is_triplanar = false;
 	
 	return result;
+}
+
+uv_map transform_uv(uv_map base_uv, vec2 offset, vec2 scale) {
+	base_uv.uv1 += offset;
+	base_uv.uv2 += offset;
+	base_uv.uv3 += offset;
+	
+	base_uv.uv1 *= scale;
+	base_uv.uv2 *= scale;
+	base_uv.uv3 *= scale;
+	
+	return base_uv;
 }
 
 vec3 get_layer_albedo(int layer_index) {

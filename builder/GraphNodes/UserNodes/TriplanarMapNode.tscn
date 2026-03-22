@@ -22,7 +22,7 @@ slot/1/left_enabled = false
 slot/1/left_type = 0
 slot/1/left_color = Color(1, 1, 1, 1)
 slot/1/left_icon = null
-slot/1/right_enabled = true
+slot/1/right_enabled = false
 slot/1/right_type = 4
 slot/1/right_color = Color(1, 1, 1, 1)
 slot/1/right_icon = null
@@ -36,6 +36,24 @@ slot/2/right_type = 0
 slot/2/right_color = Color(1, 1, 1, 1)
 slot/2/right_icon = null
 slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = true
+slot/4/right_type = 4
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
 script = ExtResource("2_ouvsg")
 represented_resource_variable_name = "represented_configuration"
 metadata/_custom_type_script = "uid://s0jc3oianx85"
@@ -55,6 +73,16 @@ popup/item_1/text = "Global"
 popup/item_1/id = 1
 popup/item_2/text = "Hybrid"
 popup/item_2/id = 2
+
+[node name="Label2" type="Label" parent="." unique_id=902594068]
+layout_mode = 2
+text = "Blend"
+
+[node name="blend" type="SpinBox" parent="." unique_id=1769328233]
+layout_mode = 2
+max_value = 10.0
+step = 0.001
+value = 1.0
 
 [node name="output" type="Label" parent="." unique_id=2060507470]
 layout_mode = 2
