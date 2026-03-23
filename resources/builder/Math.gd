@@ -30,21 +30,21 @@ func initialise_value(index : int = -1) -> void:
 		value_B.internal_to_node = true
 
 func get_expression() -> String:
-	print("expression requested from math node")
+	#print("expression requested from math node")
 	match operation:
 		OperationType.ADD:
-			return "float(" + value_A.get_expression() + ") + float(" + value_B.get_expression() + ")"
+			return "float( " + value_A.get_expression() + " ) + float( " + value_B.get_expression() + " )"
 		OperationType.SUBTRACT:
-			return "float(" + value_A.get_expression() + ") - float(" + value_B.get_expression() + ")"
+			return "float( " + value_A.get_expression() + " ) - float( " + value_B.get_expression() + " )"
 		OperationType.MULTIPLY:
-			return "float(" + value_A.get_expression() + ") * float(" + value_B.get_expression() + ")"
+			return "float( " + value_A.get_expression() + " ) * float( " + value_B.get_expression() + " )"
 		OperationType.DIVIDE:
-			return "float(" + value_A.get_expression() + ") / float(" + value_B.get_expression() + ")"
+			return "float( " + value_A.get_expression() + " ) / float( " + value_B.get_expression() + " )"
 		
 		OperationType.POWER:
-			return "pow(float(" + value_A.get_expression() + "), float(" + value_B.get_expression() + "))"
+			return "pow(float(" + value_A.get_expression() + " ), float( " + value_B.get_expression() + " ))"
 		OperationType.ROOT:
-			return "pow(float(" + value_A.get_expression() + "), 1.0 / float(" + value_B.get_expression() + "))"
+			return "pow(float( " + value_A.get_expression() + " ), 1.0 / float( " + value_B.get_expression() + " ))"
 		
 	return value_A.get_expression() + " + " + value_B.get_expression()
 

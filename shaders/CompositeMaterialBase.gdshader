@@ -198,7 +198,9 @@ uv_map get_triplanar_uv(int uv_index) {
 	result.uv2_fac = normal.y;
 	result.uv3 = vec2(pos.x, pos.y);
 	result.uv3_fac = normal.z;
-
+	
+	result.is_triplanar = true;
+	
 	return result;
 }
 #endif
@@ -485,14 +487,14 @@ void fragment() {
 	//fragment
 	
 	for (int i = starting_index; i < NUM_LAYERS; i++) {
-		if (process_index == 0) {
+		if (process_index == 0) { //if this is the first layer we're processing, just force the mask to be 1
 			albedo_mix = get_layer_albedo(i);
 			normal_mix = get_layer_normal(i);
 			roughness_mix = get_layer_roughness(i);
 			metallic_mix = get_layer_metallic(i);
 			occlusion_mix = get_layer_occlusion(i);
 		}
-		else {
+		else if (layer_masks[i] > 0.005) {
 			albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i] * get_layer_alpha(i));
 			
 			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i]);
