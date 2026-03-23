@@ -2,12 +2,13 @@
 
 CompositeMaterial provides a workspace for creating procedural hard-surface materials, right inside of the Godot editor, using nodes.
 
-While the node building environment is similar to the visual shader system, CompositeMaterial is higher level and provides a lot of abstractions on top of building regular visual shaders to allow developers and artists to get something running in seconds.
-
 CompositeMaterial is built around the concept of layers and masks.
 **Layers** are exactly what you'd expect. They provide a way to stack multiple textures on top of each other. Each layer posesses a set of properties, like color, roughness, metallic and a mask value.
 **Masks** are values that determine how visible a layer is at a certain point. These values can be derived from multiple sources, like normal of the surface, a texture or vertex color, and can be manipulated using math, allowing for a very wide range of patterns.
 
+### Why use this over Godot's VisualShader system?
+
+VisualShader gives you very fine-grained control over your shader. That can be good, but that also means having to set up the complete system behind your procedural material. CompositeMaterial provides fewer, higher-level nodes that utilize more complex systems behind the scenes that you don’t have to worry about as a developer. Where most VisualShader nodes translate directly to a GDShader expression, CompositeMaterial nodes call more complicated functions. Think of masks based on position and surface normal, converting depth maps to normal maps, and HSV tuning. CompositeMaterial is built with a focus on making it easy and quick to create dynamic materials. You cannot do everything you can with shaders, but it’s a lot simpler to use.
 
 ## Getting started
 Getting started using CompositeMaterial is quite simple. 
