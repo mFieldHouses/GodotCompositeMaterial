@@ -10,7 +10,6 @@ enum OperationType {
 @export var value_A : CPMB_NumericValue:
 	set(x):
 		value_A = x
-		print("Setter on value_A")
 
 @export var operation : OperationType = 0:
 	set(x):

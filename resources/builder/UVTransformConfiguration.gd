@@ -49,13 +49,13 @@ func get_node_name() -> String:
 	return "UVTransformNode"
 
 func get_input_port_resources() -> Dictionary[CPMB_Base, int]:
-	print("returning ", {
-		base_uv: 0,
-		scale.x: 1,
-		scale.y: 2,
-		offset.x: 3,
-		offset.y: 4
-	})
+	#print("returning ", {
+		#base_uv: 0,
+		#scale.x: 1,
+		#scale.y: 2,
+		#offset.x: 3,
+		#offset.y: 4
+	#})
 	return {
 		base_uv: 0,
 		scale.x: 1,

@@ -89,7 +89,7 @@ func get_represented_object(port_idx : int) -> Object:
 
 func set_represented_object(object : Object) -> void:
 	
-	print("set represented object on valuenode to ", object)
+	#print("set represented object on valuenode to ", object)
 	
 	if object is CPMB_IntValue:
 		_type_chosen(1)

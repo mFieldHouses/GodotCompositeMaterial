@@ -25,13 +25,13 @@ class_name CompositeMaterialVariation
 
 func update_all() -> void:
 	used_names.clear()
-	print("updating all")
-	print("used_names is ", used_names)
+	#print("updating all")
+	#print("used_names is ", used_names)
 	update_shader()
 	emit_changed()
 
 func get_variable_name(name : String) -> String:
-	print("get_variable_name() for ", name)
+	#print("get_variable_name() for ", name)
 	var _result : String = name
 	
 	if name == "":
@@ -43,11 +43,10 @@ func get_variable_name(name : String) -> String:
 		used_names[name] += 1
 		_result = name + " " + str(used_names[name])
 	
-	print("returning ", _result)
 	return _result
 
 func update_shader() -> void:
-	print("updating shader")
+	#print("updating shader")
 	var _base_shader : Shader = base_composite_material.shader
 	
 	shader = _base_shader.duplicate()
@@ -59,7 +58,6 @@ func update_shader() -> void:
 		var _val : Array = base_composite_material.get_shader_parameter(_uniform_name).duplicate()
 		
 		if _val[0] is GradientTexture1D: #duplicate color ramps so we can edit those independently
-			print(_val)
 			var _tmp_val : Array = []
 			
 			for _color_ramp : GradientTexture1D in _val:
@@ -70,10 +68,10 @@ func update_shader() -> void:
 		set_shader_parameter(_uniform_name, _val)
 	
 	
-	print('all shader uniforms have been set')
+	#print('all shader uniforms have been set')
 	
 	for variable_resource : CPMB_Base in base_composite_material.variable_resources:
-		print("============== checking variable resource ", variable_resource)
+		#print("============== checking variable resource ", variable_resource)
 		
 		var variable_type : Variant.Type = 0
 		var variable_name : String = get_variable_name(variable_resource.variable_name)
@@ -136,8 +134,8 @@ func update_shader() -> void:
 		elif variable_resource is CPMB_ComposeVec2:
 			variable_type = TYPE_VECTOR2
 		
-		print("uniform name: ", uniform_name)
-		print("value: ", get_shader_parameter(uniform_name)[variable_resource.index])
+	#	print("uniform name: ", uniform_name)
+		#print("value: ", get_shader_parameter(uniform_name)[variable_resource.index])
 		
 		displayed_variables[variable_name] = {
 			"resource": variable_resource,
@@ -162,11 +160,11 @@ func update_shader() -> void:
 	for value_name in cached_values:
 		set(value_name, cached_values[value_name])
 	
-	print("generated displayed_variables")
+	#print("generated displayed_variables")
 	
 	
 func _get_property_list() -> Array[Dictionary]:
-	print("get property list")
+	#print("get property list")
 	var _property_list : Array[Dictionary] = [
 		{
 			"name": "Material Variables",
@@ -191,7 +189,7 @@ func _set(property: StringName, value: Variant) -> bool:
 	if displayed_variables.has(property):
 		displayed_variables[property].value = value
 		
-		print("set")
+		#print("set")
 		var array : Array = get_shader_parameter(displayed_variables[property].uniform_name)
 		array[displayed_variables[property].index_in_uniform] = value
 		#print(array)

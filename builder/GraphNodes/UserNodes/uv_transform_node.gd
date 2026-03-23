@@ -23,7 +23,7 @@ func set_represented_object(object : Object) -> void:
 	$offset_y/value.value = object.offset.y.value
 	
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
-	print("passing object to ", self, ", port ", input_port_id, ": ", object)
+	#print("passing object to ", self, ", port ", input_port_id, ": ", object)
 	match input_port_id:
 		0:
 			represented_uv_config.base_uv = object

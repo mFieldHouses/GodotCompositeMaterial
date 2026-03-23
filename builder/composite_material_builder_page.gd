@@ -2,6 +2,8 @@
 extends GraphEdit
 class_name CompositeMaterialBuilderPage
 
+const DEBUG_LEVEL : int = 1
+
 signal material_rebuilt
 
 var output_node : CompositeMaterialOutputNode
@@ -207,13 +209,11 @@ func build_material() -> void:
 	while resources_to_check.size() > 0:
 		var resource_to_check : CPMB_Base = resources_to_check.pop_front()
 		var resource_mapping_key : String = resource_to_check.get_mapping_key()
-		print("mapping ", resource_to_check)
+		debug_print("mapping " + str(resource_to_check), 0)
 		
 		
 		if resource_to_check.is_variable and !edited_composite_material.variable_resources.has(resource_to_check):
-			#var _new_declaration = CPM_VariableDeclaration.new()
-			#_new_declaration.setup_from_resource(resource_to_check)
-			print("added ", resource_to_check, " to variables")
+			debug_print("added " + str(resource_to_check) + " to variables", 0)
 			
 			if resource_to_check.is_descendant_resource:
 				edited_composite_material.variable_resources.append(resource_to_check.get_source_resource())
@@ -281,8 +281,7 @@ func build_material() -> void:
 		if mapped_resources[key].size() == 0:
 			continue
 		
-		print(definition_map[key] + " " + str(mapped_resources[key].size()))
-
+		debug_print(definition_map[key] + " " + str(mapped_resources[key].size()), 1)
 		
 		edited_composite_material.shader.code = edited_composite_material.shader.code.replace(definition_map[key] + " 0", definition_map[key] + " " + str(mapped_resources[key].size()))
 		
@@ -337,7 +336,7 @@ func build_material() -> void:
 	#print(mapped_resources.FloatValue.size())
 	
 	for parameter_name in parameters_to_be_initialised:
-		print("initialising ", parameter_name)
+		debug_print("initialising " + parameter_name, 1)
 		edited_composite_material.set_shader_parameter(parameter_name, null)
 	
 	if mapped_resources.has("Texture"):
@@ -371,7 +370,7 @@ func build_material() -> void:
 			if resource.has_signal("value_changed"):
 				if resource.has_connections("value_changed"):
 					resource.disconnect("value_changed", set_shader_property)
-				print("connecting resource ", resource, " to index ", _idx)
+				debug_print("connecting resource " + str(resource) + " to index " + str(_idx), 1)
 				resource.connect("value_changed", set_shader_property.bind(_idx))
 				
 			
@@ -479,14 +478,17 @@ func build_material() -> void:
 
 
 func request_rebuild_material() -> void:
-	print("request received")
+	debug_print("request received", 1)
 	if !is_building_material:
+		debug_print("rebuilding", 1)
 		build_material()
+	else:
+		debug_print("not rebuilding", 1)
 
 func set_shader_property(value : Variant, shader_property_name : String, id : int) -> void:
 	edited_composite_material.get_property_list() #????? This line needs to be present or get_shader_parameter will return Nil
 	
-	print("setting ", shader_property_name, " for index ", id)
+	debug_print("setting " + shader_property_name + " for index " + str(id), 1)
 	
 	var _current_value : Array = edited_composite_material.get_shader_parameter(shader_property_name)
 	#print("Current value: ", _current_value, " id: ", id)
@@ -513,7 +515,7 @@ func instantiate_node(node_id : String) -> GraphNode:
 
 func reconstruct_material_graph(material : CompositeMaterial) -> void:
 	
-	print("reconstructing material ", material.layers)
+	debug_print("reconstructing material " + str(material.layers), 0)
 	is_building_material = true
 	
 	clear_graph()
@@ -535,25 +537,24 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 		#print("to node: ", _instructions.to_node)
 		var _to_node = get_node(String(_instructions.to_node))
 		
-		print("==========================\nresource ", _resource)
+		debug_print("==========================\nresource " + str(_resource), 0)
 		
 		if _resource is not CompositeMaterialLayer:
-			print("internal: ", _resource.internal_to_node)
 			if _resource.internal_to_node:
-				print("resource is internal, skipping this one")
+				debug_print("resource is internal, skipping this one", 1)
 				continue
 		
 		var _new_node : CompositeMaterialBuilderGraphNode
 		
 		var _create_new_node : bool = true	
 		if existing_resources.has(_resource as CPMB_Base):
-			print("resource already exists as a node")
+			debug_print("resource already exists as a node", 1)
 			_new_node = existing_resources[_resource as CPMB_Base]
 			_create_new_node = false
 		
 		if _resource is CPMB_Base:
 			if _resource.is_descendant_resource:
-				print("resource is a descendant resource")
+				debug_print("resource is a descendant resource", 1)
 				var _source = _resource.get_source_resource()
 				if existing_resources.has(_source):
 					_new_node = existing_resources[_source]
@@ -565,9 +566,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 				#_create_new_node = false
 		
 		elif _resource is CompositeMaterialLayer:
-			print("found layer resource")
-			print("albedo is ", _resource.albedo)
-			print("roughness is ", _resource.roughness_value)
+			debug_print("found layer resource", 1)
 			_new_node = instantiate_node("LayerNode")
 			add_child(_new_node)
 			
@@ -585,13 +584,12 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			
 			layer_nodes.append(_new_node)
 			
-			print("set represented layer")
 			_new_node.set_represented_object(_resource)
 			_new_node.position_offset = _resource.node_position
 			continue
 		
 		if _resource.get_node_name() != "" and _create_new_node:
-			print("Instantiating new node for this resource")
+			debug_print("Instantiating new node for this resource", 1)
 			_new_node = instantiate_node(_resource.get_node_name())
 		
 		if _new_node:
@@ -599,7 +597,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 				identifiers[_resource.source_identifier] = _new_node
 			
 			if !existing_resources.has(_resource):
-				print("Resource doesnt have a node yet, adding new node as child")
+				debug_print("Resource doesnt have a node yet, adding new node as child", 1)
 				
 				_new_node.request_edit_title.connect(_edit_title_request.bind(_new_node))
 				_new_node.request_stop_editing_title.connect(_stop_editing_title_request.bind(_new_node))
@@ -610,33 +608,25 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			if _create_new_node:
 				var _input_port_resources = _resource.get_input_port_resources()
 				for resource_to_add in _input_port_resources.keys():
-					print("adding resource ", resource_to_add, " to nodes_to_add")
+					debug_print("adding resource " + str(resource_to_add) + " to nodes_to_add", 2)
 					nodes_to_add.append([resource_to_add, {"to_node": String(_new_node.name), "to_port": _input_port_resources[resource_to_add], "from_port": resource_to_add.get_output_port_for_state()}])
 			
-			print("connecting node ", _new_node.name, " to ", _instructions.to_node)
+			debug_print("connecting node " + _new_node.name + " to " + str(_instructions.to_node), 2)
 			call_deferred("_connection_requested", _new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
 
-			#await get_tree().create_timer(0.1).timeout
-			print("setting represented_object on ", _new_node, " with ", _resource)
+			debug_print("setting represented_object on " + str(_new_node) + " with " + str(_resource), 2)
 			_new_node.set_represented_object(_resource)
-			#print("adding as existing resource now")
+			
 			if _resource.is_descendant_resource:
 				existing_resources[_resource.get_source_resource()] = _new_node
 				_new_node.set_deferred("position_offset", _resource.get_source_resource().node_position)
-				print("setting position of node to ",  _resource.get_source_resource().node_position)
 			else:
 				existing_resources[_resource as CPMB_Base] = _new_node
 				_new_node.set_deferred("position_offset", _resource.node_position)
-				print('setting position of node to ', _resource.node_position)
+
 			
 	
 	await get_tree().create_timer(0.1).timeout
-	
-	#arrange_nodes()
-	
-	#manual final arrangements, because arrange_nodes() tends to arrange nodes very vertically
-	#output_node.position_offset.y = (layer_nodes[0].position_offset.y + layer_nodes.back().position_offset.y) / 2.0
-	#output_node.position_offset.x = layer_nodes[0].position_offset.x + 350
 	
 	scroll_offset = (layer_nodes[0].position_offset + layer_nodes.back().position_offset) / 2.0
 	
@@ -658,3 +648,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 		#_children_to_be_checked.erase(_child_to_check)
 	#
 	#return _result
+
+func debug_print(message : String, debug_level : int = 0): ##A higher debug level is less important.
+	if debug_level <= DEBUG_LEVEL:
+		print(message)

@@ -6,7 +6,7 @@ class_name CompositeMaterialLayer
 @export var alpha : CPMB_NumericValue:
 	set(x):
 		alpha = x
-		print("setter on ", self, " alpha: set to ", x)
+		#print("setter on ", self, " alpha: set to ", x)
 @export var normal : CPMB_Vector3Value
 @export var roughness_value : CPMB_NumericValue
 @export var metallic_value : CPMB_NumericValue = CPMB_FloatValue.new()

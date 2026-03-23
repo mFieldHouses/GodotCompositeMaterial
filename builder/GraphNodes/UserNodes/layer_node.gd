@@ -35,8 +35,8 @@ func enable_value(idx : int, state : bool = true) -> void:
 			$metallic_in/value.editable = state
 			
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
-	print("before setting the alpha, it was ", represented_layer.alpha)
-	print("layernode: connect and pass object ", object, " on port ", input_port_id)
+	#print("before setting the alpha, it was ", represented_layer.alpha)
+	#print("layernode: connect and pass object ", object, " on port ", input_port_id)
 	match input_port_id:
 		0:
 			represented_layer.albedo = object
@@ -76,7 +76,7 @@ func get_represented_object(port_idx : int) -> Object:
 	return represented_layer
 
 func set_represented_object(object : Object) -> void:
-	print("represented layer got set to ", object)
+	#print("represented layer got set to ", object)
 	#print("alpha is currently ", object.alpha)
 	represented_layer = object
 	if represented_layer.alpha.internal_to_node:

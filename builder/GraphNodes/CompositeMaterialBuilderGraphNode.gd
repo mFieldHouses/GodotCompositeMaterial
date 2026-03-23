@@ -43,7 +43,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if selected or previous_position_offset == Vector2.ZERO:
 		if position_offset != previous_position_offset:
-			print("updating position on ", self)
+			#print("updating position on ", self)
 			update_position()
 		
 		previous_position_offset = position_offset
@@ -55,14 +55,14 @@ func node_process(delta : float) -> void:
 
 func _material_rebuilt() -> void: ##Do not overwrite. Is called when the material is rebuilt.
 	print("call material_rebuilt")
-	#update_position()
-	#node_material_rebuilt()
+	update_position()
+	node_material_rebuilt()
 
 func node_material_rebuilt() -> void: ##Can be overwritten. Is called when the material is rebuilt, after [method CompositeMaterialBuilderGraphNode._material_rebuilt]
 	pass
 
 func start_capturing_keyboard() -> void:
-	print("start_capturing_keyboard()")
+	#print("start_capturing_keyboard()")
 	title = ""
 	
 	_rename_button.release_focus()
@@ -71,11 +71,11 @@ func start_capturing_keyboard() -> void:
 	selected = false
 	
 	
-	print("emit signal")
+	#print("emit signal")
 	request_edit_title.emit()
 
 func stop_capturing_keyboard() -> void:
-	print("stop_capturing_keyboard()")
+	#print("stop_capturing_keyboard()")
 	_confirm_button.release_focus()
 	_rename_button.visible = true
 	_confirm_button.visible = false
