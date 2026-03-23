@@ -3,6 +3,7 @@ extends CompositeMaterialBuilderGraphNode
 class_name CompositeMaterialOutputNode
 
 signal request_rebuild
+signal output_node_position_changed
 
 var represented_composite_material : CompositeMaterial:
 	set(x):
@@ -34,12 +35,14 @@ func _node_ready() -> void:
 	_reload_button.button_down.connect(request_rebuild.emit)
 	get_titlebar_hbox().add_child(_reload_button)
 
+func update_position() -> void:
+	output_node_position_changed.emit()
 
 func edit_material() -> void:
 	EditorInterface.edit_resource(represented_composite_material)
 
 
-func _process(delta: float) -> void:
+func node_process(delta: float) -> void:
 	move_child($new_layer, get_child_count())
 	
 	var _idx : int = 0

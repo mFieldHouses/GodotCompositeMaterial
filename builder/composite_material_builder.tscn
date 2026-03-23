@@ -172,7 +172,5 @@ item_2/id = 2
 
 [node name="output" parent="pages/template_page" unique_id=1293774481 instance=ExtResource("3_xl7ga")]
 layout_mode = 0
-offset_left = 640.0
-offset_top = 180.0
-offset_right = 910.0
-offset_bottom = 385.9997
+offset_right = 270.0
+position_offset = Vector2(0, 0)

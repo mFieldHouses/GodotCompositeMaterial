@@ -25,10 +25,6 @@ func edit_layer() -> void:
 	EditorInterface.edit_resource(represented_layer)
 	
 
-func _process(delta: float) -> void:
-	pass
-	
-
 func enable_value(idx : int, state : bool = true) -> void:
 	match idx:
 		0:

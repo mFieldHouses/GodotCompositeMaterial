@@ -20,6 +20,8 @@ signal is_variable_changed(new_state : bool)
 		index = x
 		#print("index got set to ", x, " for ", self)
 
+@export var node_position : Vector2 = Vector2.INF
+
 func get_source_resource() -> CPMB_Base: ##Is only called on descendant resources.
 	return null
 

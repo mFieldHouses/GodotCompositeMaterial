@@ -14,6 +14,8 @@ var _confirm_button : Button
 signal request_edit_title
 signal request_stop_editing_title
 
+var previous_position_offset : Vector2 = Vector2.ZERO
+
 func _node_ready() -> void: ##Called after _ready() by [CompositeMaterialBuilderGraphNode] to allow extending classes to extend _ready() functionality without overriding base behavior.
 	pass
 
@@ -38,6 +40,26 @@ func _ready() -> void:
 	
 	_node_ready()
 
+func _process(delta: float) -> void:
+	if selected or previous_position_offset == Vector2.ZERO:
+		if position_offset != previous_position_offset:
+			print("updating position on ", self)
+			update_position()
+		
+		previous_position_offset = position_offset
+	
+	node_process(delta)
+	
+func node_process(delta : float) -> void:
+	pass
+
+func _material_rebuilt() -> void: ##Do not overwrite. Is called when the material is rebuilt.
+	print("call material_rebuilt")
+	#update_position()
+	#node_material_rebuilt()
+
+func node_material_rebuilt() -> void: ##Can be overwritten. Is called when the material is rebuilt, after [method CompositeMaterialBuilderGraphNode._material_rebuilt]
+	pass
 
 func start_capturing_keyboard() -> void:
 	print("start_capturing_keyboard()")
@@ -76,3 +98,6 @@ func set_represented_object(object : Object) -> void:
 
 func disconnected(input_port_id : int) -> void:
 	get(represented_resource_variable_name).initialise_value(input_port_id)
+
+func update_position() -> void:
+	get(represented_resource_variable_name).node_position = position_offset

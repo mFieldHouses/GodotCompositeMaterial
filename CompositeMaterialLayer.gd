@@ -13,6 +13,8 @@ class_name CompositeMaterialLayer
 @export var mask : CPMB_NumericValue
 @export var distance_fade_ni : String = "not implemented yet"
 
+@export var node_position : Vector2 = Vector2.ZERO
+
 var is_descendant_resource : bool = false #for parity, has no further function
 
 func _init() -> void:

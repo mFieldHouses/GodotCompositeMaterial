@@ -2,6 +2,8 @@
 extends GraphEdit
 class_name CompositeMaterialBuilderPage
 
+signal material_rebuilt
+
 var output_node : CompositeMaterialOutputNode
 
 var node_mappings : Array = [
@@ -27,7 +29,6 @@ var node_groups : Dictionary[String, Array] = {
 
 var initial_mouse_position : Vector2 #value used for storing where the user opened the context menu in case the user wants to add a node
 
-
 var capturing_keyboard : bool = false:
 	set(x):
 		print('set capturing to ', x)
@@ -51,7 +52,7 @@ func _ready() -> void:
 	
 	output_node = $output
 	output_node.request_rebuild.connect(build_material)
-
+	output_node.output_node_position_changed.connect(func(): edited_composite_material.output_node_position = output_node.position_offset)
 
 func _edit_title_request(node : CompositeMaterialBuilderGraphNode) -> void:
 	print("request edit title from ", node)
@@ -169,6 +170,8 @@ func add_node(idx1 : int, idx2 : int) -> void:
 	_node.request_disconnect_self.connect(disconnect_all_from_node.bind(_node))
 	_node.request_edit_title.connect(_edit_title_request.bind(_node))
 	_node.request_stop_editing_title.connect(_stop_editing_title_request.bind(_node))
+	#material_rebuilt.connect(_node._material_rebuilt)
+	
 	
 func instantiate_node_at_mouse(node_name : String) -> CompositeMaterialBuilderGraphNode:
 	var _node = load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_name + ".tscn").instantiate()
@@ -494,6 +497,7 @@ func edit_material(material : CompositeMaterial) -> void:
 	edited_composite_material = material
 	
 	output_node.represented_composite_material = material
+	output_node.position_offset = edited_composite_material.output_node_position
 	
 	reconstruct_material_graph(edited_composite_material)
 
@@ -583,6 +587,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			
 			print("set represented layer")
 			_new_node.set_represented_object(_resource)
+			_new_node.position_offset = _resource.node_position
 			continue
 		
 		if _resource.get_node_name() != "" and _create_new_node:
@@ -598,6 +603,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 				
 				_new_node.request_edit_title.connect(_edit_title_request.bind(_new_node))
 				_new_node.request_stop_editing_title.connect(_stop_editing_title_request.bind(_new_node))
+				#material_rebuilt.connect(_new_node._material_rebuilt)
 				
 				add_child(_new_node)
 			
@@ -616,17 +622,21 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			#print("adding as existing resource now")
 			if _resource.is_descendant_resource:
 				existing_resources[_resource.get_source_resource()] = _new_node
+				_new_node.set_deferred("position_offset", _resource.get_source_resource().node_position)
+				print("setting position of node to ",  _resource.get_source_resource().node_position)
 			else:
 				existing_resources[_resource as CPMB_Base] = _new_node
+				_new_node.set_deferred("position_offset", _resource.node_position)
+				print('setting position of node to ', _resource.node_position)
 			
 	
 	await get_tree().create_timer(0.1).timeout
 	
-	arrange_nodes()
+	#arrange_nodes()
 	
 	#manual final arrangements, because arrange_nodes() tends to arrange nodes very vertically
-	output_node.position_offset.y = (layer_nodes[0].position_offset.y + layer_nodes.back().position_offset.y) / 2.0
-	output_node.position_offset.x = layer_nodes[0].position_offset.x + 350
+	#output_node.position_offset.y = (layer_nodes[0].position_offset.y + layer_nodes.back().position_offset.y) / 2.0
+	#output_node.position_offset.x = layer_nodes[0].position_offset.x + 350
 	
 	scroll_offset = (layer_nodes[0].position_offset + layer_nodes.back().position_offset) / 2.0
 	

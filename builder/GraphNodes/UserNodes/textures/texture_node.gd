@@ -2,22 +2,22 @@
 extends CompositeMaterialBuilderGraphNode
 class_name TextureNode
 
-@export var respresented_texture_config : CPMB_TextureConfiguration
+@export var represented_texture_config : CPMB_TextureConfiguration
 
 func _node_ready() -> void:
 	$load_texture.button_down.connect(_load_texture)
-	respresented_texture_config = CPMB_TextureConfiguration.new()
+	represented_texture_config = CPMB_TextureConfiguration.new()
 	
-	$filter.item_selected.connect(func(x): respresented_texture_config.filtering = x; print("prompt rebuild"))
-	$is_variable.toggled.connect(func(x): respresented_texture_config.is_variable = x; respresented_texture_config.variable_name = title)
+	$filter.item_selected.connect(func(x): represented_texture_config.filtering = x; print("prompt rebuild"))
+	$is_variable.toggled.connect(func(x): represented_texture_config.is_variable = x; represented_texture_config.variable_name = title)
 	
 	if Engine.is_editor_hint():
 		node_selected.connect(edit_texture)
-		respresented_texture_config.texture_changed.connect(update_preview)
+		represented_texture_config.texture_changed.connect(update_preview)
 
 func edit_texture() -> void:
 	print("edit texture")
-	EditorInterface.edit_resource(respresented_texture_config)
+	EditorInterface.edit_resource(represented_texture_config)
 
 func _load_texture() -> void:
 	var _file_dialog : EditorFileDialog = EditorFileDialog.new()
@@ -31,26 +31,26 @@ func _load_texture() -> void:
 	
 	var path : String = await _file_dialog.file_selected
 	var tex = load(path)
-	respresented_texture_config.texture = tex
+	represented_texture_config.texture = tex
 	$texture_view.texture = tex
 
 func get_represented_object(port_idx : int) -> Object:
 	var _output_config := CPMB_TextureOutputConfiguration.new()
-	_output_config.source_texture_configuration = respresented_texture_config
+	_output_config.source_texture_configuration = represented_texture_config
 	_output_config.output_channel = port_idx
-	#respresented_texture_config.texture_changed.connect()
+	#represented_texture_config.texture_changed.connect()
 	
 	return _output_config
 
 func set_represented_object(object : Object) -> void:
 	if object is CPMB_TextureOutputConfiguration:
-		respresented_texture_config = object.source_texture_configuration
+		represented_texture_config = object.source_texture_configuration
 	elif object is CPMB_TextureConfiguration:
-		respresented_texture_config = object
+		represented_texture_config = object
 	
-	$is_variable.button_pressed = respresented_texture_config.is_variable
+	$is_variable.button_pressed = represented_texture_config.is_variable
 	
-	update_preview(respresented_texture_config.texture)
+	update_preview(represented_texture_config.texture)
 
 func update_preview(new_texture : Texture2D) -> void:
 	$texture_view.texture = new_texture
@@ -58,7 +58,7 @@ func update_preview(new_texture : Texture2D) -> void:
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 	match input_port_id:
 		0:
-			respresented_texture_config.uv = object
+			represented_texture_config.uv = object
 
 func disconnected(input_port_id : int) -> void:
-	respresented_texture_config.initialise_value(input_port_id)
+	represented_texture_config.initialise_value(input_port_id)
