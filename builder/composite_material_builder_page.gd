@@ -605,10 +605,10 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 					nodes_to_add.append([resource_to_add, {"to_node": String(_new_node.name), "to_port": _input_port_resources[resource_to_add], "from_port": resource_to_add.get_output_port_for_state()}])
 			
 			debug_print("connecting node " + _new_node.name + " to " + str(_instructions.to_node), 2)
-			_connection_requested(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
+			_connection_requested.call_deferred(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
 
 			debug_print("setting represented_object on " + str(_new_node) + " with " + str(_resource), 2)
-			_new_node.call_deferred("set_represented_object", _resource)
+			_new_node.set_represented_object(_resource)
 			
 			if _resource.is_descendant_resource:
 				existing_resources[_resource.get_source_resource()] = _new_node
@@ -618,7 +618,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 				_new_node.position_offset = _resource.node_position
 			
 	
-	debug_print("finish setting up all resource", 1)
+	debug_print("finish setting up all resources", 1)
 	
 	await get_tree().create_timer(0.1).timeout
 	

@@ -43,7 +43,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if selected or previous_position_offset == Vector2.ZERO:
 		if position_offset != previous_position_offset:
-			#print("updating position on ", self)
+			print("updating position on ", self)
 			update_position()
 		
 		previous_position_offset = position_offset
@@ -55,8 +55,8 @@ func node_process(delta : float) -> void:
 
 func _material_rebuilt() -> void: ##Do not overwrite. Is called when the material is rebuilt.
 	print("call material_rebuilt")
-	#update_position()
-	#node_material_rebuilt()
+	update_position()
+	node_material_rebuilt()
 
 func node_material_rebuilt() -> void: ##Can be overwritten. Is called when the material is rebuilt, after [method CompositeMaterialBuilderGraphNode._material_rebuilt]
 	pass
@@ -100,4 +100,5 @@ func disconnected(input_port_id : int) -> void:
 	get(represented_resource_variable_name).initialise_value(input_port_id)
 
 func update_position() -> void:
+	print("update position on ", get(represented_resource_variable_name), " to ", position_offset)
 	get(represented_resource_variable_name).node_position = position_offset
