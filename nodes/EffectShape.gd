@@ -17,7 +17,6 @@ func _exit_tree() -> void:
 
 func _process(delta: float) -> void:
 	shape = _forced_shape
-	
 	if global_position != _previous_pos:
 		if EditorInterface.is_plugin_enabled("CompositeMaterial"):
 			CPMEffectShapeManager.notify_moved(self)

@@ -33,7 +33,7 @@ var initial_mouse_position : Vector2 #value used for storing where the user open
 
 var capturing_keyboard : bool = false:
 	set(x):
-		print('set capturing to ', x)
+		#print('set capturing to ', x)
 		capturing_keyboard = x
 		if x == false:
 			if edited_node:
@@ -69,7 +69,7 @@ func _stop_editing_title_request(node : CompositeMaterialBuilderGraphNode) -> vo
 
 
 func _connection_requested(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
-	#print("request for connection: port ", from_port, " on ", from_node, " to port ", to_port, " on ", to_node)
+	print("request for connection: port ", from_port, " on ", from_node, " to port ", to_port, " on ", to_node)
 	
 	var _from_node : CompositeMaterialBuilderGraphNode = get_node(String(from_node))
 	var _to_node : CompositeMaterialBuilderGraphNode = get_node(String(to_node))
@@ -99,6 +99,7 @@ func _connection_requested(from_node: StringName, from_port: int, to_node: Strin
 
 
 func _disconnection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
+	print("disconnection request")
 	var _from_node : CompositeMaterialBuilderGraphNode = get_node(String(from_node))
 	var _to_node : CompositeMaterialBuilderGraphNode = get_node(String(to_node))
 	
@@ -106,8 +107,8 @@ func _disconnection_request(from_node: StringName, from_port: int, to_node: Stri
 	
 	_to_node.disconnected(to_port)
 	
-	print(_from_node.represented_resource_variable_name)
-	_from_node.get(_from_node.represented_resource_variable_name).value_changed.disconnect(set_shader_property)
+	if _from_node.get(_from_node.represented_resource_variable_name).value_changed.is_connected(set_shader_property):
+		_from_node.get(_from_node.represented_resource_variable_name).value_changed.disconnect(set_shader_property)
 	
 	request_rebuild_material()
 
@@ -185,6 +186,8 @@ func instantiate_node_at_mouse(node_name : String) -> CompositeMaterialBuilderGr
 	return _node
 
 func build_material() -> void:
+	
+	print("build")
 	
 	is_building_material = true
 	
@@ -464,14 +467,6 @@ func build_material() -> void:
 	edited_composite_material.shader = null
 	edited_composite_material.shader = _shader
 	
-	#for child in get_children_recursive(self):
-		#child.owner = self
-	#
-	#var _scene : PackedScene = PackedScene.new()
-	#_scene.pack(self)
-	#edited_composite_material.node_page = _scene
-	#print('saved page as scene: ', edited_composite_material.node_page)
-	
 	is_building_material = false
 	
 	edited_composite_material.finish_building.emit()
@@ -518,7 +513,7 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 	debug_print("reconstructing material " + str(material.layers), 0)
 	is_building_material = true
 	
-	clear_graph()
+	#clear_graph()
 	
 	var nodes_to_add : Array[Array] = [] #Map of what resources to add and which nodes and ports they should connect to
 	var existing_resources : Dictionary[CPMB_Base, CompositeMaterialBuilderGraphNode] = {} #Map of which resources have already been manifested as nodes
@@ -593,8 +588,6 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			_new_node = instantiate_node(_resource.get_node_name())
 		
 		if _new_node:
-			if _resource is CPMB_ComposeVec2 or _resource is CPMB_ComposeVec3 or _resource is CPMB_ComposeVec4 or _resource is CPMB_DecomposeVec2 or _resource is CPMB_DecomposeVec3 or _resource is CPMB_DecomposeVec4:
-				identifiers[_resource.source_identifier] = _new_node
 			
 			if !existing_resources.has(_resource):
 				debug_print("Resource doesnt have a node yet, adding new node as child", 1)
@@ -612,19 +605,20 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 					nodes_to_add.append([resource_to_add, {"to_node": String(_new_node.name), "to_port": _input_port_resources[resource_to_add], "from_port": resource_to_add.get_output_port_for_state()}])
 			
 			debug_print("connecting node " + _new_node.name + " to " + str(_instructions.to_node), 2)
-			call_deferred("_connection_requested", _new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
+			_connection_requested(_new_node.name, _instructions.from_port, _instructions.to_node, _instructions.to_port)
 
 			debug_print("setting represented_object on " + str(_new_node) + " with " + str(_resource), 2)
-			_new_node.set_represented_object(_resource)
+			_new_node.call_deferred("set_represented_object", _resource)
 			
 			if _resource.is_descendant_resource:
 				existing_resources[_resource.get_source_resource()] = _new_node
-				_new_node.set_deferred("position_offset", _resource.get_source_resource().node_position)
+				_new_node.position_offset = _resource.get_source_resource().node_position
 			else:
 				existing_resources[_resource as CPMB_Base] = _new_node
-				_new_node.set_deferred("position_offset", _resource.node_position)
-
+				_new_node.position_offset = _resource.node_position
 			
+	
+	debug_print("finish setting up all resource", 1)
 	
 	await get_tree().create_timer(0.1).timeout
 	

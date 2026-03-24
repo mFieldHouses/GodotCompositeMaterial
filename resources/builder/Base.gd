@@ -3,8 +3,6 @@ class_name CPMB_Base
 
 signal request_material_rebuild
 
-@export var source_node_offset : Vector2 = Vector2.INF
-
 @export var is_descendant_resource : bool = false ##Set this to true on any resource that gets returned as the represented object on a node instead of the nodes actual represented object
 
 signal is_variable_changed(new_state : bool)
@@ -20,7 +18,7 @@ signal is_variable_changed(new_state : bool)
 		index = x
 		#print("index got set to ", x, " for ", self)
 
-@export var node_position : Vector2 = Vector2.INF
+@export var node_position : Vector2 = Vector2.ZERO
 
 func get_source_resource() -> CPMB_Base: ##Is only called on descendant resources.
 	return null

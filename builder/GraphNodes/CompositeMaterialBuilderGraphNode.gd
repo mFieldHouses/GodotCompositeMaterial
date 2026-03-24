@@ -55,8 +55,8 @@ func node_process(delta : float) -> void:
 
 func _material_rebuilt() -> void: ##Do not overwrite. Is called when the material is rebuilt.
 	print("call material_rebuilt")
-	update_position()
-	node_material_rebuilt()
+	#update_position()
+	#node_material_rebuilt()
 
 func node_material_rebuilt() -> void: ##Can be overwritten. Is called when the material is rebuilt, after [method CompositeMaterialBuilderGraphNode._material_rebuilt]
 	pass
