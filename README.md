@@ -4,6 +4,8 @@ CompositeMaterial provides a workspace for creating procedural hard-surface mate
 
 <img width="1382" height="1009" alt="image" src="https://github.com/user-attachments/assets/dda9c924-315a-4353-b9df-deb7e99e809e" />
 
+
+
 CompositeMaterial is built around the concept of layers and masks.
 **Layers** are exactly what you'd expect. They provide a way to stack multiple textures on top of each other. Each layer posesses a set of properties, like color, roughness, metallic and a mask value.
 **Masks** are values that determine how visible a layer is at a certain point. These values can be derived from multiple sources, like normal of the surface, a texture or vertex color, and can be manipulated using math, allowing for a very wide range of patterns.
