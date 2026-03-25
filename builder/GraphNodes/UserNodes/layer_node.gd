@@ -54,9 +54,9 @@ func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 			represented_layer.metallic_value = object
 			enable_value(2, false)
 		5:
-			#print("before setting the mask, it is ", represented_layer.alpha)
+			represented_layer.occlusion = object
+		6:
 			represented_layer.mask = object
-			#print('set layer mask, it is now ', represented_layer.alpha)
 
 func disconnected(input_port_id : int) -> void:
 	get(represented_resource_variable_name).initialise_value(input_port_id)

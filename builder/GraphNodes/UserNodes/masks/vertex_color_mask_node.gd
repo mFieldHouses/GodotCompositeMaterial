@@ -13,7 +13,7 @@ func _node_ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func node_process(delta: float) -> void:
 	if $channel/custom.button_pressed:
 		$custom_color_config.modulate.a = 1.0
 	else:

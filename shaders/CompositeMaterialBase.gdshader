@@ -442,7 +442,7 @@ float get_layer_metallic(int layer_index) {
 
 float get_layer_occlusion(int layer_index) {
 	//get_occlusion
-	return 0.0;
+	return 1.0;
 }
 
 void vertex() {
@@ -510,6 +510,6 @@ void fragment() {
 	NORMAL_MAP = normal_mix;
 	ROUGHNESS = roughness_mix;
 	METALLIC = metallic_mix;
-	//AO = occlusion_mix;
+	AO = occlusion_mix;
 	
 }

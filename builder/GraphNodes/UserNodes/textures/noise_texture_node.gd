@@ -7,6 +7,8 @@ func _ready() -> void:
 	_tex.noise = FastNoiseLite.new()
 	_tex.noise.seed = randi_range(0, 1000000)
 	
+	_tex.seamless = true
+	
 	var _config = CPMB_TextureConfiguration.new()
 	_config.texture = _tex
 	$TextureNode.set_represented_object(_config)

@@ -9,9 +9,14 @@ class_name CompositeMaterialLayer
 		#print("setter on ", self, " alpha: set to ", x)
 @export var normal : CPMB_Vector3Value
 @export var roughness_value : CPMB_NumericValue
-@export var metallic_value : CPMB_NumericValue = CPMB_FloatValue.new()
+@export var metallic_value : CPMB_NumericValue
+@export var occlusion : CPMB_NumericValue
 @export var mask : CPMB_NumericValue
-@export var distance_fade_ni : String = "not implemented yet"
+
+@export_group("Distance Fade")
+@export var distance_fade_enabled : bool = false
+@export var distance_fade_max_distance : float = 100.0
+@export var distance_fade_min_distance : float = 50.0
 
 @export var node_position : Vector2 = Vector2.ZERO
 
@@ -37,11 +42,14 @@ func initialise_value(index : int = -1) -> void:
 		metallic_value = CPMB_FloatValue.new()
 		metallic_value.internal_to_node = true
 	if index == 5 or index == -1:
-		mask = CPMB_FloatValue.new(0.5)
+		occlusion = CPMB_FloatValue.new()
+		occlusion.internal_to_node = true
+	if index == 6 or index == -1:
+		mask = CPMB_FloatValue.new(1.0)
 		mask.internal_to_node = true
 
 func get_child_resources() -> Array[CPMB_Base]:
-	return [albedo, alpha, normal, roughness_value, metallic_value, mask]
+	return [albedo, alpha, normal, roughness_value, metallic_value, occlusion, mask]
 
 func get_input_port_resources() -> Dictionary[CPMB_Base, int]:
 	return {
@@ -50,5 +58,6 @@ func get_input_port_resources() -> Dictionary[CPMB_Base, int]:
 		normal: 2,
 		roughness_value: 3,
 		metallic_value: 4,
-		mask: 5
+		occlusion: 5,
+		mask: 6
 	}

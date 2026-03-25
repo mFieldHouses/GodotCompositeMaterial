@@ -393,11 +393,13 @@ func build_material() -> void:
 		edited_composite_material.set_shader_parameter("color_ramp_textures", mapped_resources.ColorRampTexture)
 	
 	var fragment_code : String = ""
+	
 	var get_layer_albedo_string : String = "switch (layer_index) {"
 	var get_layer_alpha_string : String = "switch (layer_index) {"
 	var get_layer_normal_string : String = "switch (layer_index) {"
 	var get_layer_roughness_string : String = "switch (layer_index) {"
 	var get_layer_metallic_string : String = "switch (layer_index) {"
+	var get_layer_occlusion_string : String = "switch (layer_index) {"
 	
 	#Sorry for the funky string formatting up ahead! It's all to have nicely formatted shader code
 	
@@ -427,6 +429,10 @@ func build_material() -> void:
 		case %s:
 			return %s;" % [_idx, layer.metallic_value.get_expression()]
 		
+		get_layer_occlusion_string += "
+		case %s:
+			return %s;" % [_idx, "1.0 - (" + layer.occlusion.get_expression() + ")"]
+		
 		_idx += 1
 	
 	get_layer_albedo_string += "
@@ -438,6 +444,8 @@ func build_material() -> void:
 	get_layer_roughness_string += "
 	}"
 	get_layer_metallic_string += "
+	}"
+	get_layer_occlusion_string += "
 	}"
 	
 	var get_color_ramp_string : String = "switch (color_ramp_id) {"
@@ -458,6 +466,7 @@ func build_material() -> void:
 	_shader.code = _shader.code.replace("//get_normal", get_layer_normal_string)
 	_shader.code = _shader.code.replace("//get_roughness", get_layer_roughness_string)
 	_shader.code = _shader.code.replace("//get_metallic", get_layer_metallic_string)
+	_shader.code = _shader.code.replace("//get_occlusion", get_layer_occlusion_string)
 	
 	_shader.code = _shader.code.replace("//get_color_ramp", get_color_ramp_string)
 	

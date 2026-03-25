@@ -74,15 +74,24 @@ slot/6/right_type = 0
 slot/6/right_color = Color(1, 1, 1, 1)
 slot/6/right_icon = null
 slot/6/draw_stylebox = true
-slot/7/left_enabled = false
+slot/7/left_enabled = true
 slot/7/left_type = 0
 slot/7/left_color = Color(1, 1, 1, 1)
 slot/7/left_icon = null
 slot/7/right_enabled = false
-slot/7/right_type = 0
+slot/7/right_type = 5
 slot/7/right_color = Color(1, 1, 1, 1)
 slot/7/right_icon = null
 slot/7/draw_stylebox = true
+slot/8/left_enabled = false
+slot/8/left_type = 0
+slot/8/left_color = Color(1, 1, 1, 1)
+slot/8/left_icon = null
+slot/8/right_enabled = false
+slot/8/right_type = 0
+slot/8/right_color = Color(1, 1, 1, 1)
+slot/8/right_icon = null
+slot/8/draw_stylebox = true
 script = ExtResource("2_j8qlm")
 represented_resource_variable_name = "represented_layer"
 metadata/_custom_type_script = "uid://d0h74nt1hl8ms"
@@ -161,11 +170,21 @@ max_value = 1.0
 step = 0.001
 value = 0.5
 
+[node name="occlusion_in" type="Label" parent="." unique_id=819964635]
+layout_mode = 2
+text = "Occlusion"
+
 [node name="mask_in" type="Label" parent="." unique_id=1397243595]
 layout_mode = 2
 text = "Mask"
 
-[node name="distance_fade_in" type="Label" parent="." unique_id=1240259462]
+[node name="settings" type="FoldableContainer" parent="." unique_id=365998080]
+layout_mode = 2
+folded = true
+title = "Layer Settings"
+
+[node name="distance_fade" type="FoldableContainer" parent="settings" unique_id=1265658251]
 visible = false
 layout_mode = 2
-text = "Distance Fade"
+folded = true
+title = "Distance Fade"
