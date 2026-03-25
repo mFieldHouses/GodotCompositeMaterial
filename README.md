@@ -2,8 +2,7 @@
 
 CompositeMaterial provides a workspace for creating procedural hard-surface materials, right inside of the Godot editor, using nodes.
 
-<img width="1382" height="1009" alt="image" src="https://github.com/user-attachments/assets/dda9c924-315a-4353-b9df-deb7e99e809e" />
-
+<img width="1382" height="1009" alt="bitmap" src="https://github.com/user-attachments/assets/ab323efd-11fb-454d-ba63-2aa13ed88e92" />
 
 
 CompositeMaterial is built around the concept of layers and masks.
