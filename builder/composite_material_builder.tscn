@@ -174,3 +174,26 @@ item_2/id = 2
 layout_mode = 0
 offset_right = 270.0
 position_offset = Vector2(0, 0)
+
+[node name="rebuilding" type="ColorRect" parent="pages/template_page" unique_id=1714323349]
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -43.0
+offset_right = 117.0
+grow_vertical = 0
+color = Color(0.072842635, 0.072842635, 0.072842635, 1)
+
+[node name="Label" type="Label" parent="pages/template_page/rebuilding" unique_id=1390132379]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Rebuilding..."
+horizontal_alignment = 1
+vertical_alignment = 1

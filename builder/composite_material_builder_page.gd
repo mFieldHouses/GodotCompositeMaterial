@@ -213,6 +213,9 @@ func build_material() -> void:
 	print("build")
 	
 	is_building_material = true
+	$rebuilding.visible = true
+	
+	await get_tree().create_timer(0.01).timeout
 	
 	#Clear out material
 	edited_composite_material.layers = [] as Array[CompositeMaterialLayer]
@@ -510,6 +513,7 @@ func build_material() -> void:
 	edited_composite_material.shader = null
 	edited_composite_material.shader = _shader
 	
+	$rebuilding.visible = false
 	is_building_material = false
 	
 	edited_composite_material.finish_building.emit()
