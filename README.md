@@ -10,7 +10,7 @@ CompositeMaterial provides a workspace for creating procedural hard-surface mate
 
 <img width="1382" height="1009" alt="bitmap" src="https://github.com/user-attachments/assets/ab323efd-11fb-454d-ba63-2aa13ed88e92" />
 
-**This model was made by [Cryostatic on Sketchfab.](https://sketchfab.com/Cryostatic), and retextured using CompositeMaterial.*
+**This model was made by [Cryostatic on Sketchfab](https://sketchfab.com/Cryostatic), and retextured using CompositeMaterial.*
 
 CompositeMaterial is a plugin that introduces 2 new materials to Godot; the **CompositeMaterial** material, and the **CompositeMaterialVariation** material. 
 The former can be edited using a node system, similarly to building Visual Shaders. There are a lot of nodes available to allow developers and artists to quickly and easily put together procedural materials that react to your mesh and environment. It is also possible to "export" certain values and textures of your **CompositeMaterial**, allowing you to edit those values in the inspector instead of having to dig through the node tree. That's where **CompositeMaterialVariations** come into play. Using **CompositeMaterialVariation** allows you to make multiple materials based off a single **CompositeMaterial** and to edit certain exported values of the base **CompositeMaterial** seperately per **CompositeMaterialVariation**. 
