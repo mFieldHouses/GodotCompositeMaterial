@@ -6,8 +6,10 @@ class_name CPMB_ColorRampConfiguration
 @export var gradient_texture : GradientTexture1D:
 	set(x):
 		gradient_texture = x
-		value_changed.emit(x, "color_ramp_textures")
-#@export_enum("") var output_channel
+		value_changed.emit(x, "color_ramp_textures_linear")
+		value_changed.emit(x, "color_ramp_textures_nearest")
+
+@export var filter : int = 0
 
 @export var texture_index : int = 0
 
@@ -24,7 +26,7 @@ func initialise_value(index : int = -1) -> void:
 #
 func get_expression() -> String:
 	printerr("get expression from source color ramp")
-	return "WRONG EXPRESSION"
+	return "CR_WRONGEXPRESSION"
 
 #func get_mapping_key() -> String:
 	#return "ColorRampConfiguration"

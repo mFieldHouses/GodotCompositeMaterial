@@ -43,7 +43,7 @@ func get_mapping_key() -> String:
 	return "UVTransformConfiguration"
 
 func get_child_resources() -> Array[CPMB_Base]:
-	return [base_uv, scale, offset]
+	return [base_uv, scale.x, scale.y, offset.x, offset.y]
 
 func get_node_name() -> String:
 	return "UVTransformNode"

@@ -34,6 +34,9 @@ func _load_texture() -> void:
 	represented_texture_config.texture = tex
 	$texture_view.texture = tex
 
+func node_material_rebuilt() -> void:
+	size.y = 0
+
 func get_represented_object(port_idx : int) -> Object:
 	var _output_config := CPMB_TextureOutputConfiguration.new()
 	_output_config.source_texture_configuration = represented_texture_config

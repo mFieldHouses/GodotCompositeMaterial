@@ -329,12 +329,16 @@ vec3 tune_hsv(int transform_id, vec3 rgb) {
 #endif
 
 #if NUM_COLOR_RAMPS > 0
-uniform sampler2D[NUM_COLOR_RAMPS] color_ramp_textures : source_color, repeat_disable;
+uniform sampler2D[NUM_COLOR_RAMPS] color_ramp_textures_linear : source_color, repeat_disable, filter_linear_mipmap;
+uniform sampler2D[NUM_COLOR_RAMPS] color_ramp_textures_nearest : source_color, repeat_disable, filter_nearest_mipmap;
 vec4 get_color_ramp(int color_ramp_id, float fac) {
 	//get_color_ramp
 	return vec4(0.0);
 }
+
 #endif
+
+// The GDSL compiler doesn't like it when I call custom sampling functions on different textures that use different texture hints. So I have to make seperate functions for every possibility.
 
 vec4 sample_texture_ln(sampler2D input_tex, uv_map input_uv) { //for linear filtering textures
 	if (input_uv.is_triplanar) {
@@ -397,6 +401,16 @@ vec4 sample_texture_nm(sampler2D input_tex, uv_map input_uv) { //for normal maps
 	else {
 		return texture(input_tex, input_uv.uv1);
 	}
+}
+
+vec4 sample_cr_ln(sampler2D input_color_ramp_tex, float fac) { //for linearly filtered color ramps
+	
+	return vec4(0.0);
+}
+
+vec4 sample_cr_nn(sampler2D input_color_ramp_tex, float fac) { //for nearest neighbor filtered color ramps
+	
+	return vec4(0.0);
 }
 
 uv_map create_uv_map(vec2 input_uv) {

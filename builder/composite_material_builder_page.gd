@@ -347,7 +347,8 @@ func build_material() -> void:
 			var _arr = []
 			_arr.resize(mapped_resources.Texture.size())
 			_arr.fill(null)
-			edited_composite_material.set_shader_parameter("textures", _arr)
+			edited_composite_material.set_shader_parameter("linear_textures", _arr)
+			edited_composite_material.set_shader_parameter("nearest_neighbor_textures", _arr)
 	
 	if mapped_resources.has("NormalMapTexture"):
 		if mapped_resources.NormalMapTexture.size() > 0:
@@ -361,7 +362,8 @@ func build_material() -> void:
 			var _arr = []
 			_arr.resize(mapped_resources.ColorRampTexture.size())
 			_arr.fill(null)
-			edited_composite_material.set_shader_parameter("color_ramp_textures", _arr)
+			edited_composite_material.set_shader_parameter("color_ramp_textures_linear", _arr)
+			edited_composite_material.set_shader_parameter("color_ramp_textures_nearest", _arr)
 	
 	for key in mapped_resources.keys():
 		var _idx : int = 0
@@ -381,6 +383,7 @@ func build_material() -> void:
 				if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE or (property.hint & PROPERTY_HINT_RESOURCE_TYPE and property.hint_string == "Texture2D"):
 					
 					#just set the value to what it was so that value_changed gets called on that resource
+					print("set ", property.name, " on ", resource)
 					resource.set(property.name, resource.get(property.name))
 				
 			_idx += 1
@@ -390,7 +393,8 @@ func build_material() -> void:
 		edited_composite_material.set_shader_parameter("nearest_neighbor_textures", mapped_resources.Texture)
 	
 	if mapped_resources.has("ColorRampTexture"):
-		edited_composite_material.set_shader_parameter("color_ramp_textures", mapped_resources.ColorRampTexture)
+		edited_composite_material.set_shader_parameter("color_ramp_textures_linear", mapped_resources.ColorRampTexture)
+		edited_composite_material.set_shader_parameter("color_ramp_textures_nearest", mapped_resources.ColorRampTexture)
 	
 	var fragment_code : String = ""
 	
@@ -453,9 +457,16 @@ func build_material() -> void:
 	if mapped_resources.has("ColorRampOutputConfiguration"):
 		_idx = 0
 		for color_ramp_config : CPMB_ColorRampOutputConfiguration in mapped_resources.ColorRampOutputConfiguration:
+			
+			var _uniform_name : String = ""
+			if color_ramp_config.source_color_ramp_configuration.filter == 0:
+				_uniform_name = "color_ramp_textures_linear"
+			else:
+				_uniform_name = "color_ramp_textures_nearest"
+				
 			get_color_ramp_string += "
 			case %s:
-				return texture(color_ramp_textures[%s], vec2(fac, 0.0));" % [_idx, mapped_resources.ColorRampTexture.find(color_ramp_config.source_color_ramp_configuration.gradient_texture)]
+				return texture(%s[%s], vec2(fac, 0.0));" % [_idx, _uniform_name, mapped_resources.ColorRampTexture.find(color_ramp_config.source_color_ramp_configuration.gradient_texture)]
 			_idx += 1
 		
 	get_color_ramp_string += "

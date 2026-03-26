@@ -2,6 +2,18 @@
 
 [ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_dmtf5"]
 [ext_resource type="Script" uid="uid://th3iwfgyvayb" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/textures/texture_node.gd" id="2_suxfi"]
+[ext_resource type="Script" uid="uid://b5gr64jphjmpw" path="res://addons/CompositeMaterial/resources/builder/TextureConfiguration.gd" id="3_56gsk"]
+[ext_resource type="Script" uid="uid://ceepdgj2ci30a" path="res://addons/CompositeMaterial/resources/builder/UVMapConfiguration.gd" id="4_ey7x0"]
+
+[sub_resource type="Resource" id="Resource_b4x88"]
+script = ExtResource("4_ey7x0")
+value = Vector2(inf, inf)
+internal_to_node = true
+
+[sub_resource type="Resource" id="Resource_spnqj"]
+script = ExtResource("3_56gsk")
+uv = SubResource("Resource_b4x88")
+value = Vector3(inf, inf, inf)
 
 [node name="TextureNode" type="GraphNode" unique_id=962352097]
 offset_right = 239.0
@@ -109,6 +121,7 @@ slot/10/right_color = Color(1, 1, 1, 1)
 slot/10/right_icon = null
 slot/10/draw_stylebox = true
 script = ExtResource("2_suxfi")
+represented_texture_config = SubResource("Resource_spnqj")
 represented_resource_variable_name = "represented_texture_config"
 metadata/_custom_type_script = "uid://th3iwfgyvayb"
 

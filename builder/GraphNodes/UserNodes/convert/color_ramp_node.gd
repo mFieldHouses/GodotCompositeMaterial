@@ -10,6 +10,7 @@ func _node_ready() -> void:
 	
 	$color_ramp_preview.texture = represented_configuration.gradient_texture
 	$is_variable.toggled.connect(func(x): represented_configuration.is_variable = x; represented_configuration.variable_name = title)
+	$VBoxContainer/filter.item_selected.connect(func(idx): represented_configuration.filter = idx)
 	
 	if Engine.is_editor_hint():
 		node_selected.connect(edit_gradient)
