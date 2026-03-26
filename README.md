@@ -5,15 +5,19 @@
 
 # CompositeMaterial, a procedural material plugin for Godot
 
-CompositeMaterial provides a workspace for creating procedural hard-surface materials, right inside of the Godot editor, using nodes.
+CompositeMaterial provides a workspace for creating procedural hard-surface materials, right inside of the Godot editor, using a visual node editor.
 
 
 <img width="1382" height="1009" alt="bitmap" src="https://github.com/user-attachments/assets/ab323efd-11fb-454d-ba63-2aa13ed88e92" />
 
+CompositeMaterial is a plugin that introduces 2 new materials to Godot; the **CompositeMaterial** material, and the **CompositeMaterialVariation** material. 
+The former can be edited using a node system, similarly to building Visual Shaders. There are a lot of nodes available to allow developers and artists to quickly and easily put together procedural materials that react to your mesh and environment. It is also possible to "export" certain values and textures of your **CompositeMaterial**, allowing you to edit those values in the inspector instead of having to dig through the node tree. That's where **CompositeMaterialVariations** come into play. Using **CompositeMaterialVariation** allows you to make multiple materials based off a single **CompositeMaterial** and to edit certain exported values of the base **CompositeMaterial** seperately per **CompositeMaterialVariation**. 
 
-CompositeMaterial is built around the concept of layers and masks.
-**Layers** are exactly what you'd expect. They provide a way to stack multiple textures on top of each other. Each layer posesses a set of properties, like color, roughness, metallic and a mask value.
-**Masks** are values that determine how visible a layer is at a certain point. These values can be derived from multiple sources, like normal of the surface, a texture or vertex color, and can be manipulated using math, allowing for a very wide range of patterns.
+You can, for example, make a single metal material, with a lot of variables, and make a set of **CompositeMaterialVariations** that all have slightly different properties, like more wear-n-tear, a rougher finish, or more dust. When you now edit the base **CompositeMaterial**, all variations will follow the changes, provided the changes are not in values of variables. Think of changing UVs or color ramps. This allows you to keep your materials consistent throughout your whole project, all without having to retune all **CompositeMaterialVariations** manually.
+
+### Design philosophy
+
+
 
 ### Why use this over Godot's VisualShader system?
 
@@ -26,7 +30,11 @@ If you have the addon installed, you can create a CompositeMaterial resource. I 
 
 You'll see a single output node. You will need to connect layers to this output node to be able to see anything. To do so, press right-click in the editor and select `Add Node...`. From there, select `Layer` and a layer will be created for you. When you connect the layer output to the singular port on the output node, you'll see your material turn purple. Purple is just the default color for any new layer. To change the color, you can connect either a `Texture` node or a `Color Ramp` node to the RGB input of your layer. That's the base of CompositeMaterial. There are a bunch of other nodes for you to try out as well, I recommend screwing around with that. For example, you can plug a `Triplanar Map` node or `UV Transform` node into the UV of your texure.
 
-### Layers
+### Technical
+
+CompositeMaterial is built around the concept of layers and masks.
+**Layers** are exactly what you'd expect. They provide a way to stack multiple textures on top of each other. Each layer posesses a set of properties, like color, roughness, metallic and a mask value.
+**Masks** are values that determine how visible a layer is at a certain point. These values can be derived from multiple sources, like normal of the surface, a texture or vertex color, and can be manipulated using math, allowing for a very wide range of patterns.
 
 A layer has a number of inputs. Here's a sumamry of what they do:
 
