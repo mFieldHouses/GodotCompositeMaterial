@@ -6,6 +6,8 @@ const DEBUG_LEVEL : int = 1
 
 signal material_rebuilt
 
+var parent_dock : CompositeMaterialBuilderDock
+
 var output_node : CompositeMaterialOutputNode
 
 var node_mappings : Array = [
@@ -44,6 +46,7 @@ var edited_node : CompositeMaterialBuilderGraphNode
 
 
 var is_building_material : bool = false
+var auto_rebuild : bool = true
 
 func _ready() -> void:
 	connection_request.connect(_connection_requested)
@@ -55,7 +58,14 @@ func _ready() -> void:
 	output_node = $output
 	output_node.request_rebuild.connect(build_material)
 	output_node.output_node_position_changed.connect(func(): edited_composite_material.output_node_position = output_node.position_offset)
-
+	
+	var _menu : HBoxContainer = get_menu_hbox()
+	var _appendix = preload("res://addons/CompositeMaterial/builder/toolbar_appendix.tscn").instantiate()
+	_menu.add_child(_appendix)
+	_appendix.set_auto_rebuild.connect(func(state: bool): auto_rebuild = state; print("set auto rebuild to ", state))
+	_appendix.rebuild_manual.connect(build_material)
+	
+	
 func _edit_title_request(node : CompositeMaterialBuilderGraphNode) -> void:
 	print("request edit title from ", node)
 	edited_node = node
@@ -121,10 +131,7 @@ func _gui_input(event: InputEvent) -> void:
 			initial_mouse_position = get_local_mouse_position()
 			$context_menu.popup(Rect2i(get_global_mouse_position() + Vector2(0, 50), Vector2i(100,100)))
 	
-	if event is InputEventKey:
-		#print("key input")
-		#print(edited_node)
-		#print(capturing_keyboard)
+	elif event is InputEventKey:
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE and event.pressed:
 			if selected_node is not CompositeMaterialOutputNode:
 				
@@ -133,7 +140,18 @@ func _gui_input(event: InputEvent) -> void:
 				selected_node.queue_free()
 				selected_node = null
 				
-				build_material()
+				request_rebuild_material()
+		
+		if event.as_text_keycode() == "Ctrl+C":
+			if selected_node:
+				if selected_node is LayerNode:
+					pass
+				else:
+					parent_dock.clipboard = selected_node.get(selected_node.represented_resource_variable_name)
+		
+		if event.as_text_keycode() == "Ctrl+V" and event.pressed:
+			initial_mouse_position = get_local_mouse_position()
+			add_node_from_resource(parent_dock.clipboard)
 		
 		if capturing_keyboard and edited_node:
 			#print("capture key")
@@ -157,7 +175,7 @@ func _gui_input(event: InputEvent) -> void:
 						edited_node.update_title(edited_node.title + event.as_text_key_label().trim_prefix("Shift+"))
 					else:
 						edited_node.update_title(edited_node.title + event.as_text_key_label().to_lower())
-			
+				
 
 func disconnect_all_from_node(node : CompositeMaterialBuilderGraphNode) -> void:
 	var _connections = get_connection_list_from_node(node.name)
@@ -175,7 +193,12 @@ func add_node(idx1 : int, idx2 : int) -> void:
 	_node.request_stop_editing_title.connect(_stop_editing_title_request.bind(_node))
 	#material_rebuilt.connect(_node._material_rebuilt)
 	
-	
+
+func add_node_from_resource(resource : Resource) -> void:
+	var _new_node = instantiate_node_at_mouse(resource.get_node_name())
+	_new_node.set_represented_object(resource)
+
+
 func instantiate_node_at_mouse(node_name : String) -> CompositeMaterialBuilderGraphNode:
 	var _node = load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_name + ".tscn").instantiate()
 	
@@ -494,7 +517,7 @@ func build_material() -> void:
 
 func request_rebuild_material() -> void:
 	debug_print("request received", 1)
-	if !is_building_material:
+	if !is_building_material and auto_rebuild:
 		debug_print("rebuilding", 1)
 		build_material()
 	else:

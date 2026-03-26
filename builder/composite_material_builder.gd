@@ -1,8 +1,10 @@
 @tool
 extends HSplitContainer
+class_name CompositeMaterialBuilderDock
 
 var pages : Dictionary[CompositeMaterial, CompositeMaterialBuilderPage]
 
+var clipboard : Resource
 
 func edit_material(material : CompositeMaterial) -> void:
 	if pages.has(material):
@@ -18,6 +20,7 @@ func open_page(material : CompositeMaterial) -> void:
 func create_page(material : CompositeMaterial) -> void:
 	var _new_page = $pages/template_page.duplicate()
 	pages[material] = _new_page
+	_new_page.parent_dock = self
 	
 	$pages.add_child(_new_page)
 	

@@ -10,11 +10,6 @@ func _ready() -> void:
 	$layer.value_changed.connect(func(x): represented_configuration.layer = x)
 	$falloff_distance.value_changed.connect(func(x): represented_configuration.falloff_distance = x)
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
 func get_represented_object(port_idx : int) -> Object:
 	return represented_configuration
 
