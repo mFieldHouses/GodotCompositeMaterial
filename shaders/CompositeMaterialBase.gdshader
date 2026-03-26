@@ -29,6 +29,11 @@ shader_type spatial;
 
 //end definitions
 
+uniform float triplanar_map_eta = 0.002;
+
+
+
+
 
 
 
@@ -335,13 +340,13 @@ vec4 sample_texture_ln(sampler2D input_tex, uv_map input_uv) { //for linear filt
 	if (input_uv.is_triplanar) {
 		vec4 result = vec4(0.0);
 		
-		if (input_uv.uv1_fac > 0.005) {
+		if (input_uv.uv1_fac > triplanar_map_eta) {
         	result += texture(input_tex, input_uv.uv1) * input_uv.uv1_fac;
    		}
-    	if (input_uv.uv2_fac > 0.005) {
+    	if (input_uv.uv2_fac > triplanar_map_eta) {
         	result += texture(input_tex, input_uv.uv2) * input_uv.uv2_fac;
     	}
-    	if (input_uv.uv3_fac > 0.005) {
+    	if (input_uv.uv3_fac > triplanar_map_eta) {
         	result += texture(input_tex, input_uv.uv3) * input_uv.uv3_fac;
     	}
 		
@@ -356,13 +361,13 @@ vec4 sample_texture_nn(sampler2D input_tex, uv_map input_uv) { //for nearest nei
 	if (input_uv.is_triplanar) {
 		vec4 result = vec4(0.0);
 		
-		if (input_uv.uv1_fac > 0.005) {
+		if (input_uv.uv1_fac > triplanar_map_eta) {
         	result += texture(input_tex, input_uv.uv1) * input_uv.uv1_fac;
    		}
-    	if (input_uv.uv2_fac > 0.005) {
+    	if (input_uv.uv2_fac > triplanar_map_eta) {
         	result += texture(input_tex, input_uv.uv2) * input_uv.uv2_fac;
     	}
-    	if (input_uv.uv3_fac > 0.005) {
+    	if (input_uv.uv3_fac > triplanar_map_eta) {
         	result += texture(input_tex, input_uv.uv3) * input_uv.uv3_fac;
     	}
 		
@@ -377,13 +382,13 @@ vec4 sample_texture_nm(sampler2D input_tex, uv_map input_uv) { //for normal maps
 	if (input_uv.is_triplanar) {
 		vec4 result = vec4(0.0);
 		
-		if (input_uv.uv1_fac > 0.005) {
+		if (input_uv.uv1_fac > triplanar_map_eta) {
         	result += texture(input_tex, input_uv.uv1) * input_uv.uv1_fac;
    		}
-    	if (input_uv.uv2_fac > 0.005) {
+    	if (input_uv.uv2_fac > triplanar_map_eta) {
         	result += texture(input_tex, input_uv.uv2) * input_uv.uv2_fac;
     	}
-    	if (input_uv.uv3_fac > 0.005) {
+    	if (input_uv.uv3_fac > triplanar_map_eta) {
         	result += texture(input_tex, input_uv.uv3) * input_uv.uv3_fac;
     	}
 		
