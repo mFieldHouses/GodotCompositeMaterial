@@ -1,6 +1,12 @@
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/d3ae2e1d-572c-4946-ab29-f3e4a5b1d759" width="150" alt="CompositeMaterial"/>
+  <img src="https://godotengine.org/assets/press/icon_color.svg" width="150">
+</div>
+
 # CompositeMaterial, a procedural material plugin for Godot
 
 CompositeMaterial provides a workspace for creating procedural hard-surface materials, right inside of the Godot editor, using nodes.
+
 
 <img width="1382" height="1009" alt="bitmap" src="https://github.com/user-attachments/assets/ab323efd-11fb-454d-ba63-2aa13ed88e92" />
 
