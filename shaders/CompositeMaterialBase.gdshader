@@ -193,15 +193,19 @@ uv_map get_triplanar_uv(int uv_index) {
 	
 	uv_map result;
 	
+	float invert_x = normal.x >= 0.0 ? 1.0 : -1.0;
+	float invert_y = normal.y >= 0.0 ? 1.0 : -1.0;
+	float invert_z = normal.z >= 0.0 ? 1.0 : -1.0;
+	
 	normal = normalize(normal);
 	normal = pow(abs(normal), vec3(10.0 / clamp(triplanar_map_blends[uv_index], 0.063, 10.0)));
 	normal = normal / (normal.x + normal.y + normal.z);
 	
-	result.uv1 = vec2(pos.z, pos.y);
+	result.uv1 = vec2(-pos.z * invert_x, -pos.y);
 	result.uv1_fac = normal.x;
-	result.uv2 = vec2(pos.x, pos.z);
+	result.uv2 = vec2(pos.x * invert_y, pos.z) * -1.0;
 	result.uv2_fac = normal.y;
-	result.uv3 = vec2(pos.x, pos.y);
+	result.uv3 = vec2(pos.x * invert_z, -pos.y);
 	result.uv3_fac = normal.z;
 	
 	result.is_triplanar = true;
