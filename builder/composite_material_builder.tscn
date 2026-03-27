@@ -177,6 +177,7 @@ position_offset = Vector2(0, 0)
 
 [node name="rebuilding" type="ColorRect" parent="pages/template_page" unique_id=1714323349]
 visible = false
+z_index = 100
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
