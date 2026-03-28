@@ -203,7 +203,7 @@ uv_map get_triplanar_uv(int uv_index) {
 	
 	result.uv1 = vec2(-pos.z * invert_x, -pos.y);
 	result.uv1_fac = normal.x;
-	result.uv2 = vec2(pos.x * invert_y, pos.z);
+	result.uv2 = vec2(pos.x * invert_y, -pos.z);
 	result.uv2_fac = normal.y;
 	result.uv3 = vec2(pos.x * invert_z, pos.y);
 	result.uv3_fac = normal.z;
