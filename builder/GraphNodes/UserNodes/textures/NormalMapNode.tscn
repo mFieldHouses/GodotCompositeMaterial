@@ -5,7 +5,7 @@
 
 [node name="NormalMapNode" type="GraphNode" unique_id=962352097]
 offset_right = 239.0
-offset_bottom = 241.0
+offset_bottom = 242.0
 tooltip_text = "Loads in a texture and samples it according to the input UV."
 theme = ExtResource("1_pklk5")
 title = "Normal Map"
@@ -91,7 +91,7 @@ slot/8/right_color = Color(1, 1, 1, 1)
 slot/8/right_icon = null
 slot/8/draw_stylebox = true
 script = ExtResource("2_fsw7i")
-represented_resource_variable_name = "represented_texture_config"
+represented_resource_variable_name = "represented_normal_map_config"
 metadata/_custom_type_script = "uid://th3iwfgyvayb"
 
 [node name="uv_in" type="Label" parent="." unique_id=408030845]

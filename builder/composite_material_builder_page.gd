@@ -33,6 +33,8 @@ var node_groups : Dictionary[String, Array] = {
 
 var initial_mouse_position : Vector2 #value used for storing where the user opened the context menu in case the user wants to add a node
 
+@onready var editor_ur : EditorUndoRedoManager = EditorInterface.get_editor_undo_redo()
+
 var capturing_keyboard : bool = false:
 	set(x):
 		#print('set capturing to ', x)
@@ -187,6 +189,14 @@ func add_node(idx1 : int, idx2 : int) -> void:
 	var _node_name = node_mappings[idx1][idx2]
 	var _node = instantiate_node_at_mouse(_node_name)
 	
+	#editor_ur.create_action("Create Node")
+	#editor_ur.add_do_property(self, "initial_mouse_position", initial_mouse_position)
+	#editor_ur.add_do_method(self, "add_child", _node)
+	#editor_ur.add_undo_method(_node, "queue_free")
+	#editor_ur.commit_action()
+	
+	add_child(_node)
+	
 	#print()
 	_node.request_disconnect_self.connect(disconnect_all_from_node.bind(_node))
 	_node.request_edit_title.connect(_edit_title_request.bind(_node))
@@ -196,6 +206,7 @@ func add_node(idx1 : int, idx2 : int) -> void:
 
 func add_node_from_resource(resource : Resource) -> void:
 	var _new_node = instantiate_node_at_mouse(resource.get_node_name())
+	add_child(_new_node)
 	_new_node.set_represented_object(resource)
 
 
@@ -203,8 +214,6 @@ func instantiate_node_at_mouse(node_name : String) -> CompositeMaterialBuilderGr
 	var _node = load("res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/" + node_name + ".tscn").instantiate()
 	
 	_node.position_offset = (scroll_offset / zoom) + (initial_mouse_position / zoom)
-	
-	add_child(_node)
 	
 	return _node
 

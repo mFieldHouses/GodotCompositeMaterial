@@ -13,7 +13,7 @@ func _node_ready() -> void:
 	if Engine.is_editor_hint():
 		node_selected.connect(edit_texture)
 
-func _process(delta: float) -> void:
+func node_process(delta: float) -> void:
 	size.y = 0
 
 func _load_texture() -> void:

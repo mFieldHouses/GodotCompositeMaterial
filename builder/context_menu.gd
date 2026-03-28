@@ -1,6 +1,8 @@
 @tool
 extends PopupMenu
 
+var _undo_redo : EditorUndoRedoManager = EditorInterface.get_editor_undo_redo()
+
 func _ready() -> void:
 	clear()
 	add_submenu_node_item("Add Node...", $add_node, 0)
@@ -21,22 +23,24 @@ func _ready() -> void:
 	$add_node/uv.id_pressed.connect(_add_uv_node)
 	$add_node/masks.id_pressed.connect(_add_mask_node)
 	$add_node/utility.id_pressed.connect(_add_utility_node)
-	
+
+func _parent_add_node(idx1 : int, idx2 : int) -> void:
+	get_parent().add_node(idx1, idx2)
 
 func _add_node(idx : int) -> void:
-	get_parent().add_node(0, idx)
+	_parent_add_node(0, idx)
 
 func _add_texture_node(idx : int) -> void:
-	get_parent().add_node(1, idx)
+	_parent_add_node(1, idx)
 
 func _add_convert_node(idx : int) -> void:
-	get_parent().add_node(2, idx)
+	_parent_add_node(2, idx)
 
 func _add_uv_node(idx : int) -> void:
-	get_parent().add_node(3, idx)
+	_parent_add_node(3, idx)
 
 func _add_mask_node(idx : int) -> void:
-	get_parent().add_node(4, idx)
+	_parent_add_node(4, idx)
 
 func _add_utility_node(idx : int) -> void:
-	get_parent().add_node(5, idx)
+	_parent_add_node(5, idx)
