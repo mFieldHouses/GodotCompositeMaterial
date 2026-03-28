@@ -631,7 +631,8 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			nodes_to_add.append([_resource.normal, {"to_node": _new_node.name, "to_port": 2, "from_port": _resource.normal.get_output_port_for_state()}])
 			nodes_to_add.append([_resource.roughness_value, {"to_node": String(_new_node.name), "to_port": 3, "from_port": _resource.roughness_value.get_output_port_for_state()}])
 			nodes_to_add.append([_resource.metallic_value, {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.metallic_value.get_output_port_for_state()}])
-			nodes_to_add.append([_resource.mask, {"to_node": String(_new_node.name), "to_port": 5, "from_port": _resource.mask.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.occlusion, {"to_node": String(_new_node.name), "to_port": 5, "from_port": _resource.occlusion.get_output_port_for_state()}])
+			nodes_to_add.append([_resource.mask, {"to_node": String(_new_node.name), "to_port": 6, "from_port": _resource.mask.get_output_port_for_state()}])
 			
 			layer_nodes.append(_new_node)
 			
