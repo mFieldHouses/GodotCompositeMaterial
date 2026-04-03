@@ -39,6 +39,7 @@ uniform float triplanar_map_eta = 0.002;
 
 struct uv_map {
 	bool is_triplanar;
+	bool is_padded;
 	
 	vec2 uv1;
 	float uv1_fac;
@@ -62,6 +63,8 @@ varying vec3 global_vertex_pos;
 varying vec3 hybrid_vertex_pos;
 varying vec3 local_vertex_pos;
 varying vec3 global_camera_pos;
+
+varying float distance_to_camera;
 
 varying vec2 uv;
 varying vec2 uv2;
@@ -361,6 +364,11 @@ vec4 sample_texture_ln(sampler2D input_tex, uv_map input_uv) { //for linear filt
 		return result;
 	}
 	else {
+		if (input_uv.is_padded) {
+			if (input_uv.uv1.x <= 0.00055 * distance_to_camera || input_uv.uv1.x >= 0.999 - (0.00055 * distance_to_camera) || input_uv.uv1.y <= 0.00055 * distance_to_camera || input_uv.uv1.y >= 0.999 - (0.00055 * distance_to_camera)) {
+				return vec4(1.0, 0.0, 0.0, 0.0);
+			}
+		}
 		return texture(input_tex, input_uv.uv1);
 	}
 }
@@ -407,16 +415,6 @@ vec4 sample_texture_nm(sampler2D input_tex, uv_map input_uv) { //for normal maps
 	}
 }
 
-vec4 sample_cr_ln(sampler2D input_color_ramp_tex, float fac) { //for linearly filtered color ramps
-	
-	return vec4(0.0);
-}
-
-vec4 sample_cr_nn(sampler2D input_color_ramp_tex, float fac) { //for nearest neighbor filtered color ramps
-	
-	return vec4(0.0);
-}
-
 uv_map create_uv_map(vec2 input_uv) {
 	uv_map result;
 	
@@ -434,6 +432,20 @@ uv_map transform_uv(uv_map base_uv, vec2 offset, vec2 scale) {
 	base_uv.uv1 *= scale;
 	base_uv.uv2 *= scale;
 	base_uv.uv3 *= scale;
+	
+	return base_uv;
+}
+
+uv_map pad_uv(uv_map base_uv, vec2 padding_amount) {
+	
+	base_uv.uv1.x = min(1.0, mod(base_uv.uv1.x, 1.0 + padding_amount.x));
+	base_uv.uv1.y = min(1.0, mod(base_uv.uv1.y, 1.0 + padding_amount.y));
+	
+	base_uv.uv2.x = min(1.0, mod(base_uv.uv2.x, 1.0 + padding_amount.x));
+	base_uv.uv2.y = min(1.0, mod(base_uv.uv2.y, 1.0 + padding_amount.y));
+	
+	base_uv.uv3.x = min(1.0, mod(base_uv.uv3.x, 1.0 + padding_amount.x));
+	base_uv.uv3.y = min(1.0, mod(base_uv.uv3.y, 1.0 + padding_amount.y));
 	
 	return base_uv;
 }
@@ -489,6 +501,8 @@ void vertex() {
 	
 	global_camera_pos = CAMERA_POSITION_WORLD;
 	vertex_color = COLOR.rgb;
+	
+	distance_to_camera = distance(CAMERA_POSITION_WORLD, global_vertex_pos);
 }
 
 void fragment() {

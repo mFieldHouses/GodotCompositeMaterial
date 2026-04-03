@@ -14,7 +14,7 @@ var node_mappings : Array = [
 	["LayerNode", "ValueNode", "", "", "", "DistanceFadeNode"],
 	["textures/TextureNode", "textures/NoiseTextureNode", "textures/NormalMapNode"],
 	["convert/ColorRampNode", "convert/HSVTransformNode"],
-	["UVTransformNode","UVMapNode","TriplanarMapNode"],
+	["uv/UVTransformNode","uv/UVMapNode","uv/TriplanarMapNode"],
 	["masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/VertexColorMaskNode", "masks/EffectShapeMaskNode", "masks/UVMaskNode", "masks/NormalMapMaskNode"],
 	["utility/TimeNode", "utility/MathNode", "utility/VectorOperationNode"]
 ]
@@ -144,16 +144,19 @@ func _gui_input(event: InputEvent) -> void:
 				
 				request_rebuild_material()
 		
-		if event.as_text_keycode() == "Ctrl+C":
+		elif event.as_text_keycode() == "Ctrl+C":
 			if selected_node:
 				if selected_node is LayerNode:
 					pass
 				else:
 					parent_dock.clipboard = selected_node.get(selected_node.represented_resource_variable_name)
 		
-		if event.as_text_keycode() == "Ctrl+V" and event.pressed:
+		elif event.as_text_keycode() == "Ctrl+V" and event.pressed:
 			initial_mouse_position = get_local_mouse_position()
 			add_node_from_resource(parent_dock.clipboard)
+		
+		elif event.as_text_keycode() == "Ctrl+R" and event.pressed:
+			build_material()
 		
 		if capturing_keyboard and edited_node:
 			#print("capture key")

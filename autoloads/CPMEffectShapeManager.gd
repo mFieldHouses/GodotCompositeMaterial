@@ -17,10 +17,11 @@ var dimensions : PackedFloat32Array = [] #layer 2 of the texture
 
 func _ready() -> void:
 	
-	RenderingServer.global_shader_parameter_add("cpm_effect_shape_textures", RenderingServer.GLOBAL_VAR_TYPE_SAMPLER2DARRAY, null)
-	RenderingServer.global_shader_parameter_add("cpm_effect_shapes_num", RenderingServer.GLOBAL_VAR_TYPE_INT, 0)
-	
-	RenderingServer.call_on_render_thread(_initialize_rendering)
+	if Engine.is_editor_hint():
+		RenderingServer.global_shader_parameter_add("cpm_effect_shape_textures", RenderingServer.GLOBAL_VAR_TYPE_SAMPLER2DARRAY, null)
+		RenderingServer.global_shader_parameter_add("cpm_effect_shapes_num", RenderingServer.GLOBAL_VAR_TYPE_INT, 0)
+		
+		RenderingServer.call_on_render_thread(_initialize_rendering)
 
 func _initialize_rendering() -> void:
 	rendering_device = RenderingServer.get_rendering_device()

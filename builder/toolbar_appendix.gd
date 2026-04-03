@@ -10,7 +10,3 @@ func _ready() -> void:
 	$rebuild.button_down.connect(rebuild_manual.emit)
 	
 	$auto_rebuild.toggled.connect(func(state : bool): set_auto_rebuild.emit(state))
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass

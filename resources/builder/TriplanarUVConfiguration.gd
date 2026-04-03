@@ -25,4 +25,4 @@ func get_mapping_key() -> String:
 	return "TriplanarUVConfiguration"
 
 func get_node_name() -> String:
-	return "TriplanarMapNode"
+	return "uv/TriplanarMapNode"

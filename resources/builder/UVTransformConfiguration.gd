@@ -46,7 +46,7 @@ func get_child_resources() -> Array[CPMB_Base]:
 	return [base_uv, scale.x, scale.y, offset.x, offset.y]
 
 func get_node_name() -> String:
-	return "UVTransformNode"
+	return "uv/UVTransformNode"
 
 func get_input_port_resources() -> Dictionary[CPMB_Base, int]:
 	#print("returning ", {

@@ -1,0 +1,100 @@
+[gd_scene format=3 uid="uid://bf88nxdmjkpa0"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_4wym8"]
+[ext_resource type="Script" uid="uid://dfpyv48pp125d" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/uv/uv_map_node.gd" id="2_byffe"]
+
+[node name="UVPadNode" type="GraphNode" unique_id=1174472716]
+offset_right = 211.0
+offset_bottom = 92.0
+tooltip_text = "Outputs the UV map embedded in the mesh."
+theme = ExtResource("1_4wym8")
+title = "Pad UV"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 4
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+script = ExtResource("2_byffe")
+represented_resource_variable_name = "represented_config"
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+metadata/renamable = false
+
+[node name="input" type="Label" parent="." unique_id=400519749]
+layout_mode = 2
+text = "UV in"
+
+[node name="padding_x" type="HBoxContainer" parent="." unique_id=1032189714]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="padding_x" unique_id=1147460016]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.8156863, 0.13725491, 0, 1)
+text = " x "
+vertical_alignment = 1
+
+[node name="value" type="SpinBox" parent="padding_x" unique_id=295697303]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -100000.0
+max_value = 100000.0
+step = 0.001
+value = 1.0
+allow_greater = true
+allow_lesser = true
+alignment = 2
+
+[node name="padding_y" type="HBoxContainer" parent="." unique_id=880634434]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="padding_y" unique_id=566299705]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3254902, 0.8392157, 0.30588236, 0.74509805)
+text = " y "
+
+[node name="value" type="SpinBox" parent="padding_y" unique_id=307135274]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -100000.0
+max_value = 100000.0
+step = 0.001
+value = 1.0
+allow_greater = true
+allow_lesser = true
+alignment = 2
+
+[node name="output" type="Label" parent="." unique_id=2060507470]
+layout_mode = 2
+text = "UV out"
+horizontal_alignment = 2

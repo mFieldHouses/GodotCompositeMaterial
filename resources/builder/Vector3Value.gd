@@ -26,7 +26,7 @@ func get_mapping_key() -> String:
 	return "Vector3Value"
 
 func get_node_name() -> String:
-	if is_variable:
+	if as_color:
 		return "ValueNode"
 	
 	return "whoops (Vector3Value.gd)"

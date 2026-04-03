@@ -17,4 +17,4 @@ func get_mapping_key() -> String:
 	return "UVMapConfiguration"
 
 func get_node_name() -> String:
-	return "UVMapNode"
+	return "uv/UVMapNode"

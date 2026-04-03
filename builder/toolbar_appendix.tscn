@@ -2,15 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cum2j4rxaiqrh" path="res://addons/CompositeMaterial/builder/toolbar_appendix.gd" id="1_kueya"]
 
-[sub_resource type="InputEventKey" id="InputEventKey_kueya"]
-device = -1
-ctrl_pressed = true
-keycode = 82
-unicode = 114
-
-[sub_resource type="Shortcut" id="Shortcut_vfv7c"]
-events = [SubResource("InputEventKey_kueya")]
-
 [sub_resource type="DPITexture" id="DPITexture_kueya"]
 _source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#e0e0e0\" d=\"M5 8a4 4 0 1 1 4 4v2a6 6 0 1 0-6-6H1l3 4 3-4z\"/></svg>
 "
@@ -36,7 +27,6 @@ text = "Auto-rebuild"
 
 [node name="rebuild" type="Button" parent="." unique_id=2085878318]
 layout_mode = 2
-shortcut = SubResource("Shortcut_vfv7c")
 text = "Rebuild"
 icon = SubResource("DPITexture_kueya")
 flat = true
