@@ -64,18 +64,26 @@ func build_material(shaded : bool = true) -> void:
 
 
 func set_baking_mode(state : bool = true) -> void:
-	print("request to set baking mode to ", state)
+	print("request to set baking mode to ", state, " on ", self)
 	
-	#if state == baking_mode:
-		#print("not setting baking mode to ", state)
-		#return
-	
-	if state:
-		shader.code = shader.code.replace("#define BAKING_MODE 0", "#define BAKING_MODE 1")
-	else:
-		shader.code = shader.code.replace("#define BAKING_MODE 1", "#define BAKING_MODE 0")
+	if state == baking_mode:
+		print("not setting baking mode to ", state)
+		return
 	
 	baking_mode = state
+	
+	if state:
+		#print("has #define BAKING_MODE 0: ", shader.code.contains("#define BAKING_MODE 0"))
+		#var new_string : String = shader.code.replace("#define BAKING_MODE 0", "#define BAKING_MODE 1")
+		#print(shader.code)
+		shader.code = shader.code.replace("#define BAKING_MODE 0", "#define BAKING_MODE 1")
+		#print("are the strings identical: ", shader.code == new_string)
+		#print("(2) has #define BAKING_MODE 0: ", shader.code.contains("#define BAKING_MODE 0"))
+		#print("(3) new_string has #define BAKING_MODE 0: ", new_string.contains("#define BAKING_MODE 0"))
+	else:
+		#print("has #define BAKING_MODE 1: ", shader.code.contains("#define BAKING_MODE 1"))
+		#var new_string : String = shader.code.replace("#define BAKING_MODE 1", "#define BAKING_MODE 0")
+		shader.code = shader.code.replace("#define BAKING_MODE 1", "#define BAKING_MODE 0")
 	
 func update_config(new_config : CompositeMaterialLayer):
 	var layer_idx = layers.find(new_config) + 1

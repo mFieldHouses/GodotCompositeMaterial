@@ -21,6 +21,15 @@ var bake_status_hints : Array[String] = [
 	"This instance"
 ]
 
+var resolutions : Array[Vector2i] = [
+	Vector2i(128, 128),
+	Vector2i(256, 256),
+	Vector2i(512, 512),
+	Vector2i(1024, 1024),
+	Vector2i(2048, 2048),
+	Vector2i(4096, 4096)
+]
+
 func _ready() -> void:
 	close_requested.connect(cancel_baking_prompt)
 	$MarginContainer/VBoxContainer/HBoxContainer/cancel_button.button_down.connect(cancel_baking_prompt)
@@ -34,19 +43,20 @@ func _ready() -> void:
 	display_baking_mode_hint(0)
 
 func bake_current_model() -> void:
-	CPMBaker._bake_imported_gltf_model(current_model.scene_file_path)	
-	current_model._internal_bake_status = 1
+	print("baking at ", resolutions[$MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer2/quality.selected])
+	CPMBaker._bake_imported_gltf_model(current_model.scene_file_path, current_model, resolutions[$MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer2/quality.selected])
+	#current_model._internal_bake_status = 1
 	cancel_baking_prompt()
 
 func revert_current_model() -> void:
 	CPMBaker._revert_imported_gltf_model(current_model.scene_file_path)
-	current_model._internal_bake_status = 0
+	#current_model._internal_bake_status = 0
 	cancel_baking_prompt()
 
 func bake_popup(model : CPMModel) -> void:
 	current_model = model
 	
-	$MarginContainer/VBoxContainer/bake_status.text = bake_status_hints[model._internal_bake_status]
+	$MarginContainer/VBoxContainer/bake_status.text = "Current bake status: " + bake_status_hints[model._internal_bake_status]
 	
 	popup_centered(Vector2i(600, 600))
 

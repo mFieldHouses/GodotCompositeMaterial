@@ -524,13 +524,15 @@ void fragment() {
 	uv2 = UV2;
 	
 	float uv_density = length(dFdx(local_vertex_pos));
-	float factor = clamp(pow(uv_density * 150.0, 3.0), 0.0, 1.0); // 0.0 = fully procedural, 1.0 = fully baked
+	float factor = 0.0 + (clamp(pow(uv_density * 150.0, 3.0), 0.0, 1.0) * float(bake_display_mode == 1)) + (1.0 * float(bake_display_mode == 2));
 	
 	vec3 albedo_mix = vec3(0.0);
 	vec3 normal_mix = vec3(0.0);
 	float roughness_mix = 0.0;
 	float metallic_mix = 0.0;
 	float occlusion_mix = 0.0;
+	
+	#if BAKING_MODE == 0
 	
 	if (factor < 0.99) {
 		int starting_index = 0;
@@ -541,13 +543,15 @@ void fragment() {
 		//fragment
 		
 		for (int i = starting_index; i < NUM_LAYERS; i++) {
-			if (process_index == 0) { //if this is the first layer we're processing, just force the mask to be 1
+			if (process_index == 0) {
+				//if this is the first layer we're processing, just force the mask to be 1
 				albedo_mix = get_layer_albedo(i);
 				normal_mix = get_layer_normal(i);
 				roughness_mix = get_layer_roughness(i);
 				metallic_mix = get_layer_metallic(i);
 				occlusion_mix = get_layer_occlusion(i);
 			}
+			
 			else if (layer_masks[i] > 0.005) {
 				albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i] * get_layer_alpha(i));
 				
@@ -558,9 +562,11 @@ void fragment() {
 			}
 			
 			process_index += 1;
+		
 		}
 		
 		ALBEDO = mix(albedo_mix, texture(baked_albedo, UV).rgb, factor);
+		//ALBEDO = albedo_mix;
 		NORMAL_MAP = normal_mix;
 		ROUGHNESS = roughness_mix;
 		METALLIC = metallic_mix;
@@ -570,9 +576,38 @@ void fragment() {
 	
 	else {
 		ALBEDO = texture(baked_albedo, UV).rgb;
+	};
+	
+	#else
+	
+	int starting_index = 0;
+	int process_index = 0;
+		
+	float[NUM_LAYERS] layer_masks;
+		
+	//fragment
+		
+	for (int i = starting_index; i < NUM_LAYERS; i++) {
+		if (process_index == 0) { //if this is the first layer we're processing, just force the mask to be 1
+			albedo_mix = get_layer_albedo(i);
+			normal_mix = get_layer_normal(i);
+			roughness_mix = get_layer_roughness(i);
+			metallic_mix = get_layer_metallic(i);
+			occlusion_mix = get_layer_occlusion(i);
+		}
+		else if (layer_masks[i] > 0.005) {
+			albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i] * get_layer_alpha(i));
+				
+			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i]);
+			roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i]);
+			metallic_mix = mix(metallic_mix, get_layer_metallic(i), layer_masks[i]);
+			occlusion_mix = mix(occlusion_mix, get_layer_occlusion(i), layer_masks[i]);
+		}
+		
+		process_index += 1;
+	
 	}
 	
-	#if BAKING_MODE == 1
 	switch (baking_channel) {
 		case 0:
 			ALBEDO = albedo_mix;

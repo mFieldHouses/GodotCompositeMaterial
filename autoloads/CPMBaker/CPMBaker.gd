@@ -137,7 +137,7 @@ func _bake_mesh(mesh_instance : CPMMeshInstance3D) -> void:
 	
 	viewport.queue_free()
 
-func _bake_imported_gltf_model(path : String) -> void:
+func _bake_imported_gltf_model(path : String, cpm_model : CPMModel, resolution : Vector2i = Vector2i(512, 512)) -> void:
 	var model : Node3D = load(path).instantiate()
 	
 	var viewport : SubViewport = SubViewport.new()
@@ -148,7 +148,7 @@ func _bake_imported_gltf_model(path : String) -> void:
 	
 	viewport.transparent_bg = true
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	viewport.size = Vector2i(256, 256)
+	viewport.size = resolution
 	
 	var camera : Camera3D = Camera3D.new()
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
@@ -171,20 +171,27 @@ func _bake_imported_gltf_model(path : String) -> void:
 	
 		if surfaces_to_bake.size() == 0:
 			printerr("Mesh has no CompositeMaterials to bake. Ignoring.")
-			return
-	
+			continue
+		
 		for index : int in surfaces_to_bake:
-			var material : CompositeMaterial = node.get_active_material(index)
+			print("index ", index, " on mesh ", node)
+			
+			node.extra_cull_margin = 16384.0
+			
+			var material : CompositeMaterial = node.get_active_material(index).duplicate(true)
 			material.set_baking_mode(true)
 			
-			#node.mesh.surface_set_material(index, baking_material)
+			node.mesh.surface_set_material(index, material)
 		
 		meshes_to_bake[node as MeshInstance3D] = surfaces_to_bake
-		print(node, ": ", node.mesh.surface_get_material(0), " ", node.mesh.surface_get_material(0).baking_mode)
-		
+		#print(node, ": ", node.mesh.surface_get_material(0), " ", node.mesh.surface_get_material(0).baking_mode)
+	
 	add_child(viewport)
 	
-	print(meshes_to_bake)
+	#print(meshes_to_bake)
+	
+	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
 	
 	var baked_material := ORMMaterial3D.new()
 	
@@ -202,9 +209,13 @@ func _bake_imported_gltf_model(path : String) -> void:
 	var img = viewport.get_texture().get_image().duplicate() #albedo
 	imagem.expand_image_boundaries(img, 2)
 	img.compress(Image.COMPRESS_S3TC)
-	var texture = ImageTexture.create_from_image(img)
+	var img_path : String = "res://addons/CompositeMaterial/baked_textures/" + path.trim_prefix("res://") + "_baked_albedo.png"
+	img.save_png(img_path)
 	
-	baked_material.albedo_texture = texture
+	EditorInterface.get_resource_filesystem().scan()
+	EditorInterface.get_resource_filesystem().reimport_files(PackedStringArray([img_path]))
+
+	baked_material.albedo_texture = ResourceLoader.load(img_path, "Texture2D", ResourceLoader.CACHE_MODE_IGNORE)
 	
 	for mesh_instance in meshes_to_bake:
 		print("set baking channel on ", mesh_instance, " to 1")
@@ -219,9 +230,13 @@ func _bake_imported_gltf_model(path : String) -> void:
 	img.srgb_to_linear()
 	imagem.expand_image_boundaries(img, 2)
 	img.compress(Image.COMPRESS_BPTC)
-	texture = ImageTexture.create_from_image(img)
+	img_path = "res://addons/CompositeMaterial/baked_textures/" + path.trim_prefix("res://") + "_baked_normal.png"
+	img.save_png(img_path)
 	
-	baked_material.normal_texture = texture
+	EditorInterface.get_resource_filesystem().scan()
+	EditorInterface.get_resource_filesystem().reimport_files(PackedStringArray([img_path]))
+
+	baked_material.normal_texture = ResourceLoader.load(img_path, "Texture2D", ResourceLoader.CACHE_MODE_IGNORE)
 	baked_material.normal_enabled = true
 	
 	for mesh_instance in meshes_to_bake:
@@ -239,12 +254,23 @@ func _bake_imported_gltf_model(path : String) -> void:
 	imagem.expand_image_boundaries(img, 2)
 	img.srgb_to_linear()
 	img.compress(Image.COMPRESS_S3TC)
-	texture = ImageTexture.create_from_image(img)
+	img_path = "res://addons/CompositeMaterial/baked_textures/" + path.trim_prefix("res://") + "_baked_orm.png"
+	img.save_png(img_path)
 	
-	baked_material.orm_texture = texture
+	EditorInterface.get_resource_filesystem().scan()
+	EditorInterface.get_resource_filesystem().reimport_files(PackedStringArray([img_path]))
+
+	baked_material.orm_texture = ResourceLoader.load(img_path, "Texture2D", ResourceLoader.CACHE_MODE_IGNORE)
+	
 	var material_path : String = "res://addons/CompositeMaterial/baked_materials/" + path.trim_prefix("res://") + "_baked.tres"
+	if FileAccess.file_exists(material_path):
+		print("file exists already")
+	
 	ResourceSaver.save(baked_material, material_path)
 	
+	cpm_model._internal_baked_albedo_texture = baked_material.albedo_texture
+	cpm_model._internal_baked_normal_texture = baked_material.normal_texture
+	cpm_model._internal_baked_orm_texture = baked_material.orm_texture
 	
 	for mesh in meshes_to_bake:
 		var surfaces_to_bake = meshes_to_bake[mesh]
@@ -265,7 +291,7 @@ func _bake_imported_gltf_model(path : String) -> void:
 		var config : Dictionary = _subresources.materials[external_material]
 		config.erase("use_external/path")
 		config["cpm/original_material_path"] = config["use_external/fallback_path"]
-		config["use_external/fallback_path"] = material_path
+		#config["use_external/fallback_path"] = material_path
 		
 		print(config)
 	
