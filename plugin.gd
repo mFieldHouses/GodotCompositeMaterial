@@ -47,6 +47,12 @@ func _enter_tree() -> void:
 	name = "CompositeMaterialPlugin"
 	
 	add_autoload_singleton("CPMEffectShapeManager", "res://addons/CompositeMaterial/autoloads/CPMEffectShapeManager.gd")
+	add_autoload_singleton("CPMLineMapManager", "res://addons/CompositeMaterial/autoloads/CPMLineMapManager.gd")
+	add_autoload_singleton("CPMBaker", "res://addons/CompositeMaterial/autoloads/CPMBaker/CPMBaker.tscn")
+	
+	add_tool_menu_item("[CPM] Bake imported model...", bake_imported_model)
+	add_tool_menu_item("[CPM] Revert imported model...", revert_imported_model)
+	
 	
 func _exit_tree() -> void:
 	#Undo everything done in _enter_tree()
@@ -62,9 +68,14 @@ func _exit_tree() -> void:
 	
 	remove_autoload_singleton("CPMFreezer")
 	remove_autoload_singleton("CPMEffectShapeManager")
+	remove_autoload_singleton("CPMLineMapManager")
+	remove_autoload_singleton("CPMBaker")
 	
 	remove_dock(builder_scene_dock_instance)
 	builder_scene_dock_instance.queue_free()
+	
+	remove_tool_menu_item("[CPM] Bake imported model...")
+	remove_tool_menu_item("[CPM] Revert imported model...")
 
 func _has_main_screen():
 	return true
@@ -166,3 +177,10 @@ func bake_popup():
 func edit_material(material : CompositeMaterial) -> void:
 	make_bottom_panel_item_visible(builder_scene_dock_instance.get_child(0))
 	builder_scene_dock_instance.get_child(0).edit_material(material)
+
+
+func bake_imported_model() -> void:
+	get_node("/root/CPMBaker")._bake_imported_gltf_model("res://pot1.gltf")
+
+func revert_imported_model() -> void:
+	get_node("/root/CPMBaker")._revert_imported_gltf_model("res://pot1.gltf")

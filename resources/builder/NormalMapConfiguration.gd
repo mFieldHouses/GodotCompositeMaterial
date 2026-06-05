@@ -22,7 +22,7 @@ func initialise_value(index : int = -1) -> void:
 		uv.internal_to_node = true
 
 func get_expression() -> String:
-	return "mix(vec3(0.5, 0.5, 1.0), sample_texture_nm(normal_map_textures[%s], %s).rgb, normal_map_scales[%s])" % [index, uv.get_expression(), index]
+	return "normalize((sample_texture_nm(normal_map_textures[%s], %s).rgb * 2.0 - 1.0) * vec3(normal_map_scales[%s], normal_map_scales[%s], 1.0)) * 0.5 + 0.5" % [index, uv.get_expression(), index, index]
 
 func get_mapping_key() -> String:
 	return "NormalMapConfiguration"

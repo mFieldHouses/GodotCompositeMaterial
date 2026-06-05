@@ -15,8 +15,9 @@ func _ready() -> void:
 	
 	$value_1/value.value_changed.connect(func(x): if represented_config.value_A.internal_to_node: represented_config.value_A.value = x)
 	$value_2/value.value_changed.connect(func(x): if represented_config.value_B.internal_to_node: represented_config.value_B.value = x)
-
-
+	
+	
+	
 func change_operation(idx : int) -> void:
 	represented_config.operation = $operation.get_item_id(idx)
 
@@ -25,14 +26,19 @@ func get_represented_object(port_idx : int) -> Object:
 	return represented_config
 
 func set_represented_object(object : Object) -> void:
-	#print("set represented object on mathnode: ", object)
+	print("set represented object on mathnode: ", object)
+	print(object.value_A, ", ", object.value_B)
 	#print("object has operation ", object.operation)
 	represented_config = object
 	#print("I now have operation ", represented_config.operation)
 	
 	$operation.selected = $operation.get_item_index(represented_config.operation)
-	#$value_1/value.value = represented_config.value_A.value
-	#$value_2/value.value = represented_config.value_B.value
+	
+	if represented_config.value_A is CPMB_FloatValue or represented_config.value_A is CPMB_IntValue:
+		$value_1/value.value = represented_config.value_A.value
+	
+	if represented_config.value_B is CPMB_FloatValue or represented_config.value_B is CPMB_IntValue:
+		$value_2/value.value = represented_config.value_B.value
 
 
 func connect_and_pass_object(input_port_id : int, object : Object) -> void:

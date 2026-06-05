@@ -1,0 +1,201 @@
+[gd_scene format=3 uid="uid://cpce2y5r801yt"]
+
+[ext_resource type="Script" uid="uid://brj85x85u1wid" path="res://addons/CompositeMaterial/autoloads/CPMBaker/CPMBaker.gd" id="1_2m42b"]
+[ext_resource type="Script" uid="uid://camher5gv1lyd" path="res://addons/CompositeMaterial/autoloads/CPMBaker/cpm_baker_baking_prompt.gd" id="2_rvg3x"]
+
+[node name="CPMBaker" type="Node" unique_id=785737360]
+script = ExtResource("1_2m42b")
+
+[node name="baking_prompt" type="Window" parent="." unique_id=220250808]
+oversampling_override = 1.0
+position = Vector2i(0, 36)
+size = Vector2i(600, 600)
+visible = false
+script = ExtResource("2_rvg3x")
+
+[node name="Panel" type="Panel" parent="baking_prompt" unique_id=534120182]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="baking_prompt" unique_id=19686123]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="baking_prompt/MarginContainer" unique_id=1212044846]
+layout_mode = 2
+
+[node name="bake_status" type="Label" parent="baking_prompt/MarginContainer/VBoxContainer" unique_id=1706944375]
+layout_mode = 2
+text = "Current bake type: Not baked"
+horizontal_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="baking_prompt/MarginContainer/VBoxContainer" unique_id=1018937960]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="Bake" type="MarginContainer" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer" unique_id=1746257811]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake" unique_id=18096427]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer" unique_id=781678386]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer" unique_id=1895999097]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Baking mode"
+
+[node name="baking_mode" type="OptionButton" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer" unique_id=796481188]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 3
+popup/item_0/text = "Imported model"
+popup/item_0/id = 0
+popup/item_1/text = "All instances"
+popup/item_1/id = 1
+popup/item_2/text = "This instance"
+popup/item_2/id = 2
+
+[node name="baking_mode_hint_bg" type="Panel" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer" unique_id=1363132319]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/baking_mode_hint_bg" unique_id=196468912]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="baking_mode_hint" type="Label" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/baking_mode_hint_bg/MarginContainer" unique_id=1052760951]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Will bake the imported model file and replace the external materials in the import configuration with the resulting baked material. This means that every instance of this model will use the exact same textures. Very small storage usage."
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer" unique_id=965336724]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer" unique_id=6327107]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer2" unique_id=1404454579]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Quality"
+
+[node name="quality" type="OptionButton" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer2" unique_id=653749225]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 2
+item_count = 5
+popup/item_0/text = "Quarter (128x128)"
+popup/item_0/id = 2
+popup/item_1/text = "Half (256x256)"
+popup/item_1/id = 1
+popup/item_2/text = "Standard (512x512)"
+popup/item_2/id = 0
+popup/item_3/text = "Double (1024x1024)"
+popup/item_3/id = 3
+popup/item_4/text = "Quadruple (2048x2048)"
+popup/item_4/id = 4
+
+[node name="HSeparator2" type="HSeparator" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer" unique_id=615191491]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer" unique_id=41721130]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer3" unique_id=836090900]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Bake display mode"
+
+[node name="bake_display_mode" type="OptionButton" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer3" unique_id=428409058]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 1
+item_count = 2
+popup/item_0/text = "Always"
+popup/item_0/id = 0
+popup/item_1/text = "Distance fade"
+popup/item_1/id = 1
+
+[node name="bake_display_mode_hint_bg" type="Panel" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer" unique_id=432242447]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/bake_display_mode_hint_bg" unique_id=736933234]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="bake_display_mode_hint" type="Label" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/bake_display_mode_hint_bg/MarginContainer" unique_id=1593767601]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Will display the baked textures based on how far away the camera is (far away -> display baked textures), and will disable the live procedural material when the baked textures take over full visibility. Can help improve performance while retaining crisp textures when viewed up close."
+autowrap_mode = 2
+
+[node name="HSeparator3" type="HSeparator" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer" unique_id=253265689]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="bake_button" type="Button" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer" unique_id=1939641966]
+layout_mode = 2
+text = "Bake"
+
+[node name="Revert" type="MarginContainer" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer" unique_id=1374798481]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Revert" unique_id=1511688331]
+layout_mode = 2
+
+[node name="revert_bake_button" type="Button" parent="baking_prompt/MarginContainer/VBoxContainer/TabContainer/Revert/VBoxContainer" unique_id=924004246]
+layout_mode = 2
+text = "Revert"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="baking_prompt/MarginContainer/VBoxContainer" unique_id=1495378432]
+layout_mode = 2
+
+[node name="cancel_button" type="Button" parent="baking_prompt/MarginContainer/VBoxContainer/HBoxContainer" unique_id=74712915]
+layout_mode = 2
+text = "Close"

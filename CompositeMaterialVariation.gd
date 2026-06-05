@@ -1,5 +1,5 @@
 @tool
-extends ShaderMaterial
+extends BaseCompositeMaterial
 class_name CompositeMaterialVariation
 
 @export_multiline("Variation note") var variation_notes : String

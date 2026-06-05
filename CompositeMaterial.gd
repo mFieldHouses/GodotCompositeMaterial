@@ -1,5 +1,5 @@
 @tool
-extends ShaderMaterial
+extends BaseCompositeMaterial
 class_name CompositeMaterial
 
 signal finish_building
@@ -9,12 +9,15 @@ var requires_building : bool = false
 @export var layers : Array[CompositeMaterialLayer] #Array of resources storing parameters of seperate layers
 
 @export_tool_button("Edit", "Edit") var edit_material = Callable(edit_self)
+@export_tool_button("Toggle Baking Mode") var toggle_baking_mode = func(): set_baking_mode(!baking_mode)
 
 @export_multiline var material_notes : String
 
 @export var variable_resources : Array[CPMB_Base]
 
 @export var output_node_position : Vector2 = Vector2.ZERO
+
+var baking_mode : bool = false
 
 #@export var autolock_material : bool = true ##Prevents the material from rewriting and recompiling the shader code automatically, reducing lag upon startup significantly.
 
@@ -59,8 +62,21 @@ func build_material(shaded : bool = true) -> void:
 	emit_changed()
 	finish_building.emit()
 
-	
 
+func set_baking_mode(state : bool = true) -> void:
+	print("request to set baking mode to ", state)
+	
+	#if state == baking_mode:
+		#print("not setting baking mode to ", state)
+		#return
+	
+	if state:
+		shader.code = shader.code.replace("#define BAKING_MODE 0", "#define BAKING_MODE 1")
+	else:
+		shader.code = shader.code.replace("#define BAKING_MODE 1", "#define BAKING_MODE 0")
+	
+	baking_mode = state
+	
 func update_config(new_config : CompositeMaterialLayer):
 	var layer_idx = layers.find(new_config) + 1
 	#print("update config for layer ", layer_idx)

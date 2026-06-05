@@ -1,5 +1,13 @@
 shader_type spatial;
 
+#define BAKING_MODE 0 //0 = disabled, 1 = enabled
+uniform int baking_channel = 0; // 0 = color, 1 = normal, 2 = ORM
+uniform int bake_display_mode = 0; // 0 = do not display bakes (only live material), 1 = mix bakes with live material, 2 = only display bakes (no live material)
+
+#if BAKING_MODE > 0
+render_mode unshaded, cull_disabled;
+#endif
+
 #define NUM_LAYERS 1
 
 #define NUM_DIRECTIONAL_MASKS 0
@@ -30,8 +38,6 @@ shader_type spatial;
 //end definitions
 
 uniform float triplanar_map_eta = 0.002;
-
-
 
 
 
@@ -204,7 +210,7 @@ uv_map get_triplanar_uv(int uv_index) {
 	normal = pow(abs(normal), vec3(10.0 / clamp(triplanar_map_blends[uv_index], 0.063, 10.0)));
 	normal = normal / (normal.x + normal.y + normal.z);
 	
-	result.uv1 = vec2(-pos.z * invert_x, -pos.y);
+	result.uv1 = vec2(-pos.z * invert_x, pos.y);
 	result.uv1_fac = normal.x;
 	result.uv2 = vec2(pos.x * invert_y, -pos.z);
 	result.uv2_fac = normal.y;
@@ -503,50 +509,83 @@ void vertex() {
 	vertex_color = COLOR.rgb;
 	
 	distance_to_camera = distance(CAMERA_POSITION_WORLD, global_vertex_pos);
+	
+	#if BAKING_MODE > 0
+	POSITION = vec4(UV * 2.0 - 1.0, 0.0, 1.0);
+	#endif
 }
 
+uniform sampler2D baked_albedo : source_color;
+uniform sampler2D baked_orm : source_color;
+uniform sampler2D baked_normal : source_color;
+
 void fragment() {
-	
 	uv = UV;
 	uv2 = UV2;
 	
-	vec3 albedo_mix;
-	vec3 normal_mix;
-	float roughness_mix;
-	float metallic_mix;
-	float occlusion_mix;
+	float uv_density = length(dFdx(local_vertex_pos));
+	float factor = clamp(pow(uv_density * 150.0, 3.0), 0.0, 1.0); // 0.0 = fully procedural, 1.0 = fully baked
 	
-	int starting_index = 0;
-	int process_index = 0;
+	vec3 albedo_mix = vec3(0.0);
+	vec3 normal_mix = vec3(0.0);
+	float roughness_mix = 0.0;
+	float metallic_mix = 0.0;
+	float occlusion_mix = 0.0;
 	
-	float[NUM_LAYERS] layer_masks;
-	
-	//fragment
-	
-	for (int i = starting_index; i < NUM_LAYERS; i++) {
-		if (process_index == 0) { //if this is the first layer we're processing, just force the mask to be 1
-			albedo_mix = get_layer_albedo(i);
-			normal_mix = get_layer_normal(i);
-			roughness_mix = get_layer_roughness(i);
-			metallic_mix = get_layer_metallic(i);
-			occlusion_mix = get_layer_occlusion(i);
-		}
-		else if (layer_masks[i] > 0.005) {
-			albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i] * get_layer_alpha(i));
+	if (factor < 0.99) {
+		int starting_index = 0;
+		int process_index = 0;
+		
+		float[NUM_LAYERS] layer_masks;
+		
+		//fragment
+		
+		for (int i = starting_index; i < NUM_LAYERS; i++) {
+			if (process_index == 0) { //if this is the first layer we're processing, just force the mask to be 1
+				albedo_mix = get_layer_albedo(i);
+				normal_mix = get_layer_normal(i);
+				roughness_mix = get_layer_roughness(i);
+				metallic_mix = get_layer_metallic(i);
+				occlusion_mix = get_layer_occlusion(i);
+			}
+			else if (layer_masks[i] > 0.005) {
+				albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i] * get_layer_alpha(i));
+				
+				normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i]);
+				roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i]);
+				metallic_mix = mix(metallic_mix, get_layer_metallic(i), layer_masks[i]);
+				occlusion_mix = mix(occlusion_mix, get_layer_occlusion(i), layer_masks[i]);
+			}
 			
-			normal_mix = mix(normal_mix, get_layer_normal(i), layer_masks[i]);
-			roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i]);
-			metallic_mix = mix(metallic_mix, get_layer_metallic(i), layer_masks[i]);
-			occlusion_mix = mix(occlusion_mix, get_layer_occlusion(i), layer_masks[i]);
+			process_index += 1;
 		}
 		
-		process_index += 1;
+		ALBEDO = mix(albedo_mix, texture(baked_albedo, UV).rgb, factor);
+		NORMAL_MAP = normal_mix;
+		ROUGHNESS = roughness_mix;
+		METALLIC = metallic_mix;
+		AO = occlusion_mix;
+		AO_LIGHT_AFFECT = 1.0;
 	}
 	
-	ALBEDO = albedo_mix;
-	NORMAL_MAP = normal_mix;
-	ROUGHNESS = roughness_mix;
-	METALLIC = metallic_mix;
-	AO = occlusion_mix;
+	else {
+		ALBEDO = texture(baked_albedo, UV).rgb;
+	}
 	
+	#if BAKING_MODE == 1
+	switch (baking_channel) {
+		case 0:
+			ALBEDO = albedo_mix;
+			break;
+		case 1:
+			ALBEDO = normal_mix;
+			break;
+		case 2:
+			ALBEDO = vec3(0.0, roughness_mix, metallic_mix);
+			break;
+	};
+	
+	// hello!
+	
+	#endif
 }

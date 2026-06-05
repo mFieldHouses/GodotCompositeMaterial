@@ -26,7 +26,7 @@ func initialise_value(index : int = -1) -> void:
 		value_A = CPMB_FloatValue.new(1.0)
 		value_A.internal_to_node = true
 	if index == 1 or index == -1:
-		value_B = CPMB_FloatValue.new(0.5)
+		value_B = CPMB_FloatValue.new(1.0)
 		value_B.internal_to_node = true
 
 func get_expression() -> String:

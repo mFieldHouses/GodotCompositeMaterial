@@ -2,7 +2,11 @@
 extends CPMB_UVConfiguration
 class_name CPMB_UVMapConfiguration
 
-@export var source : int = 0
+@export var source : int = 0:
+	set(x):
+		source = x
+		if source != INF:
+			value_changed.emit(x, "uv_map_sources")
 
 func _init() -> void:
 	self.value = Vector2.INF
