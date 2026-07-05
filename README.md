@@ -5,6 +5,8 @@
 
 # CompositeMaterial, a procedural material plugin for Godot
 
+### WARNING: THIS ADDON DEPENDS ON A MODULE I HAVE NOT YET PUBLISHED AND WILL NOT WORK
+
 CompositeMaterial provides a workspace for creating procedural hard-surface materials, right inside of the Godot editor, using a visual node editor.
 <br><br>
 <p align="center"><b>You can view a set of demos in the <a href="https://github.com/mFieldHouses/GodotCompositeMaterial/wiki/Gallery/">gallery</a>!</b></p>
