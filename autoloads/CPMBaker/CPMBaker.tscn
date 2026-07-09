@@ -2,6 +2,14 @@
 
 [ext_resource type="Script" uid="uid://brj85x85u1wid" path="res://addons/CompositeMaterial/autoloads/CPMBaker/CPMBaker.gd" id="1_2m42b"]
 [ext_resource type="Script" uid="uid://camher5gv1lyd" path="res://addons/CompositeMaterial/autoloads/CPMBaker/cpm_baker_baking_prompt.gd" id="2_rvg3x"]
+[ext_resource type="Script" uid="uid://carcdj4thrgpv" path="res://addons/CompositeMaterial/autoloads/CPMBaker/surface_baking_prompt.gd" id="3_ytl7m"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ytl7m"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
 
 [node name="CPMBaker" type="Node" unique_id=785737360]
 script = ExtResource("1_2m42b")
@@ -199,3 +207,81 @@ layout_mode = 2
 [node name="cancel_button" type="Button" parent="baking_prompt/MarginContainer/VBoxContainer/HBoxContainer" unique_id=74712915]
 layout_mode = 2
 text = "Close"
+
+[node name="surface_baking_prompt" type="Window" parent="." unique_id=1722732094]
+oversampling_override = 1.0
+position = Vector2i(0, 36)
+size = Vector2i(400, 400)
+visible = false
+script = ExtResource("3_ytl7m")
+
+[node name="Panel" type="Panel" parent="surface_baking_prompt" unique_id=322733198]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ytl7m")
+
+[node name="MarginContainer" type="MarginContainer" parent="surface_baking_prompt" unique_id=1134467854]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="surface_baking_prompt/MarginContainer" unique_id=1446811452]
+layout_mode = 2
+
+[node name="surface_size" type="HBoxContainer" parent="surface_baking_prompt/MarginContainer/VBoxContainer" unique_id=372388635]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="Label" type="Label" parent="surface_baking_prompt/MarginContainer/VBoxContainer/surface_size" unique_id=752748449]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Surface size"
+
+[node name="surface_size" type="SpinBox" parent="surface_baking_prompt/MarginContainer/VBoxContainer/surface_size" unique_id=1078894891]
+layout_mode = 2
+size_flags_horizontal = 3
+step = 0.001
+value = 1.0
+
+[node name="axis" type="HBoxContainer" parent="surface_baking_prompt/MarginContainer/VBoxContainer" unique_id=1365908880]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="Label" type="Label" parent="surface_baking_prompt/MarginContainer/VBoxContainer/axis" unique_id=1109228858]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Axis"
+
+[node name="axis" type="OptionButton" parent="surface_baking_prompt/MarginContainer/VBoxContainer/axis" unique_id=1644556542]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 1
+item_count = 3
+popup/item_0/text = "X"
+popup/item_0/id = 0
+popup/item_1/text = "Y"
+popup/item_1/id = 2
+popup/item_2/text = "Z"
+popup/item_2/id = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="surface_baking_prompt/MarginContainer/VBoxContainer" unique_id=326125066]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="cancel_button" type="Button" parent="surface_baking_prompt/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1815974336]
+layout_mode = 2
+text = "Cancel"
+
+[node name="bake_button" type="Button" parent="surface_baking_prompt/MarginContainer/VBoxContainer/HBoxContainer" unique_id=887609742]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Bake"

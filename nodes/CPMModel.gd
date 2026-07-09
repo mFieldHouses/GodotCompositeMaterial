@@ -18,44 +18,153 @@ var bake_status_strings : Array[String] = [
 		_internal_bake_status = x
 		
 
-@export var _internal_baked_albedo_texture : Texture2D:
-	set(x):
-		print("albedo texture got set")
-		_internal_baked_albedo_texture = x
+@export var _internal_baked_albedo_texture : Texture2D
 @export var _internal_baked_normal_texture : Texture2D
 @export var _internal_baked_orm_texture : Texture2D
 
 		
 func _ready() -> void:
-	
 	if Engine.is_editor_hint():
 		return
 	
-	if _internal_baked_albedo_texture:
-		var meshes_to_bake : Dictionary[MeshInstance3D, Array] = {}
+	if _internal_bake_status == 0:
+		return
 		
-		for node : Node in get_children_recursive(self):
-			if node is not MeshInstance3D:
-				continue
+	var meshes_to_bake : Dictionary[MeshInstance3D, Array] = {}
 			
-			var surfaces_to_bake : Array[int] = []
-			for i in node.mesh.get_surface_count():
-				if node.get_active_material(i) is CompositeMaterial:
-					surfaces_to_bake.append(i)
-			
-			for index : int in surfaces_to_bake:
-				var material : CompositeMaterial = node.get_active_material(index).duplicate(true)
+	for node : Node in get_children_recursive(self):
+		if node is not MeshInstance3D:
+			continue
 				
-				material.set_shader_parameter("baked_albedo", _internal_baked_albedo_texture)
-				material.set_shader_parameter("baked_normal", _internal_baked_normal_texture)
-				material.set_shader_parameter("baked_orm", _internal_baked_orm_texture)
-				material.set_shader_parameter("bake_display_mode", 1)
-				
-				node.mesh.surface_set_material(index, material)
+		var surfaces_to_bake : Array[int] = []
+		for i in node.mesh.get_surface_count():
+			if node.get_active_material(i) is CompositeMaterial:
+				surfaces_to_bake.append(i)
+		
+		meshes_to_bake[node as MeshInstance3D] = surfaces_to_bake
+	
+	var _subresources_config : Dictionary
+	
+	#print("ready: ", self)
+	#print(_internal_bake_status)
+	
+	if CPMBaker.imported_baked_scenes.has(scene_file_path) and _internal_bake_status < 2:
+		#print("found in cache 1")
+		_internal_bake_status = 1
+	
+	#elif CPMBaker.imported_non_baked_scene_paths.has(scene_file_path) and _internal_bake_status < 2:
+		#print("found in anti-cache 1")
+	
+	elif _internal_bake_status < 2:
+		#print("not found in cache, need to read file 1")
+		var import_file_path : String = scene_file_path + ".import"
+		var import_file : ConfigFile = ConfigFile.new()
+		import_file.load(import_file_path)
+		
+		_subresources_config = import_file.get_value("params", "_subresources")
+
+		if _subresources_config.has("cpm/baked"):
+			if _subresources_config["cpm/baked"] == true:
+				_internal_bake_status = 1 # just force the model to use imported model bakes
+	
+	if _internal_bake_status == 1:
+		#print("imported model bakes")
+		
+		var albedo_texture : Texture2D
+		var normal_texture : Texture2D
+		var orm_texture : Texture2D
+		
+		if CPMBaker.imported_baked_scenes.has(scene_file_path):
+			#print("found in cache 2")
 			
-			meshes_to_bake[node as MeshInstance3D] = surfaces_to_bake
+			return
+			
+			#for node : MeshInstance3D in meshes_to_bake:
+				#var surfaces_to_bake : Array[int] = meshes_to_bake[node]
+				#
+				#for index : int in surfaces_to_bake:
+					#var material : CompositeMaterial = node.get_active_material(index).duplicate(true)
+					#
+					#CPMBaker.imported_baked_scenes[scene_file_path].mesh_surface_materials[node][index] = material
+					#
+					#material.set_shader_parameter("baked_albedo", albedo_texture)
+					#material.set_shader_parameter("baked_normal", normal_texture)
+					#material.set_shader_parameter("baked_orm", orm_texture)
+					#material.set_shader_parameter("bake_display_mode", 1)
+					#
+					#node.mesh.surface_set_material(index, material)
+			
+		else:
+			#print("not found in cache, need to read file 2")
+			if !_subresources_config.has("cpm/baked"):
+				return
+		
+			if _subresources_config["cpm/baked"] == false:
+				return
+		
+			if !_subresources_config.has("cpm/baked_albedo_texture"):
+				printerr("CPMModel: Imported model appears to be baked in .import file, but does not possess over baked textures: ", scene_file_path)
+				return
+			
+			albedo_texture = load(_subresources_config["cpm/baked_albedo_texture"])
+			normal_texture = load(_subresources_config["cpm/baked_normal_texture"])
+			orm_texture = load(_subresources_config["cpm/baked_orm_texture"])
+		
+			CPMBaker.imported_baked_scenes[scene_file_path] = {
+				"albedo_texture": albedo_texture.resource_path,
+				"normal_texture": albedo_texture.resource_path,
+				"orm_texture": albedo_texture.resource_path,
+				"mesh_surface_materials": {}
+			}
+			
+			#print(CPMBaker.imported_baked_scenes)
+			
+			for node : MeshInstance3D in meshes_to_bake:
+				#print(node)
+				var surfaces_to_bake : Array[int] = meshes_to_bake[node]
+				
+				CPMBaker.imported_baked_scenes[scene_file_path].mesh_surface_materials[node] = {}
+				
+				for index : int in surfaces_to_bake:
+					var material : CompositeMaterial = node.get_active_material(index).duplicate(true)
+					
+					CPMBaker.imported_baked_scenes[scene_file_path].mesh_surface_materials[node][index] = material
+					
+					material.set_shader_parameter("baked_albedo", albedo_texture)
+					material.set_shader_parameter("baked_normal", normal_texture)
+					material.set_shader_parameter("baked_orm", orm_texture)
+					material.set_shader_parameter("bake_display_mode", 1)
+					
+					node.mesh.surface_set_material(index, material)
+		
+	elif _internal_bake_status >= 2:
+		#print("instance bakes")
+		if _internal_baked_albedo_texture:
+			
+			if !CPMBaker.imported_non_baked_scene_paths.has(scene_file_path):
+				CPMBaker.imported_non_baked_scene_paths.append(scene_file_path)
+			
+			for node : MeshInstance3D in meshes_to_bake:
+				var surfaces_to_bake : Array[int] = meshes_to_bake[node]
+				
+				node.mesh = node.mesh.duplicate()
+				
+				for index : int in surfaces_to_bake:
+					#print("old material: ", node.get_active_material(index))
+					var material : CompositeMaterial = node.get_active_material(index).duplicate(true)
+					#print("new material: ", material)
+					
+					#print("setting textures on ", self)
+					material.set_shader_parameter("baked_albedo", _internal_baked_albedo_texture)
+					material.set_shader_parameter("baked_normal", _internal_baked_normal_texture)
+					material.set_shader_parameter("baked_orm", _internal_baked_orm_texture)
+					material.set_shader_parameter("bake_display_mode", 1)
+					
+					node.mesh.surface_set_material(index, material)
+				
+				meshes_to_bake[node as MeshInstance3D] = surfaces_to_bake
 			#print(node, ": ", node.mesh.surface_get_material(0), " ", node.mesh.surface_get_material(0).baking_mode)
-		
+	
 	
 	#var import_file_path : String = scene_file_path + ".import"
 	#var import_file : ConfigFile = ConfigFile.new()
@@ -99,8 +208,8 @@ func _validate_property(property: Dictionary) -> void:
 	if property.name == "bake_status_hint":
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 	
-	elif property.name == "_internal_bake_status" or property.name ==  "_internal_baked_albedo_texture" or property.name == "_internal_baked_normal_texture" or property.name == "_internal_baked_orm_texture":
-		property.usage = PROPERTY_USAGE_NO_EDITOR
+	#elif property.name == "_internal_bake_status" or property.name ==  "_internal_baked_albedo_texture" or property.name == "_internal_baked_normal_texture" or property.name == "_internal_baked_orm_texture":
+		#property.usage = PROPERTY_USAGE_NO_EDITOR
 
 func bake() -> void:
 	CPMBaker.bake_popup(self)

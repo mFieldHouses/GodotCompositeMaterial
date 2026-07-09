@@ -9,7 +9,8 @@ var requires_building : bool = false
 @export var layers : Array[CompositeMaterialLayer] #Array of resources storing parameters of seperate layers
 
 @export_tool_button("Edit", "Edit") var edit_material = Callable(edit_self)
-@export_tool_button("Toggle Baking Mode") var toggle_baking_mode = func(): set_baking_mode(!baking_mode)
+@export_tool_button("Bake", "Bake") var bake_action = bake_surface
+#@export_tool_button("Toggle Baking Mode") var toggle_baking_mode = func(): set_baking_mode(!baking_mode)
 
 @export_multiline var material_notes : String
 
@@ -77,6 +78,8 @@ func set_baking_mode(state : bool = true) -> void:
 		#var new_string : String = shader.code.replace("#define BAKING_MODE 0", "#define BAKING_MODE 1")
 		#print(shader.code)
 		shader.code = shader.code.replace("#define BAKING_MODE 0", "#define BAKING_MODE 1")
+		if shader.code.find("#define BAKING_MODE 0") != -1:
+			printerr("set baking mode to true failed")
 		#print("are the strings identical: ", shader.code == new_string)
 		#print("(2) has #define BAKING_MODE 0: ", shader.code.contains("#define BAKING_MODE 0"))
 		#print("(3) new_string has #define BAKING_MODE 0: ", new_string.contains("#define BAKING_MODE 0"))
@@ -84,6 +87,8 @@ func set_baking_mode(state : bool = true) -> void:
 		#print("has #define BAKING_MODE 1: ", shader.code.contains("#define BAKING_MODE 1"))
 		#var new_string : String = shader.code.replace("#define BAKING_MODE 1", "#define BAKING_MODE 0")
 		shader.code = shader.code.replace("#define BAKING_MODE 1", "#define BAKING_MODE 0")
+		if shader.code.find("#define BAKING_MODE 1") != -1:
+			printerr("set baking mode to false failed")
 	
 func update_config(new_config : CompositeMaterialLayer):
 	var layer_idx = layers.find(new_config) + 1
@@ -103,3 +108,6 @@ func compose_shader_code(layer_num: int, shaded: bool) -> String: ##Returns Comp
 
 func edit_self() -> void:
 	EditorInterface.get_base_control().get_parent().get_node("CompositeMaterialPlugin").edit_material(self)
+
+func bake_surface() -> void:
+	CPMBaker.bake_surface_popup(self)

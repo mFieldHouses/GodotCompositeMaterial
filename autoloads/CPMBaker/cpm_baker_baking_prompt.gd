@@ -43,9 +43,22 @@ func _ready() -> void:
 	display_baking_mode_hint(0)
 
 func bake_current_model() -> void:
-	print("baking at ", resolutions[$MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer2/quality.selected])
-	CPMBaker._bake_imported_gltf_model(current_model.scene_file_path, current_model, resolutions[$MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer2/quality.selected])
-	#current_model._internal_bake_status = 1
+	#print("baking at ", resolutions[$MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer2/quality.selected])
+	match $MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer/baking_mode.selected:
+		0:
+			CPMBaker._bake_imported_gltf_model(current_model.scene_file_path, current_model, resolutions[$MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer2/quality.selected])
+		1:
+			for node in get_children_recursive(EditorInterface.get_edited_scene_root()):
+				if node is CPMModel:
+					if node.scene_file_path == current_model.scene_file_path:
+						await CPMBaker._bake_cpm_model(node, resolutions[$MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer2/quality.selected])
+						node._internal_bake_status = 3
+						await get_tree().create_timer(0.5).timeout
+		2:
+			CPMBaker._bake_cpm_model(current_model, resolutions[$MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/HBoxContainer2/quality.selected])
+			current_model._internal_bake_status = 3
+	
+	
 	cancel_baking_prompt()
 
 func revert_current_model() -> void:
@@ -68,3 +81,20 @@ func display_baking_mode_hint(index : int) -> void:
 
 func display_bake_display_mode_hint(index : int) -> void:
 	$MarginContainer/VBoxContainer/TabContainer/Bake/VBoxContainer/bake_display_mode_hint_bg/MarginContainer/bake_display_mode_hint.text = bake_display_mode_hints[index]
+
+func get_children_recursive(node : Node) -> Array[Node]:
+	var _result : Array[Node] = []
+	var _children_to_be_checked : Array[Node] = []
+	
+	for _child in node.get_children():
+		_children_to_be_checked.append(_child)
+	
+	while _children_to_be_checked.size() > 0:
+		var _child_to_check : Node = _children_to_be_checked[0]
+		for _subchild in _child_to_check.get_children():
+			_children_to_be_checked.append(_subchild)
+		
+		_result.append(_child_to_check)
+		_children_to_be_checked.erase(_child_to_check)
+	
+	return _result
