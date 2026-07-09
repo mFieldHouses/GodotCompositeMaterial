@@ -1,16 +1,16 @@
 @tool
 extends CPMB_Vector3Value
-class_name CPMB_NormalMapConfiguration
+class_name CPMB_MixNormalMapsConfiguration
 
 @export var uv : CPMB_Vector2Value
 @export var normal_map : Texture2D:
 	set(x):
 		normal_map = x
 		value_changed.emit(x, "normal_map_textures")
-@export_range(0.001, 20.0, 0.001) var scale : float = 1.0:
+@export_range(0.0, 1.0, 0.001) var factor : float = 1.0:
 	set(x):
-		scale = x
-		value_changed.emit(x, "normal_map_scales")
+		factor = x
+		value_changed.emit(x, "normal_map_mix_factors")
 
 func _init(value : Vector3 = Vector3.ZERO) -> void:
 	self.value = Vector3.INF

@@ -431,9 +431,9 @@ vec4 sample_texture_nm(sampler2D input_tex, uv_map input_uv) { //for normal maps
 		tnormalZ.z = sqrt(max(0.0, 1.0 - dot(tnormalZ.xy, tnormalZ.xy)));
 	
 		// UDN blend
-		tnormalX = vec3(tnormalX.xy + normal.zy, normal.x*tnormalX.z);
-		tnormalY = vec3(tnormalY.xy + normal.xz, normal.y*tnormalY.z);
-		tnormalZ = vec3(tnormalZ.xy + normal.xy, normal.z*tnormalZ.z);
+		tnormalX = vec3(tnormalX.xy + normal.zy, normal.x*tnormalX.z) * (1.0 - 2.0 * float(normal.z < 0.0));
+		tnormalY = vec3(tnormalY.xy + normal.xz, normal.y*tnormalY.z) * (1.0 - 2.0 * float(normal.z < 0.0));
+		tnormalZ = vec3(tnormalZ.xy + normal.xy, normal.z*tnormalZ.z) * (1.0 - 2.0 * float(normal.z < 0.0));
 		
 		result = vec4(normalize(
 	        tnormalX.zyx * input_uv.uv1_fac +
@@ -446,9 +446,9 @@ vec4 sample_texture_nm(sampler2D input_tex, uv_map input_uv) { //for normal maps
 	}
 	else {
 		mat3 TBN = mat3(global_vertex_tangent, global_vertex_binormal, global_vertex_normal);
-    	vec4 tnormal = texture(input_tex, input_uv.uv1);
+    	vec4 tnormal = texture(input_tex, input_uv.uv1) * 2.0 - 1.0;
 		
-		tnormal.z = sqrt(max(0.0, 1.0 - dot(tnormal.xy, tnormal.xy)));
+		tnormal.z = sqrt(max(0.0, 1.0 - dot(tnormal.xy, tnormal.xy))) * (1.0 - 2.0 * float(global_vertex_normal.z < 0.0));
 		
 		return vec4(normalize(TBN * tnormal.rgb), tnormal.a);
 	}

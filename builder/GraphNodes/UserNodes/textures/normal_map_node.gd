@@ -20,7 +20,7 @@ func _load_texture() -> void:
 	var _file_dialog : EditorFileDialog = EditorFileDialog.new()
 	add_child(_file_dialog)
 	
-	_file_dialog.filters = ["*.png,*.jpg,*.jpeg;Image Files"]
+	_file_dialog.filters = ["*.png,*.jpg,*.jpegm*.webp,*.exr;Image Files"]
 	_file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 	
 	_file_dialog.popup_centered(Vector2i(600,400))
