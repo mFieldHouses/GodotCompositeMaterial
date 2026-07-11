@@ -124,7 +124,7 @@ grow_horizontal = 0
 grow_vertical = 2
 max_value = 1.0
 step = 0.001
-value = 0.5
+value = 1.0
 
 [node name="normal_in" type="Label" parent="." unique_id=2141362739]
 layout_mode = 2

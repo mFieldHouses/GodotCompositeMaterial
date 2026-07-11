@@ -14,6 +14,9 @@ var studio_main_scene_instance
 var builder_scene = preload("res://addons/CompositeMaterial/builder/composite_material_builder.tscn")
 var builder_scene_dock_instance : EditorDock
 
+var settings_scene : PackedScene = preload("res://addons/CompositeMaterial/scenes/settings.tscn")
+var settings_panel : Control
+
 func _enter_tree() -> void:
 	#Add custom material types so that they show up in Godots list of classes
 	add_custom_type("CompositeMaterial", "ShaderMaterial", preload("res://addons/CompositeMaterial/CompositeMaterial.gd"), preload("res://addons/CompositeMaterial/CompositeMaterial.svg"))
@@ -53,6 +56,9 @@ func _enter_tree() -> void:
 	add_tool_menu_item("[CPM] Bake imported model...", bake_imported_model)
 	add_tool_menu_item("[CPM] Revert imported model...", revert_imported_model)
 	
+	settings_panel = settings_scene.instantiate()
+	add_control_to_container(EditorPlugin.CONTAINER_PROJECT_SETTING_TAB_RIGHT, settings_panel)
+	
 	
 func _exit_tree() -> void:
 	#Undo everything done in _enter_tree()
@@ -76,6 +82,8 @@ func _exit_tree() -> void:
 	
 	remove_tool_menu_item("[CPM] Bake imported model...")
 	remove_tool_menu_item("[CPM] Revert imported model...")
+	
+	remove_control_from_container(EditorPlugin.CONTAINER_PROJECT_SETTING_TAB_RIGHT, settings_panel)
 
 func _has_main_screen():
 	return true

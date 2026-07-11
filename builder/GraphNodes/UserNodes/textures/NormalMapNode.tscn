@@ -90,6 +90,15 @@ slot/8/right_type = 3
 slot/8/right_color = Color(1, 1, 1, 1)
 slot/8/right_icon = null
 slot/8/draw_stylebox = true
+slot/9/left_enabled = false
+slot/9/left_type = 0
+slot/9/left_color = Color(1, 1, 1, 1)
+slot/9/left_icon = null
+slot/9/right_enabled = false
+slot/9/right_type = 0
+slot/9/right_color = Color(1, 1, 1, 1)
+slot/9/right_icon = null
+slot/9/draw_stylebox = true
 script = ExtResource("2_fsw7i")
 represented_resource_variable_name = "represented_normal_map_config"
 metadata/_custom_type_script = "uid://th3iwfgyvayb"
@@ -124,6 +133,11 @@ layout_mode = 2
 min_value = -100.0
 step = 0.001
 value = 1.0
+
+[node name="flip_y" type="CheckButton" parent="." unique_id=1081520835]
+visible = false
+layout_mode = 2
+text = "Flip Y"
 
 [node name="export" type="CheckButton" parent="." unique_id=1791086357]
 layout_mode = 2

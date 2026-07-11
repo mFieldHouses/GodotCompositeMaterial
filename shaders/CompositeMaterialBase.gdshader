@@ -4,9 +4,24 @@ shader_type spatial;
 uniform int baking_channel = 0; // 0 = color, 1 = normal, 2 = ORM
 uniform int bake_display_mode = 0; // 0 = do not display bakes (only live material), 1 = mix bakes with live material, 2 = only display bakes (no live material)
 
+#define DEPTH_PREPASS_MODE 1
+#define UNSHADED_MODE 0
+
+
 #if BAKING_MODE > 0
 render_mode unshaded, cull_disabled;
 #endif
+
+
+#if BAKING_MODE == 0
+#if DEPTH_PREPASS_MODE == 1
+render_mode depth_prepass_alpha;
+#endif
+#if UNSHADED_MODE == 1
+render_mode unshaded;
+#endif
+#endif
+
 
 #define NUM_LAYERS 1
 
@@ -449,7 +464,7 @@ vec4 sample_texture_nm(sampler2D input_tex, uv_map input_uv, float strength) { /
 	        tnormalZ.xyz * input_uv.uv3_fac
 	    ), 0.0); // world normals
 		
-		return vec4(inverse(global_TBN) * result.xyz, result.a); //transformed back to tangent space
+		return vec4(normalize((inverse(global_TBN) * result.xyz) * vec3(strength, strength, 1.0)), result.a); //transformed back to tangent space
 
 	}
 	else {
@@ -511,7 +526,7 @@ float get_layer_alpha(int layer_index) {
 
 vec3 get_layer_normal(int layer_index) {
 	//get_normal
-	return global_vertex_normal;
+	return vec3(0.0, 0.0, 1.0);
 }
 
 float get_layer_roughness(int layer_index) {
@@ -582,6 +597,7 @@ void fragment() {
 	float roughness_mix = 0.0;
 	float metallic_mix = 0.0;
 	float occlusion_mix = 0.0;
+	float alpha_mix = 1.0;
 	
 	#if BAKING_MODE == 0
 	
@@ -597,6 +613,7 @@ void fragment() {
 			if (process_index == 0) {
 				//if this is the first layer we're processing, just force the mask to be 1
 				albedo_mix = get_layer_albedo(i);
+				alpha_mix = get_layer_alpha(i);
 				normal_mix = mix_normals_udn(vec3(0.0, 0.0, 1.0), get_layer_normal(i), 0.5);
 				roughness_mix = get_layer_roughness(i);
 				metallic_mix = get_layer_metallic(i);
@@ -605,6 +622,7 @@ void fragment() {
 			
 			else if (layer_masks[i] > 0.005) {
 				albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i] * get_layer_alpha(i));
+				alpha_mix = get_layer_alpha(i);
 				
 				normal_mix = mix_normals_udn(normal_mix, get_layer_normal(i), layer_masks[i]);
 				
@@ -618,6 +636,7 @@ void fragment() {
 		}
 		
 		ALBEDO = mix(albedo_mix, texture(baked_albedo, UV).rgb, show_bake_factor);
+		ALPHA = alpha_mix;
 		
 		NORMAL_MAP = mix(normal_mix * vec3(0.5, 0.5, 0.5) + vec3(0.5, 0.5, 0.0), texture(baked_normal, UV).rgb, show_bake_factor);
 		
@@ -630,6 +649,7 @@ void fragment() {
 	
 	else {
 		ALBEDO = texture(baked_albedo, UV).rgb;
+		ALPHA = alpha_mix;
 		
 		NORMAL_MAP = normal_mix * vec3(0.5, 0.5, 0.5) + vec3(0.5, 0.5, 0.0);
 		

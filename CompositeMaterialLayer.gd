@@ -33,7 +33,7 @@ func initialise_value(index : int = -1) -> void:
 		alpha = CPMB_FloatValue.new(1.0)
 		alpha.internal_to_node = true
 	if index == 2 or index == -1:
-		normal = CPMB_Vector3Value.new(Vector3(0.5, 0.5, 1.0))
+		normal = CPMB_Vector3Value.new(Vector3(0.0, 0.0, 1.0))
 		normal.internal_to_node = true
 	if index == 3 or index == -1:
 		roughness_value = CPMB_FloatValue.new()

@@ -12,7 +12,7 @@ var output_node : CompositeMaterialOutputNode
 
 var node_mappings : Array = [
 	["LayerNode", "ValueNode", "", "", "", "DistanceFadeNode"],
-	["textures/TextureNode", "textures/NoiseTextureNode", "textures/NormalMapNode"],
+	["textures/TextureNode", "textures/NoiseTextureNode", "textures/NormalMapNode", "textures/MixNormalMapsNode"],
 	["convert/ColorRampNode", "convert/HSVTransformNode"],
 	["uv/UVTransformNode","uv/UVMapNode","uv/TriplanarMapNode"],
 	["masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/VertexColorMaskNode", "masks/EffectShapeMaskNode", "masks/UVMaskNode", "masks/NormalMapMaskNode"],
@@ -629,8 +629,11 @@ func reconstruct_material_graph(material : CompositeMaterial) -> void:
 			_new_subnode.linked_node = _new_node
 			connect_node(_new_node.name, 0, _new_subnode.name, 0)
 			
+			print(_resource)
+			
 			nodes_to_add.append([_resource.albedo, {"to_node": String(_new_node.name), "to_port": 0, "from_port": _resource.albedo.get_output_port_for_state()}])
 			nodes_to_add.append([_resource.alpha, {"to_node": _new_node.name, "to_port": 1, "from_port": _resource.alpha.get_output_port_for_state()}])
+			print("normal: ", _resource.normal)
 			nodes_to_add.append([_resource.normal, {"to_node": _new_node.name, "to_port": 2, "from_port": _resource.normal.get_output_port_for_state()}])
 			nodes_to_add.append([_resource.roughness_value, {"to_node": String(_new_node.name), "to_port": 3, "from_port": _resource.roughness_value.get_output_port_for_state()}])
 			nodes_to_add.append([_resource.metallic_value, {"to_node": String(_new_node.name), "to_port": 4, "from_port": _resource.metallic_value.get_output_port_for_state()}])

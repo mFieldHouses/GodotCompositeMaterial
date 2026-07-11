@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://ctt5wdps327xr"]
+
+[node name="CompositeMaterial" type="Control" unique_id=763161385]
+layout_mode = 3
+anchors_preset = 0
