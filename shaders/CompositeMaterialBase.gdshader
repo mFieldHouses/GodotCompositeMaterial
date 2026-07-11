@@ -86,7 +86,9 @@ varying vec2 uv;
 varying vec2 uv2;
 
 
-
+vec3 get_binormal(int space) {
+	return normalize(cross(local_vertex_normal, local_vertex_tangent)) * float(space == 0) + normalize(cross(global_vertex_normal, global_vertex_tangent)) * float(space == 1) + normalize(cross(hybrid_vertex_normal, hybrid_vertex_tangent)) * float(space == 2);
+}
 
 
 #if NUM_DIRECTIONAL_MASKS > 0
@@ -408,17 +410,23 @@ vec4 sample_texture_nn(sampler2D input_tex, uv_map input_uv) { //for nearest nei
 	}
 }
 
-vec3 mix_normals_udn(vec3 n1, vec3 n2, float fac) {
+vec3 mix_normals_udn(vec3 n1, vec3 n2, float fac) { // for unpacked tangent space normals
 	n1.xy *= clamp((fac * -2.0) + 2.0, 0.0, 1.0);
 	n2.xy *= clamp(fac * 2.0, 0.0, 1.0);
-	vec3 result = vec3(n1.xy + n2.xy * fac, n1.z*n2.z);
+	
+	vec3 result = vec3(n1.xy + n2.xy, n1.z*n2.z);
 	
 	return normalize(result);
 }
 
-vec4 sample_texture_nm(sampler2D input_tex, uv_map input_uv) { //for normal maps, returns a world normal
+vec4 sample_texture_nm(sampler2D input_tex, uv_map input_uv, float strength) { //for normal maps
 	if (input_uv.is_triplanar) {
 		vec3 normal = global_vertex_normal;
+		mat3 global_TBN = mat3(
+			global_vertex_tangent,
+			global_vertex_binormal,
+			global_vertex_normal
+		);
 		
 		vec4 result = vec4(normal, 0.0);
 		
@@ -431,26 +439,28 @@ vec4 sample_texture_nm(sampler2D input_tex, uv_map input_uv) { //for normal maps
 		tnormalZ.z = sqrt(max(0.0, 1.0 - dot(tnormalZ.xy, tnormalZ.xy)));
 	
 		// UDN blend
-		tnormalX = vec3(tnormalX.xy + normal.zy, normal.x*tnormalX.z) * (1.0 - 2.0 * float(normal.z < 0.0));
-		tnormalY = vec3(tnormalY.xy + normal.xz, normal.y*tnormalY.z) * (1.0 - 2.0 * float(normal.z < 0.0));
-		tnormalZ = vec3(tnormalZ.xy + normal.xy, normal.z*tnormalZ.z) * (1.0 - 2.0 * float(normal.z < 0.0));
+		tnormalX = vec3(tnormalX.xy + normal.zy, normal.x*tnormalX.z);
+		tnormalY = vec3(tnormalY.xy + normal.xz, normal.y*tnormalY.z);
+		tnormalZ = vec3(tnormalZ.xy + normal.xy, normal.z*tnormalZ.z);
 		
 		result = vec4(normalize(
 	        tnormalX.zyx * input_uv.uv1_fac +
 	        tnormalY.xzy * input_uv.uv2_fac +
 	        tnormalZ.xyz * input_uv.uv3_fac
-	    ), 0.0);
+	    ), 0.0); // world normals
 		
-		return result;
+		return vec4(inverse(global_TBN) * result.xyz, result.a); //transformed back to tangent space
 
 	}
 	else {
-		mat3 TBN = mat3(global_vertex_tangent, global_vertex_binormal, global_vertex_normal);
     	vec4 tnormal = texture(input_tex, input_uv.uv1) * 2.0 - 1.0;
 		
-		tnormal.z = sqrt(max(0.0, 1.0 - dot(tnormal.xy, tnormal.xy))) * (1.0 - 2.0 * float(global_vertex_normal.z < 0.0));
+		tnormal.xy *= strength;
 		
-		return vec4(normalize(TBN * tnormal.rgb), tnormal.a);
+		tnormal.z = sqrt(max(0.0, 1.0 - dot(tnormal.xy, tnormal.xy)));
+		tnormal.xyz = normalize(tnormal.xyz);
+		
+		return tnormal;
 	}
 }
 
@@ -520,22 +530,22 @@ float get_layer_occlusion(int layer_index) {
 }
 
 void vertex() {
-	local_vertex_normal = NORMAL.rgb;
+	local_vertex_normal = NORMAL;
 	vec3 normal_scale = vec3(
     	length(MODEL_NORMAL_MATRIX[0].xyz),
     	length(MODEL_NORMAL_MATRIX[1].xyz),
     	length(MODEL_NORMAL_MATRIX[2].xyz)
 	);
 	hybrid_vertex_normal = local_vertex_normal * normal_scale;
-	global_vertex_normal = (MODEL_NORMAL_MATRIX * local_vertex_normal).xyz;
+	global_vertex_normal = normalize(MODEL_NORMAL_MATRIX * NORMAL);
 	
-	local_vertex_binormal = BINORMAL.xyz;
+	local_vertex_binormal = BINORMAL;
 	hybrid_vertex_binormal = local_vertex_binormal * normal_scale;
-	global_vertex_binormal = (MODEL_NORMAL_MATRIX * local_vertex_binormal).xyz;
+	global_vertex_binormal = normalize(MODEL_NORMAL_MATRIX * BINORMAL);
 	
-	local_vertex_tangent = TANGENT.xyz;
+	local_vertex_tangent = TANGENT;
 	hybrid_vertex_tangent = local_vertex_tangent * normal_scale;
-	global_vertex_tangent = (MODEL_NORMAL_MATRIX * local_vertex_tangent).xyz;
+	global_vertex_tangent = normalize(MODEL_NORMAL_MATRIX * TANGENT);
 	
 	local_vertex_pos = VERTEX.xyz;
 	global_vertex_pos = (MODEL_MATRIX * vec4(local_vertex_pos, 1.0)).xyz;
@@ -568,7 +578,7 @@ void fragment() {
 	float show_bake_factor = 0.0 + (clamp(pow(uv_density * 200.0, 0.7) - 0.7, 0.0, 1.0) * float(bake_display_mode == 1 || bake_display_mode == 3)) + (1.0 * float(bake_display_mode == 2));
 	
 	vec3 albedo_mix = vec3(0.0);
-	vec3 normal_mix = vec3(0.0);
+	vec3 normal_mix = vec3(0.0, 0.0, 1.0);
 	float roughness_mix = 0.0;
 	float metallic_mix = 0.0;
 	float occlusion_mix = 0.0;
@@ -587,7 +597,7 @@ void fragment() {
 			if (process_index == 0) {
 				//if this is the first layer we're processing, just force the mask to be 1
 				albedo_mix = get_layer_albedo(i);
-				normal_mix = mix_normals_udn((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz, get_layer_normal(i), 0.5);
+				normal_mix = mix_normals_udn(vec3(0.0, 0.0, 1.0), get_layer_normal(i), 0.5);
 				roughness_mix = get_layer_roughness(i);
 				metallic_mix = get_layer_metallic(i);
 				occlusion_mix = get_layer_occlusion(i);
@@ -597,6 +607,7 @@ void fragment() {
 				albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i] * get_layer_alpha(i));
 				
 				normal_mix = mix_normals_udn(normal_mix, get_layer_normal(i), layer_masks[i]);
+				
 				roughness_mix = mix(roughness_mix, get_layer_roughness(i), layer_masks[i]);
 				metallic_mix = mix(metallic_mix, get_layer_metallic(i), layer_masks[i]);
 				occlusion_mix = mix(occlusion_mix, get_layer_occlusion(i), layer_masks[i]);
@@ -608,8 +619,7 @@ void fragment() {
 		
 		ALBEDO = mix(albedo_mix, texture(baked_albedo, UV).rgb, show_bake_factor);
 		
-		vec3 world_normal = normal_mix;
-		NORMAL = normalize((VIEW_MATRIX * vec4(world_normal, 0.0)).xyz);
+		NORMAL_MAP = mix(normal_mix * vec3(0.5, 0.5, 0.5) + vec3(0.5, 0.5, 0.0), texture(baked_normal, UV).rgb, show_bake_factor);
 		
 		vec4 orm_texture = texture(baked_orm, UV);
 		ROUGHNESS = mix(roughness_mix, orm_texture.g, show_bake_factor);
@@ -621,8 +631,7 @@ void fragment() {
 	else {
 		ALBEDO = texture(baked_albedo, UV).rgb;
 		
-		vec3 world_normal = normal_mix;
-		NORMAL = normalize((VIEW_MATRIX * vec4(world_normal, 0.0)).xyz);
+		NORMAL_MAP = normal_mix * vec3(0.5, 0.5, 0.5) + vec3(0.5, 0.5, 0.0);
 		
 		vec4 orm_texture = texture(baked_orm, UV);
 		AO = orm_texture.r;
