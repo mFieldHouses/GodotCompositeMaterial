@@ -514,6 +514,16 @@ uv_map pad_uv(uv_map base_uv, vec2 padding_amount) {
 	return base_uv;
 }
 
+float func_linear(float x, float slope, float offset) {
+	return clamp(x * slope + offset, 0.0, 1.0);
+}
+
+float func_bias_gain(float x, float t, float s) { // Implementation of the generalization of Schlicks Bias and Gain functions by Jonathan T. Barron: https://arxiv.org/abs/2010.09714	
+	return
+		(((t * x) / (x + (s * (t - x)) + 0.000001)) * float(x < t)) +
+		(((((1.0 - t) * (x - 1.0)) / (1.0 - x - s * (t - x) + 0.000001)) + 1.0) * float(x >= t));
+}
+
 vec3 get_layer_albedo(int layer_index) {
 	//get_albedo
 	return vec3(0.0);
@@ -622,7 +632,6 @@ void fragment() {
 			
 			else if (layer_masks[i] > 0.005) {
 				albedo_mix = mix(albedo_mix, get_layer_albedo(i), layer_masks[i] * get_layer_alpha(i));
-				alpha_mix = get_layer_alpha(i);
 				
 				normal_mix = mix_normals_udn(normal_mix, get_layer_normal(i), layer_masks[i]);
 				

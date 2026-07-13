@@ -13,7 +13,7 @@ var output_node : CompositeMaterialOutputNode
 var node_mappings : Array = [
 	["LayerNode", "ValueNode", "", "", "", "DistanceFadeNode"],
 	["textures/TextureNode", "textures/NoiseTextureNode", "textures/NormalMapNode", "textures/MixNormalMapsNode"],
-	["convert/ColorRampNode", "convert/HSVTransformNode"],
+	["convert/FunctionNode", "convert/ColorRampNode", "convert/HSVTransformNode"],
 	["uv/UVTransformNode","uv/UVMapNode","uv/TriplanarMapNode"],
 	["masks/DirectionalMaskNode", "masks/PositionalMaskNode", "masks/VertexColorMaskNode", "masks/EffectShapeMaskNode", "masks/UVMaskNode", "masks/NormalMapMaskNode"],
 	["utility/TimeNode", "utility/MathNode", "utility/VectorOperationNode"]
@@ -227,7 +227,7 @@ func build_material() -> void:
 	is_building_material = true
 	$rebuilding.visible = true
 	
-	await get_tree().create_timer(0.01).timeout
+	await get_tree().create_timer(0.1).timeout
 	
 	#Clear out material
 	edited_composite_material.layers = [] as Array[CompositeMaterialLayer]

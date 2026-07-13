@@ -5,7 +5,7 @@ class_name MixNormalMapsNode
 var represented_mix_normal_maps_config : CPMB_MixNormalMapsConfiguration
 
 func _node_ready() -> void:
-	$factor.value_changed.connect(func(x): represented_mix_normal_maps_config.factor = x)
+	$factor.value_changed.connect(func(x): represented_mix_normal_maps_config.factor.value = x)
 	
 	represented_mix_normal_maps_config = CPMB_MixNormalMapsConfiguration.new()
 	
@@ -28,6 +28,8 @@ func connect_and_pass_object(input_port_id : int, object : Object) -> void:
 			represented_mix_normal_maps_config.normal_map_A = object
 		1:
 			represented_mix_normal_maps_config.normal_map_B = object
+		2:
+			represented_mix_normal_maps_config.factor = object
 
 func disconnected(input_port_id : int) -> void:
 	represented_mix_normal_maps_config.initialise_value(input_port_id)

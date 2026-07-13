@@ -1,0 +1,223 @@
+[gd_scene format=3 uid="uid://bjx284epfv71i"]
+
+[ext_resource type="Theme" uid="uid://b8si47itvd186" path="res://addons/CompositeMaterial/builder/graph_node_default_theme.tres" id="1_j4cwk"]
+[ext_resource type="Script" uid="uid://c8t6y6wwwbs56" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/convert/function_node.gd" id="2_ycb0b"]
+[ext_resource type="Script" uid="uid://rkb8ptxpbi5u" path="res://addons/CompositeMaterial/builder/GraphNodes/UserNodes/convert/function_preview_window.gd" id="3_ycb0b"]
+
+[node name="FunctionNode" type="GraphNode" unique_id=1174472716]
+offset_right = 207.0
+offset_bottom = 66.0
+tooltip_text = "Takes a number as an input and outputs a color based on where the input number lies between 0 and 1 on the gradient."
+theme = ExtResource("1_j4cwk")
+theme_override_constants/separation = 15
+title = "Function"
+ignore_invalid_connection_type = true
+slot/0/left_enabled = false
+slot/0/left_type = 5
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 5
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = false
+slot/1/left_enabled = false
+slot/1/left_type = 5
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 5
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 5
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 5
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = true
+slot/3/right_type = 5
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = true
+slot/4/left_type = 5
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 0
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+slot/5/left_enabled = false
+slot/5/left_type = 0
+slot/5/left_color = Color(1, 1, 1, 1)
+slot/5/left_icon = null
+slot/5/right_enabled = false
+slot/5/right_type = 0
+slot/5/right_color = Color(1, 1, 1, 1)
+slot/5/right_icon = null
+slot/5/draw_stylebox = true
+slot/6/left_enabled = false
+slot/6/left_type = 0
+slot/6/left_color = Color(1, 1, 1, 1)
+slot/6/left_icon = null
+slot/6/right_enabled = false
+slot/6/right_type = 0
+slot/6/right_color = Color(1, 1, 1, 1)
+slot/6/right_icon = null
+slot/6/draw_stylebox = true
+slot/7/left_enabled = false
+slot/7/left_type = 0
+slot/7/left_color = Color(1, 1, 1, 1)
+slot/7/left_icon = null
+slot/7/right_enabled = false
+slot/7/right_type = 0
+slot/7/right_color = Color(1, 1, 1, 1)
+slot/7/right_icon = null
+slot/7/draw_stylebox = true
+slot/8/left_enabled = false
+slot/8/left_type = 0
+slot/8/left_color = Color(1, 1, 1, 1)
+slot/8/left_icon = null
+slot/8/right_enabled = false
+slot/8/right_type = 0
+slot/8/right_color = Color(1, 1, 1, 1)
+slot/8/right_icon = null
+slot/8/draw_stylebox = true
+script = ExtResource("2_ycb0b")
+metadata/_custom_type_script = "uid://s0jc3oianx85"
+
+[node name="Label" type="Label" parent="." unique_id=356640209]
+layout_mode = 2
+text = "Function Type"
+
+[node name="function" type="OptionButton" parent="." unique_id=482261096]
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "Linear"
+popup/item_0/id = 0
+popup/item_1/text = "Bias/Gain"
+popup/item_1/id = 1
+popup/item_2/text = "Steps"
+popup/item_2/id = 3
+
+[node name="preview_window" type="ColorRect" parent="." unique_id=1912818340]
+custom_minimum_size = Vector2(0, 126.025)
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+script = ExtResource("3_ycb0b")
+margin = 5
+
+[node name="result" type="Label" parent="." unique_id=1063963965]
+layout_mode = 2
+text = "Y"
+horizontal_alignment = 2
+
+[node name="x" type="HBoxContainer" parent="." unique_id=1593582084]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label2" type="Label" parent="x" unique_id=809324394]
+layout_mode = 2
+text = "X"
+
+[node name="value" type="SpinBox" parent="x" unique_id=1461763403]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.001
+value = 0.5
+
+[node name="HSeparator" type="HSeparator" parent="." unique_id=813177198]
+layout_mode = 2
+
+[node name="settings_linear" type="VBoxContainer" parent="." unique_id=1747453963]
+layout_mode = 2
+
+[node name="slope" type="Label" parent="settings_linear" unique_id=337632750]
+layout_mode = 2
+text = "Slope"
+
+[node name="slope_value" type="SpinBox" parent="settings_linear" unique_id=49597181]
+layout_mode = 2
+step = 0.001
+value = 1.0
+allow_greater = true
+
+[node name="offset" type="Label" parent="settings_linear" unique_id=1434543147]
+layout_mode = 2
+text = "Offset"
+
+[node name="offset_value" type="SpinBox" parent="settings_linear" unique_id=563253542]
+layout_mode = 2
+min_value = -1000.0
+max_value = 1000.0
+step = 0.001
+allow_greater = true
+allow_lesser = true
+
+[node name="center_curve" type="Button" parent="settings_linear" unique_id=2104398963]
+layout_mode = 2
+text = "Center"
+
+[node name="settings_bias_gain" type="VBoxContainer" parent="." unique_id=1421930034]
+visible = false
+layout_mode = 2
+
+[node name="t" type="Label" parent="settings_bias_gain" unique_id=1555154800]
+layout_mode = 2
+text = "Threshold"
+
+[node name="t_value" type="SpinBox" parent="settings_bias_gain" unique_id=1348227004]
+layout_mode = 2
+max_value = 1.0
+step = 0.001
+value = 0.5
+allow_greater = true
+
+[node name="s" type="Label" parent="settings_bias_gain" unique_id=1402809431]
+layout_mode = 2
+text = "Slope"
+
+[node name="s_value" type="SpinBox" parent="settings_bias_gain" unique_id=1763795580]
+layout_mode = 2
+max_value = 1000.0
+step = 0.001
+value = 1.0
+allow_greater = true
+
+[node name="settings_steps" type="VBoxContainer" parent="." unique_id=510392576]
+visible = false
+layout_mode = 2
+
+[node name="steps" type="Label" parent="settings_steps" unique_id=1135942233]
+layout_mode = 2
+text = "Steps"
+
+[node name="steps_value" type="SpinBox" parent="settings_steps" unique_id=1741176233]
+layout_mode = 2
+min_value = 2.0
+value = 5.0
+
+[node name="behavior" type="Label" parent="settings_steps" unique_id=2102199550]
+layout_mode = 2
+text = "Behavior"
+
+[node name="behavior_value" type="OptionButton" parent="settings_steps" unique_id=1266262407]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Floor"
+popup/item_0/id = 0
+popup/item_1/text = "Ceiling"
+popup/item_1/id = 1
